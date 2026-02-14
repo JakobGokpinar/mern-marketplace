@@ -1,0 +1,17 @@
+.navbar-nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-grow: 1;
+}
+
+.log-in-button {
+    font-size: large;
+    
+}
+
+@media (max-width: 1200px) {
+    .navbar-avatar {
+        margin-top: 10px;
+    }
+}

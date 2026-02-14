@@ -1,0 +1,8 @@
+.filter-accordion {
+    margin-bottom: 20px;
+}
+
+.commune-filter {
+    max-height: 300px;
+   overflow: auto;
+}

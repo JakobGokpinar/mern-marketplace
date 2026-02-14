@@ -1,0 +1,19 @@
+.chat-div-container {
+    height: 600px;
+    padding: 20px;
+}
+
+.chat-sidebar {
+    min-width: 400px;
+}
+
+.conversationHeader-product {
+    height: 70px;
+    display: flex;
+    align-items: center;
+}
+.conversationHeader-product-img {
+    width: 100px;
+    height: 60px;
+    object-fit: cover;
+}

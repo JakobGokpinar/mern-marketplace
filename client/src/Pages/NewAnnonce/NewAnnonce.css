@@ -1,0 +1,157 @@
+.input-col {
+  padding: 20px;
+}
+
+.input-col * p {
+  margin: 0%;
+}
+
+.newannonce-form-group {
+  margin-bottom: 60px;
+}
+.form-group__content {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.review-product-images-small-div {
+  margin: 0px 20px 60px 10px;
+}
+.images-li-div-small {
+  display: flex;
+  align-items: center;
+}
+.images-li-image-control {
+  display: flex;
+  width: 100%;
+  margin-left: 15px;
+  align-items: center;
+  padding: 15px;
+}
+.image-span-img {
+  border-radius: 10px;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+}
+
+.image-control-drag-item:hover{
+  cursor:grabbing;
+}
+.image-control-delete-item:hover{
+  cursor: pointer;
+  color: gray;
+}
+
+.backdrop-model-div{
+  border-radius: 10px;
+  width: 500px;
+  background-color:ghostwhite;
+  padding: 30px;
+}
+
+.create-annonce-control-button {
+  width: 100px;
+  margin-bottom: 50px;
+}
+
+/* ########## PREVIEW COLUMN ######### */
+.preview-column {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+.preview-column * p {
+  margin: 0%;
+}
+.preview-column-content {
+  width: 80%;
+}
+
+.preview-carousel {
+  background-color: #fdfafa;
+  width: 100%;
+  height: 400px;
+}
+.preview-carousel-image {
+  width: 100%; 
+  height:395px;
+  object-fit: contain;
+}
+.preview-carousel-caption{
+  display: flex;
+  justify-content: center;
+}
+.carousel-image-text{
+  background-color: black;
+  color: white;
+  width: fit-content;
+}
+
+.preview-content-box {
+  margin-bottom: 50px;
+}
+.preview-content-heading {
+  font-size: 18px;
+  font-weight: 450;
+}
+.preview-product-title {
+  font-size: 30px;
+}
+
+.preview-product-desc {
+  width: 100%;
+  border-style: none; 
+  background-color: transparent;
+  overflow: hidden;
+  resize: none;
+  color: black;
+}
+
+.special-properties-container{
+  display: flex;
+  flex-wrap: wrap;
+}
+.spec-prop-item{
+  height: 120px;
+  width: 120px;
+  margin: 0px 10px 5px 0px;
+  position: relative;
+}
+.spec-prop-box{
+  height: 100%;
+  height: 100%;
+  padding: 10px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  word-wrap: break-word;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.special-props-title{
+  font-size: 18px;
+  font-weight: 440;
+}
+.special-prop-remove-btn{
+  display: none;
+  position: absolute;
+  top: 40px;
+  left: 15px;
+}
+.spec-prop-box:hover{
+  filter: blur(2px);
+}
+.spec-prop-item:hover > .special-prop-remove-btn{
+  display: block;
+}
+
+/* continue filtering background of the .spec-prop-box when 'fjern' button hovered */
+.spec-prop-box:has(+ .special-prop-remove-btn:hover) {
+  filter: blur(2px);
+}
+
+

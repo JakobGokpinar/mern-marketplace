@@ -1,0 +1,34 @@
+.searchresult-container{
+    display: flex;
+}
+
+.result-row{
+    display: flex;
+    margin: 0%;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.top-row{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+}
+.middle-row {
+    display: flex;
+    margin: 20px;
+}
+.bottom-row {
+    max-width: 60rem;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+/* center products in page on mobile */
+@media (max-width: 768px) { 
+    .bottom-row{
+      justify-content: center;
+    }
+  }

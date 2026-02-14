@@ -1,0 +1,27 @@
+.conversation-div {
+    height: 100px;
+    display: flex;
+    align-items: center;
+}
+.conversation-avatar{
+    margin-right: 10px;
+}
+.conversation-operations{
+    display: flex;
+}
+.conversation-operations-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-right: 10px;
+}
+.conversation-operations-info p {
+    margin: 0%;
+    font-size: 12px;
+    text-align: end;
+}
+.conversation-product-img {
+    width: 80px;
+    height: 60px;
+    object-fit: cover;
+}

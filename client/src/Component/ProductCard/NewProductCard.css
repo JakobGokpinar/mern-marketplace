@@ -1,0 +1,27 @@
+.carousel-img {
+    height: 250px; 
+    width: 100%; 
+    object-fit: cover;
+  }
+  
+  .card-properties {
+    padding: 10px;
+  }
+  
+  .card-properties__item {
+    margin-bottom: 10px;
+  }
+  .item-location{
+    font-size: 14px;
+  }
+  .item-price {
+    font-size: 20px;
+  }
+  .item-description{
+    font-size: 14px
+  }
+  .card-buttons{
+    display: flex;
+    justify-content: space-evenly;
+    margin: 5px;
+  }

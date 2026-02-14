@@ -1,0 +1,40 @@
+{
+    "categories": [
+        {
+            "maincategory": "Bil",
+            "subcategories": ["Bobil", "Elbil", "Vanlig bil", "Campingvogner", "Varebil", "Leiebil", "Bildel", "Andre"]
+        },
+        {
+            "maincategory": "Eindom",
+            "subcategories": ["Rekkehus", "Leilighet", "Hytta", "Enebolig", "Tomter", "Feriehus", "Tomannsbolig", "Gårdsbruk", "Andre"]           
+        },
+        {
+            "maincategory": "Båt",
+            "subcategories": ["Bowrider", "Cabincruser", "Gummibåt", "RIB","Seilbåt", "Daycruiser", "Yacht", "Båtplass", "Speedbåt", "Trebåt", "Vannscooter", "Yrkesbåt", "Andre"]     
+        },
+        {
+            "maincategory": "Motorsykkel",
+            "subcategories": ["Scooter", "Moped", "Snøscooter", "ATV", "Chopper","MC deler", "Classic", "Cross", "Cruiser", "Custom", "Offroad", "Sport", "Touring", "Andre"]     
+        },
+        {
+            "maincategory": "Klær og Sko",
+            "subcategories": ["Barneklær", "Herreklær", "Dameklær", "Barnesko", "Briller og Linser", "Sko", "Smykker", "Vesker og bager", "Kroppspleie", "Klokker og ur", "Annet"]
+        },
+        {
+            "maincategory": "Møbler",
+            "subcategories": ["Antikke møbler", "Bord og stol", "Dekorasjon", "Garderobe", "Hyller og Kommoder", "Senger", "Belysning", "Sofa", "Tepper", "Annet"]
+        },
+        {
+            "maincategory": "Elektronikk",
+            "subcategories": ["Data", "Hvitevarer", "Lyd og Bilde", "Mobil og tilbehør", "Spill og Konsoll", "Foto og video", "Annet"]
+        },
+        {
+            "maincategory": "Torget",
+            "subcategories":["Porselen og keramikk", "Kunst", "Sølvtøy", "Dyr og utstyr", "Håndarbeid", "Musikk og Film", "Bøker", "Brettspill", "Musikkinstrument","Hage og Utstyr","Ventilasjon", "Sykler", "Annet"]
+        },
+        {
+            "maincategory": "Annet",
+            "subcategories": ["Annet"]
+        }
+    ]
+}

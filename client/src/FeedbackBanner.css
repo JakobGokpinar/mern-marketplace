@@ -1,0 +1,10 @@
+.feedback-div{
+    position: absolute;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.feedback-banner {
+    position: fixed;
+    bottom: 40px;
+}

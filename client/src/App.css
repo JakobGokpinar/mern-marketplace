@@ -1,0 +1,8 @@
+.app-div {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.app-div__content {
+    margin-bottom: 5%;
+}

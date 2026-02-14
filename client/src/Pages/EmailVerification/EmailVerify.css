@@ -1,0 +1,44 @@
+.email-verify-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0%;
+    padding: 3%;
+}
+
+.email-verify-content {
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+    padding: 4%;
+}
+
+.content__alert {
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.content__token-label {
+    align-self: flex-start;
+}
+.content__token-input {
+    height: 60px;
+    font-size: 18px;
+    margin-bottom: 40px;
+
+}
+
+.content__verify-button {
+    width: 100%;
+    height: 60px;
+}
+
+@media (max-width: 768px) {
+    .email-verify-content {
+      width: 90%;
+    }
+  }

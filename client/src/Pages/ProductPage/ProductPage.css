@@ -1,0 +1,134 @@
+.productPage * p{
+  margin: 0%
+}
+
+.product-page-row {
+    width: 100%;
+    display: flex;
+}
+.product-content-col {
+    padding: 0%;
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+}
+
+.content-col-div {
+    width: 80%;
+}
+
+.annonce-carousel {
+    width: 100%;
+    height: 400px;
+}
+.annonce-image {
+    width: 100%; 
+    height: 400px; 
+    object-fit: contain;
+  }
+  .annonce-image-caption {
+    display: flex;
+    justify-content: center;
+  }
+  .annonce-image-caption__text {
+    background-color: black;
+    color: white;
+    width: fit-content;
+  }
+
+  .annonce-content-box{
+    margin-bottom: 50px;
+  }
+  .annonce-content-heading{
+    font-size: 18px;
+    font-weight: 450;
+  }
+  .annonce-product-title {
+    font-size: 30px;
+  }
+
+  .price-and-controlbuttons{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .annonce-product-desc{
+      width: 100%;
+      border-style: none; 
+      background-color: transparent;
+      overflow: hidden;
+      resize: none;
+      color: black;
+  }
+
+.annonce-special-props-div {
+  display: flex;
+  flex-wrap: wrap;
+}
+  .special-props-box{
+    height: 120px;
+    width: 120px;
+    padding: 10px;
+    margin: 0px 10px 5px 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    word-wrap: break-word;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  .special-prop-title{
+    font-size: 18px;
+    font-weight: 450;
+  }
+
+  /* ########## SELLER COLUMN ######### */
+
+
+  .productPage-seller-col{
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .seller-panel {
+    border: 2px solid;
+    border-radius: 5px;
+    width: 70%;
+    position: relative;
+    margin-top: 20%;
+    height: 300px;
+  }
+  .seller-avatar{
+    position: absolute;
+    top: -60px;
+    left: 0;
+    right: 0%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+  }
+  .seller-information {
+    top: -60px;
+    left: 0;
+    right: 0%;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+  .seller-username {
+    font-size: 20px;
+  }
+  .seller-subinfo {
+    font-size: 14px;
+    font-weight: 100;
+  }
+  .seller-lastactive {
+    font-size: 12px;
+  }
+  .seller-panel p {
+    margin: 0%;
+  }

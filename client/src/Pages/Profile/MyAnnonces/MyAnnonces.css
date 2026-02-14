@@ -1,0 +1,65 @@
+.myannonces-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 1% 5%;
+}
+.myannonces-content {
+    display: flex;
+    flex-wrap: wrap;
+    border: 2px solid black;
+    border-radius: 10px;
+    width: 100%;
+    padding: 3% 5%;
+}
+.myannonces-content p {
+    margin: 0%;
+}
+.content-product__info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-left: 5px;
+    height: 125px;
+}
+
+.myannonces-content-product {
+    width: 250px;
+    height: 250px;
+    border-radius: 5px;
+    margin: 10px;
+    
+}
+
+.content-product__img {
+    height: 125px; 
+    width: 100%; 
+    object-fit: cover;
+}
+
+.content-product__info__title {
+    font-weight: 450;
+}
+.content-product__info__price {
+    font-size: 14px;
+    margin-top: 10px;
+}
+.content-product__info__buttons {
+    display: flex;
+
+    margin-bottom: 10px;
+
+}
+.content-product-control-button {
+    margin-right: 5px;
+    width: 60px;
+}
+
+@media (max-width: 768px) { 
+    .myannonces-content{
+        justify-content: center;
+      }
+    .myannonces-content-product {
+        margin-right: 0%;
+    }
+}

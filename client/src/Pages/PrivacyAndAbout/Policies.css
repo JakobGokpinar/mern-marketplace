@@ -1,0 +1,8 @@
+.about-us-container, .policy-container{
+    display: flex;
+    justify-content: center;
+}
+
+.about-us-content, .policy-content{
+    width: 60%;
+}
