@@ -69,7 +69,7 @@ app.enable('trust proxy');
 app.use(
     session({
         name: 'signin-cookie',
-        secret: process.env.SESSION_SECRET || "change-this-in-production",
+        secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: true,
         proxy: true,

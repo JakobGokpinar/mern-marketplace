@@ -43,7 +43,7 @@ const UserSchema = new Schema({
         type: Boolean,
         default: false
     }
-},{ strict: false}
+},{ strict: true}
 );
 
 UserSchema.methods.toJSON = function() {    //remove the user's password before sending it to client
