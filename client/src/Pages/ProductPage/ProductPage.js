@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
-import { useSelector } from "react-redux";
-
+import { useSelector, useDispatch } from "react-redux";
 import TextareaAutosize from 'react-textarea-autosize';
 
 import { instanceAxs } from "../../config/api.js";
@@ -9,31 +8,32 @@ import './ProductPage.css';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import Row from 'react-bootstrap/Row'
+import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import Carousel from 'react-bootstrap/Carousel';
 import Breadcrumb from "react-bootstrap/Breadcrumb";
-import Tooltip from "react-bootstrap/Tooltip";
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Avatar from '@mui/material/Avatar';
 import Spinner from "react-bootstrap/Spinner";
 
-import { useDispatch } from "react-redux";
 import { uiSliceActions } from "../../features/uiSlice.js";
 import { addToFavorites, removeFromFavorites } from "../../features/userSliceActions.js";
 import { format } from "timeago.js";
 import socket from "../../config/socket.js";
 
+const formatPrice = (price) => {
+    if (!price && price !== 0) return "0 kr";
+    return Number(price).toLocaleString("nb-NO") + " kr";
+};
+
 function ProductPage() {
     let { annonceId } = useParams();
     let navigate = useNavigate();
-    const siteLink = 'https://www.rego.live';
+    const siteLink = process.env.REACT_APP_SITE_URL || window.location.origin;
     
     const user = useSelector(state => state.user.user);
     const dispatch = useDispatch();
     const [annonce, setAnnonce] = useState('');
-    const [seller, setSeller] = useState(null)
+    const [seller, setSeller] = useState(null);
     const [isLoading, setLoading] = useState(true);
     const [showSpinner, setShowSpinner] = useState(false);
     const [showShareModal, setShowShareModal] = useState(false);
@@ -42,201 +42,221 @@ function ProductPage() {
 
     useEffect(() => {
         socket.on('getUsers', data => {
-          setConnectedUsers(data)
-        })
-      }, [])
+            setConnectedUsers(data);
+        });
+    }, []);
 
-    const findProduct = useCallback( async () => {
+    const findProduct = useCallback(async () => {
         await instanceAxs.get(`/product?id=${annonceId}`)
             .then(respond => {
                 if (respond.status !== 200) {
-                    setLoading(false)
+                    setLoading(false);
                     return;
                 }                
                 setAnnonce(respond.data.product);
-                setSeller(respond.data.seller)
+                setSeller(respond.data.seller);
             })   
-            .catch(err => {
-                console.log(err);
-            })   
+            .catch(err => console.log(err));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user])
+    }, [user]);
 
     useEffect(() => {
-        if(!connectedUsers || !user || !seller) return;
-        let connectedFriend = connectedUsers?.find(user => user.userId === seller._id)
-        if(connectedFriend) {
-          setSellerStatus('Active now')
+        if (!connectedUsers || !user || !seller) return;
+        let connectedFriend = connectedUsers?.find(u => u.userId === seller._id);
+        if (connectedFriend) {
+            setSellerStatus('Active now');
         } else {
-          setSellerStatus(format(seller?.lastActiveAt))
+            setSellerStatus(format(seller?.lastActiveAt));
         }
-    }, [user, seller, connectedUsers, annonce, isLoading])
+    }, [user, seller, connectedUsers, annonce, isLoading]);
     
-    const sendMessage = event => {
+    const sendMessage = (event) => {
         event.preventDefault();
-        if(user?._id === seller?._id || !user || !seller || !annonce) return;
+        if (user?._id === seller?._id || !user || !seller || !annonce) return;
         navigate('/chat', {   
-          state: { 
-            buyer: user._id,  
-            seller: seller._id,
-            product_id: annonce._id
-          }})
-      }
+            state: { 
+                buyer: user._id,  
+                seller: seller._id,
+                product_id: annonce._id
+            }
+        });
+    };
 
     const handleAddToFavorites = () => {
-        setShowSpinner(true)
+        setShowSpinner(true);
         setTimeout(() => {
-          dispatch(addToFavorites(annonceId))
-          setShowSpinner(false)
-        }, 1000)
-      }
+            dispatch(addToFavorites(annonceId));
+            setShowSpinner(false);
+        }, 800);
+    };
     
-      const handleRemoveFromFavorites = () => {
-        setShowSpinner(true)
+    const handleRemoveFromFavorites = () => {
+        setShowSpinner(true);
         setTimeout(() => {
-          dispatch(removeFromFavorites(annonceId))
-          setShowSpinner(false)
-        }, 1000)
-      }
+            dispatch(removeFromFavorites(annonceId));
+            setShowSpinner(false);
+        }, 800);
+    };
 
-    const showTheModal = () => {
-        setShowShareModal(true)
-      }
-      const closeShareModal = () => {
-        setShowShareModal(false)
-      }
-    
-      const copyAnnonceLink = (event) => {
+    const copyAnnonceLink = (event) => {
         event.preventDefault();
-        let text = `${siteLink}/produkt/${annonceId}`;
-        navigator.clipboard.writeText(text)
-        dispatch(uiSliceActions.setFeedbackBanner({severity: 'success', msg: 'Annons lenken ble kopiert'}));
-        setShowShareModal(false)
-      }
+        navigator.clipboard.writeText(`${siteLink}/produkt/${annonceId}`);
+        dispatch(uiSliceActions.setFeedbackBanner({ severity: 'success', msg: 'Lenken ble kopiert' }));
+        setShowShareModal(false);
+    };
 
     useEffect(() => {
         findProduct();
         //eslint-disable-next-line
-    }, [isLoading])
+    }, [isLoading]);
 
     useEffect(() => {
         findProduct();
-    }, [findProduct])
+    }, [findProduct]);
 
-    return(
-        <div style={{minHeight: '100vh', display: 'flex', flexDirection: 'column', flexGrow: 1}}>
-            { annonce !== '' ?
-                <Container className="productPage">
-                    <Row className="product-page-row">
-                        <Col className="product-content-col">
-                            <div className="content-col-div">
+    if (annonce === '') {
+        return (
+            <div className="pp-empty">
+                <Spinner animation="border" variant="secondary" />
+            </div>
+        );
+    }
 
-                            <Breadcrumb className="mt-2">
-                                  <Breadcrumb.Item active>Kategori</Breadcrumb.Item>
-                                  <Breadcrumb.Item href={`/search?category=${annonce.category}`}>{annonce.category}</Breadcrumb.Item>
-                                  <Breadcrumb.Item>{annonce.subCategory}</Breadcrumb.Item>
-                              </Breadcrumb>
-                                    <Carousel variant="dark" className="annonce-carousel bg-light mb-4" slide="false">
-                                        {annonce.annonceImages.map((item, index) => {
-                                            return(
-                                                <Carousel.Item key={index}>
-                                                <img src={item.location} alt="item img" className="annonce-image"/>            
-                                                <Carousel.Caption className="annonce-image-caption">
-                                                    <p className="annonce-image-caption__text mb-4">{item.description}</p>
-                                                </Carousel.Caption>
-                                            </Carousel.Item>
-                                            )
-                                        })}
-                                    </Carousel>
+    return (
+        <Container className="pp">
+            <Breadcrumb className="pp__breadcrumb">
+                <Breadcrumb.Item href="/">Hjem</Breadcrumb.Item>
+                <Breadcrumb.Item href={`/search?category=${annonce.category}`}>{annonce.category}</Breadcrumb.Item>
+                <Breadcrumb.Item active>{annonce.subCategory}</Breadcrumb.Item>
+            </Breadcrumb>
 
-                                    <div className="price-and-controlbuttons mb-3">
-                                        <div className="d-flex align-items-center me-3">
-                                            <p className="me-2" style={{fontSize: '20px'}}>{annonce.price} kr</p>
-                                            <p> - {annonce.pricePeriod}</p>  
-                                        </div>
-                                        {annonce.isFavorite ? 
-                                            <OverlayTrigger placement="bottom" overlay={<Tooltip>Remove from Favorites</Tooltip>}>
-                                                <Button variant="danger" onClick={handleRemoveFromFavorites}>
-                                                {showSpinner ? <Spinner size='sm'/> : <><i className="fa-solid fa-heart me-2"/> Fjern fra Favoritter </>}
-                                                </Button>
-                                            </OverlayTrigger>
-                                        :
-                                            <OverlayTrigger placement="bottom" overlay={<Tooltip>Add to Favorites</Tooltip>}>
-                                                <Button variant="outline-danger" onClick={handleAddToFavorites} size='sm'>
-                                                {showSpinner ? <Spinner size='sm'/> : <><i className="fa-solid fa-heart me-2"/> Legg til Favoritter</>}
-                                                </Button>
-                                        </OverlayTrigger>
-                                        }
+            <Row className="pp__row">
+                {/* Left Column - Product Details */}
+                <Col lg={8} className="pp__main">
+                    {/* Image Carousel */}
+                    <div className="pp__carousel-wrapper">
+                        <Carousel variant="dark" className="pp__carousel">
+                            {annonce.annonceImages.map((item, index) => (
+                                <Carousel.Item key={index}>
+                                    <img src={item.location} alt={annonce.title} className="pp__carousel-img" />
+                                    {item.description && (
+                                        <Carousel.Caption className="pp__carousel-caption">
+                                            <span>{item.description}</span>
+                                        </Carousel.Caption>
+                                    )}
+                                </Carousel.Item>
+                            ))}
+                        </Carousel>
+                        <div className="pp__img-count">
+                            <i className="fa-regular fa-image" /> {annonce.annonceImages.length}
+                        </div>
+                    </div>
 
-                                        <Button variant="outline-secondary" className="ms-3" onClick={showTheModal} size="sm">
-                                            <i className="fa-solid fa-arrow-up-from-bracket me-2"/> Del
-                                        </Button>
+                    {/* Price + Actions Bar */}
+                    <div className="pp__price-bar">
+                        <div className="pp__price">
+                            {formatPrice(annonce.price)}
+                            {annonce.pricePeriod && <span className="pp__price-period">{annonce.pricePeriod}</span>}
+                        </div>
+                        <div className="pp__actions">
+                            {annonce.isFavorite ? (
+                                <button className="pp__action-btn pp__action-btn--fav-active" onClick={handleRemoveFromFavorites}>
+                                    {showSpinner ? <Spinner size="sm" /> : <><i className="fa-solid fa-heart" /> Favoritt</>}
+                                </button>
+                            ) : (
+                                <button className="pp__action-btn" onClick={handleAddToFavorites}>
+                                    {showSpinner ? <Spinner size="sm" /> : <><i className="fa-regular fa-heart" /> Favoritt</>}
+                                </button>
+                            )}
+                            <button className="pp__action-btn" onClick={() => setShowShareModal(true)}>
+                                <i className="fa-solid fa-arrow-up-from-bracket" /> Del
+                            </button>
+                        </div>
+                    </div>
 
-                                        <Modal show={showShareModal} onHide={closeShareModal}>
-                                            <Modal.Header closeButton>
-                                                <Modal.Title>Del annonsen</Modal.Title>
-                                            </Modal.Header>
-                                            <Modal.Body>
-                                                <p>Vil du dele denne annonsen?</p>
-                                                <Form.Control type="text" className="mb-3" value={`${siteLink}/produkt/${annonceId}`} disabled/>
-                                                <Button type='button' variant="outline-primary" className="mb-2" onClick={copyAnnonceLink}>
-                                                    Kopier Lenken
-                                                </Button>
-                                            </Modal.Body>
-                                        </Modal>
-                                    </div>
+                    {/* Title */}
+                    <h1 className="pp__title">{annonce.title}</h1>
 
-                                    <p className="annonce-product-title mb-5">{annonce.title}</p>
+                    {/* Description */}
+                    <div className="pp__section">
+                        <h3 className="pp__section-title">Beskrivelse</h3>
+                        <TextareaAutosize className="pp__description" value={annonce.description} disabled />
+                    </div>
 
-                                    <div className="annonce-content-box">
-                                        <p className="annonce-content-heading">Description</p>
-                                        <TextareaAutosize className="annonce-product-desc" value={annonce.description} disabled/>
-                                    </div>
-
-                                    <div className="annonce-content-box">
-                                            <p className="annonce-content-heading mb-2">Nokkelinfo</p>
-                                            <div className="annonce-special-props-div">
-                                                <div className="special-props-box border">
-                                                    <p className="special-prop-title">Status</p>
-                                                    <p>{annonce.status && annonce.status}</p>
-                                                </div>
-                                                {annonce.specialProperties.map((item, index) => {
-                                                    return(
-                                                        <div key={index} className="special-props-box border">
-                                                            <p className="special-prop-title">{item.title}</p>
-                                                            <p>{item.value}</p>
-                                                        </div>
-                                                    )
-                                                })}
-                                            </div>
-                                    </div>
-
-                                    <div className="annonce-content-box">
-                                            <p className="annonce-content-heading mb-2">Addresse</p>
-                                            <p>{annonce.postnumber}</p>
-                                            <p>{annonce.location}</p>
-                                    </div>
-
-                            </div>
-                        </Col>
-                        <Col lg={4} className='productPage-seller-col'>
-                                <div className="seller-panel">
-                                        <Avatar className="seller-avatar" src={seller?.profilePicture} alt='avatar'sx={{width: '128px', height: '128px'}}/>
-                                        <div className="seller-information">
-                                            <p className="seller-username">{seller?.username}</p>
-                                            <p className="seller-subinfo mb-5">Bruker siden {new Date(seller?.userCreatedAt).getFullYear()}</p>
-                                            <p className="seller-lastactive mt-4 mb-2">{sellerStatus === 'Active now' ? <><Spinner animation="grow" variant="success" size="sm"/> Active Now</> : sellerStatus}</p>
-                                            <Button variant="primary" onClick={sendMessage}><i className="fa-solid fa-envelope me-2"/> Send Melding</Button>
-                                        </div>
+                    {/* Key Info */}
+                    <div className="pp__section">
+                        <h3 className="pp__section-title">N&oslash;kkelinfo</h3>
+                        <div className="pp__info-grid">
+                            {annonce.status && (
+                                <div className="pp__info-card">
+                                    <span className="pp__info-label">Status</span>
+                                    <span className="pp__info-value">{annonce.status}</span>
                                 </div>
-                        </Col>
-                    </Row>
-                </Container>
-                :
-                <h4 className="m-5">Ingen Annonse</h4>
-            }
-        </div>
-    )
+                            )}
+                            {annonce.specialProperties.map((item, index) => (
+                                <div key={index} className="pp__info-card">
+                                    <span className="pp__info-label">{item.title}</span>
+                                    <span className="pp__info-value">{item.value}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Address */}
+                    <div className="pp__section">
+                        <h3 className="pp__section-title">Adresse</h3>
+                        <div className="pp__address">
+                            <i className="fa-solid fa-location-dot" />
+                            <div>
+                                <p>{annonce.postnumber}</p>
+                                <p>{annonce.location}</p>
+                            </div>
+                        </div>
+                    </div>
+                </Col>
+
+                {/* Right Column - Seller */}
+                <Col lg={4} className="pp__sidebar">
+                    <div className="pp__seller-card">
+                        <div className="pp__seller-avatar-wrapper">
+                            {seller?.profilePicture ? (
+                                <img src={seller.profilePicture} alt={seller?.username} className="pp__seller-avatar" />
+                            ) : (
+                                <div className="pp__seller-avatar pp__seller-avatar--placeholder">
+                                    <i className="fa-solid fa-user" />
+                                </div>
+                            )}
+                        </div>
+                        <p className="pp__seller-name">{seller?.username}</p>
+                        <p className="pp__seller-since">Bruker siden {new Date(seller?.userCreatedAt).getFullYear()}</p>
+                        <div className="pp__seller-status">
+                            {sellerStatus === 'Active now' ? (
+                                <span className="pp__seller-status--online">
+                                    <span className="pp__status-dot" /> Aktiv n&aring;
+                                </span>
+                            ) : (
+                                <span className="pp__seller-status--away">{sellerStatus}</span>
+                            )}
+                        </div>
+                        <button className="pp__seller-msg-btn" onClick={sendMessage}>
+                            <i className="fa-regular fa-message" /> Send Melding
+                        </button>
+                    </div>
+                </Col>
+            </Row>
+
+            {/* Share Modal */}
+            <Modal show={showShareModal} onHide={() => setShowShareModal(false)} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Del annonsen</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form.Control type="text" className="mb-3" value={`${siteLink}/produkt/${annonceId}`} readOnly />
+                    <Button variant="primary" onClick={copyAnnonceLink}>Kopier Lenken</Button>
+                </Modal.Body>
+            </Modal>
+        </Container>
+    );
 }
 
 export default ProductPage;

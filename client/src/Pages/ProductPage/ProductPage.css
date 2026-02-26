@@ -1,134 +1,418 @@
-.productPage * p{
-  margin: 0%
+/* ============================================
+   Product Page - Redesigned
+   ============================================ */
+
+.pp {
+  padding: 0 5%;
+  min-height: 80vh;
+  margin-top: 16px;
+  margin-bottom: 60px;
 }
 
-.product-page-row {
-    width: 100%;
-    display: flex;
-}
-.product-content-col {
-    padding: 0%;
-    display: flex;
-    justify-content: center;
-    align-items: baseline;
+.pp__breadcrumb {
+  margin-bottom: 20px;
 }
 
-.content-col-div {
-    width: 80%;
+.pp__breadcrumb .breadcrumb-item a {
+  color: var(--color-primary);
 }
 
-.annonce-carousel {
-    width: 100%;
-    height: 400px;
+.pp__row {
+  display: flex;
+  gap: 32px;
 }
-.annonce-image {
-    width: 100%; 
-    height: 400px; 
-    object-fit: contain;
-  }
-  .annonce-image-caption {
-    display: flex;
-    justify-content: center;
-  }
-  .annonce-image-caption__text {
-    background-color: black;
-    color: white;
-    width: fit-content;
-  }
 
-  .annonce-content-box{
-    margin-bottom: 50px;
-  }
-  .annonce-content-heading{
-    font-size: 18px;
-    font-weight: 450;
-  }
-  .annonce-product-title {
-    font-size: 30px;
-  }
+.pp__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+}
 
-  .price-and-controlbuttons{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+/* ============================================
+   Image Carousel
+   ============================================ */
 
-  .annonce-product-desc{
-      width: 100%;
-      border-style: none; 
-      background-color: transparent;
-      overflow: hidden;
-      resize: none;
-      color: black;
-  }
+.pp__carousel-wrapper {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #f8f8f8;
+  margin-bottom: 24px;
+}
 
-.annonce-special-props-div {
+.pp__carousel {
+  width: 100%;
+}
+
+.pp__carousel-img {
+  width: 100%;
+  height: 420px;
+  object-fit: contain;
+}
+
+.pp__carousel-caption {
+  display: flex;
+  justify-content: center;
+}
+
+.pp__carousel-caption span {
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.pp__img-count {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 2;
+}
+
+/* ============================================
+   Price Bar
+   ============================================ */
+
+.pp__price-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.pp__price {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-primary-darker);
+}
+
+.pp__price-period {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  margin-left: 8px;
+}
+
+.pp__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.pp__action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: inherit;
+}
+
+.pp__action-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-lightest);
+}
+
+.pp__action-btn--fav-active {
+  background: var(--color-danger-light);
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.pp__action-btn--fav-active:hover {
+  background: var(--color-danger);
+  color: white;
+}
+
+/* ============================================
+   Title
+   ============================================ */
+
+.pp__title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 32px;
+  line-height: 1.3;
+}
+
+/* ============================================
+   Sections
+   ============================================ */
+
+.pp__section {
+  margin-bottom: 32px;
+}
+
+.pp__section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--color-primary-lightest);
+}
+
+.pp__description {
+  width: 100%;
+  border: none;
+  background: transparent;
+  resize: none;
+  overflow: hidden;
+  color: var(--color-text);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  font-family: inherit;
+}
+
+/* ============================================
+   Info Grid (Key Info)
+   ============================================ */
+
+.pp__info-grid {
   display: flex;
   flex-wrap: wrap;
+  gap: 10px;
 }
-  .special-props-box{
-    height: 120px;
-    width: 120px;
-    padding: 10px;
-    margin: 0px 10px 5px 0px;
-    display: flex;
+
+.pp__info-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 120px;
+  height: 100px;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-lightest);
+  border: 1px solid rgba(13, 148, 136, 0.12);
+}
+
+.pp__info-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.pp__info-value {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-text);
+  word-break: break-word;
+}
+
+/* ============================================
+   Address
+   ============================================ */
+
+.pp__address {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+}
+
+.pp__address i {
+  color: var(--color-primary);
+  margin-top: 4px;
+}
+
+.pp__address p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ============================================
+   Seller Card
+   ============================================ */
+
+.pp__sidebar {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.pp__seller-card {
+  position: sticky;
+  top: 100px;
+  width: 100%;
+  max-width: 300px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.pp__seller-avatar-wrapper {
+  margin-bottom: 16px;
+}
+
+.pp__seller-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.pp__seller-avatar--placeholder {
+  background: var(--color-primary-lightest);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pp__seller-avatar--placeholder i {
+  font-size: 32px;
+  color: var(--color-primary);
+}
+
+.pp__seller-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 4px;
+}
+
+.pp__seller-since {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin: 0 0 12px;
+}
+
+.pp__seller-status {
+  margin-bottom: 20px;
+}
+
+.pp__seller-status--online {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: var(--color-success);
+  font-weight: 500;
+}
+
+.pp__status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-success);
+  display: inline-block;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.pp__seller-status--away {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+.pp__seller-msg-btn {
+  width: 100%;
+  padding: 10px 20px;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: inherit;
+}
+
+.pp__seller-msg-btn:hover {
+  background: var(--color-primary-dark);
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 992px) {
+  .pp__row {
     flex-direction: column;
-    justify-content: space-between;
-    word-wrap: break-word;
-    text-overflow: ellipsis;
-    overflow: hidden;
-  }
-  .special-prop-title{
-    font-size: 18px;
-    font-weight: 450;
+    gap: 24px;
   }
 
-  /* ########## SELLER COLUMN ######### */
+  .pp__sidebar {
+    justify-content: flex-start;
+  }
 
+  .pp__seller-card {
+    position: static;
+    max-width: 100%;
+    flex-direction: row;
+    padding: 20px 24px;
+    gap: 20px;
+    text-align: left;
+  }
 
-  .productPage-seller-col{
-    display: flex;
-    justify-content: center;
+  .pp__seller-avatar-wrapper {
+    margin-bottom: 0;
+  }
+
+  .pp__seller-msg-btn {
+    width: auto;
+  }
+}
+
+@media (max-width: 576px) {
+  .pp {
+    padding: 0 16px;
+  }
+
+  .pp__carousel-img {
+    height: 260px;
+  }
+
+  .pp__price-bar {
+    flex-direction: column;
     align-items: flex-start;
+    gap: 12px;
   }
-  .seller-panel {
-    border: 2px solid;
-    border-radius: 5px;
-    width: 70%;
-    position: relative;
-    margin-top: 20%;
-    height: 300px;
+
+  .pp__price {
+    font-size: 1.4rem;
   }
-  .seller-avatar{
-    position: absolute;
-    top: -60px;
-    left: 0;
-    right: 0%;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 10px;
-  }
-  .seller-information {
-    top: -60px;
-    left: 0;
-    right: 0%;
-    margin-left: auto;
-    margin-right: auto;
-    display: flex;
+
+  .pp__seller-card {
     flex-direction: column;
-    align-items: center;
-    position: relative;
+    text-align: center;
   }
-  .seller-username {
-    font-size: 20px;
-  }
-  .seller-subinfo {
-    font-size: 14px;
-    font-weight: 100;
-  }
-  .seller-lastactive {
-    font-size: 12px;
-  }
-  .seller-panel p {
-    margin: 0%;
-  }
+}
