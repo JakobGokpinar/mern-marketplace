@@ -238,3 +238,23 @@ a:hover {
 .category-suggestion-component__content:hover {
   background-color: var(--color-primary-lightest);
 }
+
+/* Profile Avatar - replaces MUI Avatar */
+.profile-avatar {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-avatar--placeholder {
+  background: var(--color-primary-lightest);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-avatar--placeholder i {
+  font-size: 64px;
+  color: var(--color-primary);
+}
