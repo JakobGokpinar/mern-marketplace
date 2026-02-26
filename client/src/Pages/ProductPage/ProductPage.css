@@ -18,8 +18,11 @@
 }
 
 .pp__row {
-  display: flex;
-  gap: 32px;
+  margin: 0;
+}
+
+.pp__main {
+  padding-right: 32px;
 }
 
 .pp__empty {
