@@ -1,162 +1,163 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import "./NewProductCard.css";
+import "./ProductCard.css";
 
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import Modal from 'react-bootstrap/Modal';
-import Card from 'react-bootstrap/Card';
 import Carousel from 'react-bootstrap/Carousel';
 import Spinner from "react-bootstrap/Spinner";
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 
-import { addToFavorites } from "../../features/userSliceActions";
-import { removeFromFavorites } from "../../features/userSliceActions";
+import { addToFavorites, removeFromFavorites } from "../../features/userSliceActions";
 import { uiSliceActions } from "../../features/uiSlice";
 
+// Format price: 1200000 → "1 200 000 kr"
+const formatPrice = (price) => {
+  if (!price && price !== 0) return "0 kr";
+  return Number(price).toLocaleString("nb-NO") + " kr";
+};
+
 function ProductCard(props) {
+  const {
+    images = [],
+    title = "Uten tittel",
+    location = "",
+    price = "0",
+    id = null,
+    description = "",
+    isFavorite = false,
+    user,
+    sellerId,
+  } = props;
 
-  const [images, title, location, price, id, description, isFavorite] = [
-    props.images || [ 'https://images.unsplash.com/photo-1577563908411-5077b6dc7624?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80'],
-    props.title || "no name",
-    props.location || "no place",
-    props.price || "0",
-    props.id || null,
-    props.description || '',
-    props.isFavorite || false
-  ];
-
-  const shortDesc = description.slice(0, 34);
   const siteLink = process.env.REACT_APP_SITE_URL || window.location.origin;
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const [isHovered, setHovered] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  const handleAddToFavorites = () => {
-    setIsLoading(true)
+  const handleToggleFavorite = () => {
+    setIsLoading(true);
     setTimeout(() => {
-      dispatch(addToFavorites(id))
-      setIsLoading(false)
-    }, 1000)
-  }
+      if (isFavorite) {
+        dispatch(removeFromFavorites(id));
+      } else {
+        dispatch(addToFavorites(id));
+      }
+      setIsLoading(false);
+    }, 600);
+  };
 
-  const handleRemoveFromFavorites = () => {
-    setIsLoading(true)
-    setTimeout(() => {
-      dispatch(removeFromFavorites(id))
-      setIsLoading(false)
-    }, 1000)
-  }
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+    if (user?._id === sellerId) return;
+    navigate("/chat", {
+      state: {
+        buyer: user?._id,
+        seller: sellerId,
+        product_id: id,
+      },
+    });
+  };
 
-  const setHoveredToTrue = () => {
-    setHovered(true)
-  }
-  const setHoveredToFalse = () => {
-    setHovered(false)
-  }
+  const handleCopyLink = (e) => {
+    e.preventDefault();
+    navigator.clipboard.writeText(`${siteLink}/produkt/${id}`);
+    dispatch(
+      uiSliceActions.setFeedbackBanner({
+        severity: "success",
+        msg: "Lenken ble kopiert",
+      })
+    );
+    setShowModal(false);
+  };
 
-  const showShareModal = () => {
-    setShowModal(true)
-  }
-  const closeShareModal = () => {
-    setShowModal(false)
-  }
+  return (
+    <div
+      className="product-card"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Image Section */}
+      <div className="product-card__image-wrapper">
+        <Carousel indicators={false} controls={isHovered} interval={null}>
+          {images.map((img, index) => (
+            <Carousel.Item key={index}>
+              <Link to={`/produkt/${id}`}>
+                <img src={img.location} alt={title} />
+              </Link>
+            </Carousel.Item>
+          ))}
+        </Carousel>
 
-  const copyAnnonceLink = (event) => {
-    event.preventDefault();
-    let text = `${siteLink}/produkt/${id}`;
-    navigator.clipboard.writeText(text)
-    dispatch(uiSliceActions.setFeedbackBanner({severity: 'success', msg: 'Annons lenken ble kopiert'}));
-    setShowModal(false)
-  }
+        {/* Favorite Button */}
+        <button
+          className={`product-card__favorite ${isFavorite ? "product-card__favorite--active" : ""}`}
+          onClick={handleToggleFavorite}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <Spinner size="sm" animation="border" style={{ width: 14, height: 14 }} />
+          ) : (
+            <i className={`fa-${isFavorite ? "solid" : "regular"} fa-heart`} />
+          )}
+        </button>
 
-  const sendMessageAlert = event => {
-    event.preventDefault();
-    if(props?.user?._id === props?.sellerId) return;
-    navigate('/chat', {   
-      state: { 
-        buyer: props?.user?._id,  
-        seller: props?.sellerId,
-        product_id: props?.id
-      }})
-  }
+        {/* Image count */}
+        {images.length > 1 && (
+          <span className="product-card__img-count">
+            <i className="fa-regular fa-image" style={{ marginRight: 4 }} />
+            {images.length}
+          </span>
+        )}
+      </div>
 
+      {/* Content Section */}
+      <div className="product-card__content">
+        <div className="product-card__price">{formatPrice(price)}</div>
+        <div className="product-card__title">{title}</div>
+        {location && (
+          <div className="product-card__location">
+            <i className="fa-solid fa-location-dot" />
+            {location}
+          </div>
+        )}
+      </div>
 
-  return(
-    <Card style={{width: '18rem'}} className="card">
-        <Card.Body style={{padding: 0, margin: 0}}>
+      {/* Actions - visible on hover */}
+      <div className="product-card__actions">
+        <button className="product-card__action-btn product-card__action-btn--primary" onClick={handleSendMessage}>
+          <i className="fa-regular fa-message" style={{ marginRight: 4 }} />
+          Melding
+        </button>
+        <button className="product-card__action-btn" onClick={() => setShowModal(true)}>
+          <i className="fa-solid fa-arrow-up-from-bracket" style={{ marginRight: 4 }} />
+          Del
+        </button>
+      </div>
 
-            <Carousel indicators={false} controls={isHovered ? true : false} 
-              interval={null} onMouseEnter={setHoveredToTrue} onMouseLeave={setHoveredToFalse}
-              >
-                  {images.map((img, index) => {
-                      return(
-                          <Carousel.Item className="carousel-item" key={index}>
-                              <Link to={`/produkt/${id}`}>
-                                <img
-                                  className="carousel-img"
-                                  src={img.location}
-                                  alt="carousel"
-                                />
-                            </Link>
-                        </Carousel.Item>
-                      )
-                  })}
-              </Carousel>
-
-
-              <div className="card-properties">
-                    <Card.Title className="card-properties__item item-title">{title}</Card.Title>
-                    <Card.Subtitle className="card-properties__item item-location ">{location}</Card.Subtitle>
-                    <Card.Text className="card-properties__item item-price">{price} nok</Card.Text>
-                    <Card.Text className="card-properties__item item-description">
-                          {shortDesc}
-                    </Card.Text>
-              </div>
-              
-              <div className="card-buttons">
-                    {isFavorite ? 
-                        <OverlayTrigger placement="bottom" overlay={<Tooltip>Remove from Favorites</Tooltip>}>
-                            <Button variant="danger" onClick={handleRemoveFromFavorites}>
-                              {isLoading ? <Spinner size='sm'/> : <i className="fa-solid fa-heart"/>}
-                            </Button>
-                        </OverlayTrigger>
-                      :
-                        <OverlayTrigger placement="bottom" overlay={<Tooltip>Add to Favorites</Tooltip>}>
-                            <Button variant="outline-danger" onClick={handleAddToFavorites}>
-                              {isLoading ? <Spinner size='sm'/> : <i className="fa-solid fa-heart"/>}
-                            </Button>
-                      </OverlayTrigger>
-                  }
-                  <OverlayTrigger placement="bottom" overlay={<Tooltip>Send en melding til selleren</Tooltip>}>
-                      <Button variant="outline-primary" type="button" onClick={sendMessageAlert}> 
-                          Send Melding <i className="fa-regular fa-message"/>
-                      </Button>
-                  </OverlayTrigger>
-                  <Button variant="outline-secondary" onClick={showShareModal}>
-                      Del <i className="fa-solid fa-arrow-up-from-bracket"/>
-                    </Button>
-                    <Modal show={showModal} onHide={closeShareModal}>
-                        <Modal.Header closeButton>
-                            <Modal.Title>Del annonsen</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <p>Vil du dele denne annonsen?</p>
-                            <Form.Control type="text" className="mb-3" value={`${siteLink}/produkt/${id}`} disabled/>
-                            <Button type='button' variant="outline-primary" className="mb-2" onClick={copyAnnonceLink}>
-                                Kopier Lenken
-                            </Button>
-                        </Modal.Body>
-                    </Modal>
-                </div>
-        </Card.Body>
-    </Card>
-  )
+      {/* Share Modal */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Del annonsen</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Control
+            type="text"
+            className="mb-3"
+            value={`${siteLink}/produkt/${id}`}
+            readOnly
+          />
+          <Button variant="primary" onClick={handleCopyLink}>
+            Kopier Lenken
+          </Button>
+        </Modal.Body>
+      </Modal>
+    </div>
+  );
 }
 
 export default ProductCard;

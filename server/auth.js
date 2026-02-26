@@ -14,30 +14,16 @@ const GoogleUserModel = require('./models/GoogleUserModel.js');
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID
 
-// * ####### FUNCTONS #######
-
-/* LocalStrategy bir kullanıcı kaydetme şekli. Local verilen değerleri kullan diyor. 
-Mesela Google hesabı ile kullanıcı açıcak olsaydık Google Strategy kullanırdık 
-local-sign in kullanıcı girişi için oluşturulmuş bir LocalStrategy
-signin metodu içinde passport.authenticate çalıştırıldığında kullanıcının girdiği email ve şifre 
-buraya geliyor. 
-*/
-passport.use('local-signin', new Strategy({ usernameField: 'email'}, async (email,password,done) => {
-    //ON DEPLOYMENT
-/*     const isEmail = validator.isEmail(email);
-    if (!isEmail) return done("Email is invalid", false, {message: 'Email is invalid'}) */
-
+// Sign-in strategy
+passport.use('local-signin', new Strategy({ usernameField: 'email'}, async (email, password, done) => {
     UserModel.findOne({ email: email}).then(user =>  {
-        // check if email exists
         if (!user) {
-            return done(null,false, {message: 'E-postadressen finnes ikke'});
+            return done(null, false, {message: 'E-postadressen finnes ikke'});
         }
-        // check if passwords matches
         bcrypt.compare(password, user.password, (err, isMatch) => {
             if (err) throw err;
-            if (!isMatch) return done(null,false, {message: 'Feil passord'})
-            // return user with no error
-            return done(null,user)
+            if (!isMatch) return done(null, false, {message: 'Feil passord'})
+            return done(null, user)
         })
     })
     .catch(err => {
@@ -45,10 +31,9 @@ passport.use('local-signin', new Strategy({ usernameField: 'email'}, async (emai
     })
 }))
 
-// sign up için yapılan LocalStrategy
-passport.use('local-signup', new Strategy({ usernameField: 'email'}, async (email,password, done) => {  //email and password is fetched automatically from req.body
+// Sign-up strategy
+passport.use('local-signup', new Strategy({ usernameField: 'email'}, async (email, password, done) => {
     try {
-        // check if user exists
         const userExists = await UserModel.findOne({ 'email': email})
         if (userExists) {
             return done(null, false, {message: 'Denne e-postadressen er allerede registrert i systemet.'})
@@ -68,7 +53,6 @@ passport.use('local-signup', new Strategy({ usernameField: 'email'}, async (emai
             return done(null, false, { message: 'Password must contain at least one number and one uppercase and lowercase letter, and be between 6 and 32 characters'})
         }
 
-        // create new user with the provided data
         const user = await UserModel.create({ email, password });
         return done(null, user, { message: 'user created'})
     } catch (err) {
@@ -77,10 +61,10 @@ passport.use('local-signup', new Strategy({ usernameField: 'email'}, async (emai
     }
 }))
 
+// Google OAuth strategy
 passport.use('google-auth', new Strategy({ usernameField: 'credential'}, async (credential, password, done) => {
     try {
         const decodedToken = await getDecodedOAuthJwtGoogle(credential)
-        console.log('decoded', decodedToken)
         
         const email = decodedToken["payload"].email;    
         const userExists = await UserModel.findOne({ 'email': email})
@@ -93,7 +77,6 @@ passport.use('google-auth', new Strategy({ usernameField: 'credential'}, async (
         const username = decodedToken["payload"].name;
         const profilePicture = decodedToken["payload"].picture;
         
-        // create new user with the provided data
         const user = await GoogleUserModel.create({ name, lastname, username, email, profilePicture });
         return done(null, user, { message: 'new user created'})
     } catch (err) {
@@ -110,33 +93,28 @@ getDecodedOAuthJwtGoogle = async (token) => {
         audience: GOOGLE_CLIENT_ID,
       })
       return ticket;
-
     } catch (error) {
       return { status: 500, data: error }
     }
 }
 
-// giris yapan kullanıcıyı session'la
 passport.serializeUser((user, done) => {
     done(null, user.id)
 })
-// kullanıcıdan istek geldiğinde doğrula
+
 passport.deserializeUser((id, done) => {
     UserModel.findById(id, (err, user) => {
-        done(err,user)
+        done(err, user)
     })
 })
-// express'in sağladığı Router servisi
+
 var router = express.Router();
 
 googleAuthentication = async (req, res, next) => {
     passport.authenticate('google-auth', function(err, user, info) {
-        console.log(info)
-         if(err) {
-            console.log(err);
+        if(err) {
             return res.json(err)
         }
-
         req.logIn(user, function(err) {
             if (err) return next(err);
             return res.json({ user, message: 'User logged in'})
@@ -144,25 +122,20 @@ googleAuthentication = async (req, res, next) => {
     })(req, res, next)
 }
 
-// giris yapmak için sign in metodu
 signin = async (req, res, next) => {
-    // local strategy'i kullan
     passport.authenticate("local-signin", function(err, user, info) {
-        if (err)  return next(err) //res.json(err);     email validator kullanıldığı zaman geçerli 
-        // if user doesn't exist return the message from done function in LocalStrategy
-        if (!user) return res.json(info) 
-        // Kullanıcıyı log in yap
+        if (err) return next(err);
+        if (!user) return res.json(info);
         req.logIn(user, function(err){
             if(err) return next(err);
-            return res.json({  user, message: 'user logged in'})
+            return res.json({ user, message: 'user logged in'})
         })
     })(req, res, next);
 }
 
-// yeni kullanıcılar için sign up metodu
 signup = async (req, res, next) => {
     passport.authenticate("local-signup", async function(err, user, info) {
-        if (err)  return next(err);       
+        if (err) return next(err);       
         if (!user) return res.json(info);
 
         let email = req.body.email;
@@ -181,38 +154,26 @@ signup = async (req, res, next) => {
                 const receiver_id = data._id;
                 const email_verify_token = generateUniqueId();
                 await emailVerify(receiver_email, receiver_username, receiver_id, email_verify_token)
-                res.status(200).json({  success: true, user: data, message: 'user created'})
+                res.status(200).json({ success: true, user: data, message: 'user created'})
         } catch (error) {
-            console.log("🚀 ~ file: auth.js:174 ~ passport.authenticate ~ error:", error)
-            return res.status(500).json({  success: false, user, message: 'user could not be created', err: error.message})
+            return res.status(500).json({ success: false, user, message: 'user could not be created', err: error.message})
         }
     })(req, res, next);
 } 
 
-// çıkış yapan kullanıcılar için logout metodu
 logout = (req, res) => {
     if(req.isAuthenticated()) {
-        req.session.destroy();  //destroy yapmak db'deki cookie'leri de imha eder. O yüzden daha mantıklı.
+        req.session.destroy();
         res.json({user: req.user, message: 'user logged out'});
         return
     } 
     res.json()
 }
 
-checkAuthorized = (req, res) => {
-    console.log("🚀 ~ session:", req.session)
-    if(req.isAuthenticated()) {
-        res.json("you have been autherized")
-    } else {
-        res.status(300).json("you have no access")
-    }
-}
-
-// ####### ROUTES #######
+// Routes
 router.post('/login', signin);
 router.post('/signup', signup);
-router.delete('/logout',logout)
-router.post('/google/auth', googleAuthentication)
-router.get('/auth',checkAuthorized)
+router.delete('/logout', logout);
+router.post('/google/auth', googleAuthentication);
 
-  module.exports = router;
+module.exports = router;
