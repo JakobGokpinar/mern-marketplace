@@ -5,7 +5,6 @@ import './Filters.css'
 import Accordion from 'react-bootstrap/Accordion';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import Tooltip from '@mui/material/Tooltip';
 
 import categoryObject from '../../categories.json';
 
@@ -215,25 +214,21 @@ const Filters = ({handleFilterChange, removeSelectedFilter, searchParams, counti
           <Accordion.Header>Pris</Accordion.Header>
           <Accordion.Body>
             <InputGroup className="mb-3">
-              <Tooltip title='min. pris' arrow>
               <Form.Control
                 type="number"
                 placeholder="min. pris"
                 onChange={handleMinPriceChange}
                 value={minPrice}
               ></Form.Control>
-              </Tooltip>
               <InputGroup.Text id="basic-addon2">kr</InputGroup.Text>
             </InputGroup>
             <InputGroup className="mb-3">
-              <Tooltip title='max. pris' arrow>
               <Form.Control
                 type="number"
                 placeholder="max. pris"
                 onChange={handleMaxPriceChange}
                 value={maxPrice}
               ></Form.Control>
-              </Tooltip>
               <InputGroup.Text id="basic-addon2">kr</InputGroup.Text>
             </InputGroup>
             <Button variant="primary" type='button' onClick={handlePriceSubmit}>Search</Button>

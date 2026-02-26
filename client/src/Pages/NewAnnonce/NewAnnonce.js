@@ -13,8 +13,6 @@ import Modal from 'react-bootstrap/Modal';
 import Carousel from 'react-bootstrap/Carousel';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import Tooltip from 'react-bootstrap/Tooltip';
-import DeleteIcon from '@mui/icons-material/Delete';
-import Backdrop from '@mui/material/Backdrop';
 import TextareaAutosize from 'react-textarea-autosize';
 
 import { getCroppedImage } from "../../utils/cropImage.js";
@@ -483,7 +481,8 @@ const submitAnnonce = async (event) => {
                                                               <Form.Control type='text' value={imageArray[index].description} 
                                                                   placeholder={item.name} onChange={e => handleImageDescription(e,item)}
                                                               />
-                                                              <DeleteIcon color="error" className="ms-3 image-control-delete-item" 
+                                                              <i className="fa-solid fa-trash-can ms-3 image-control-delete-item" 
+                                                                  style={{color: '#dc3545', cursor: 'pointer'}}
                                                                   onClick={(e) => handleImageDelete(e,item.name)}
                                                               />
                                                       </div>
@@ -558,33 +557,22 @@ const submitAnnonce = async (event) => {
                                         > 
                                         <i className="fa-solid fa-circle-question  mx-3"/>
                                     </OverlayTrigger>
-                              <Backdrop  sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                                                  open={showBackdrop}
-                                                  >
-                                      <div className="backdrop-model-div">
-                                              <FloatingLabel
-                                                    label="Overskrift"
-                                                    className="mb-3"
-                                                    style={{color: 'black'}}
-                                                  >
-                                                    <Form.Control type="text" id="title" name='tit' placeholder="name@example.com" onChange={e => setSpecPropTitle(e.target.value)}/>
-                                                </FloatingLabel>
-                                                <FloatingLabel
-                                                    label="Input"
-                                                    className="mb-3"
-                                                    style={{color: 'black'}}
-                                                  >
-                                                    <Form.Control type="text" id="value" name="val" placeholder="name@example.com" onChange={e => setSpecPropVal(e.target.value)
-                                                      }/>
-                                                </FloatingLabel>
-                                                <div className="d-flex" style={{ gap: 20, marginTop: 40}}>
-
-                                                  <Button variant="outline-primary" type='button' className="w-75" onClick={insertSpecialProp}><i className="fa-solid fa-plus mx-2"/>Legg til nokkelinfo</Button>
-                                                  <Button variant="outline-dark" type='button' className="w-25" onClick={() => setShowBackdrop(false)}>Lukk</Button>
-                                                </div>
-
-                                      </div>
-                              </Backdrop>
+                                    {showBackdrop && (
+                                        <div className="newannonce-backdrop" onClick={() => setShowBackdrop(false)}>
+                                          <div className="backdrop-model-div" onClick={(e) => e.stopPropagation()}>
+                                            <FloatingLabel label="Overskrift" className="mb-3" style={{color: 'black'}}>
+                                              <Form.Control type="text" id="title" name='tit' placeholder="name@example.com" onChange={e => setSpecPropTitle(e.target.value)}/>
+                                            </FloatingLabel>
+                                            <FloatingLabel label="Input" className="mb-3" style={{color: 'black'}}>
+                                              <Form.Control type="text" id="value" name="val" placeholder="name@example.com" onChange={e => setSpecPropVal(e.target.value)}/>
+                                            </FloatingLabel>
+                                            <div className="d-flex" style={{ gap: 20, marginTop: 40}}>
+                                              <Button variant="outline-primary" type='button' className="w-75" onClick={insertSpecialProp}><i className="fa-solid fa-plus mx-2"/>Legg til nokkelinfo</Button>
+                                              <Button variant="outline-dark" type='button' className="w-25" onClick={() => setShowBackdrop(false)}>Lukk</Button>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      )}
                               </div>
 
                           </Form.Group>

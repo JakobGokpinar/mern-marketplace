@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import './Conversation.css';
 import { Conversation } from '@chatscope/chat-ui-kit-react'
-import { Avatar } from '@mui/material'
 import { instanceAxs } from '../../../config/api.js';
 
 const Conversations = ({ productId, conversation, loggedUser, isActive, findFriend }) => {
@@ -27,7 +26,7 @@ const Conversations = ({ productId, conversation, loggedUser, isActive, findFrie
         fetchUser();
     }, [conversation, loggedUser])
 
-    useEffect(async () => {
+    useEffect(() => {
         const fetchProduct = async () => {
             if(!productId) return;
             await instanceAxs.get(`/product?id=${productId}`).then(response => {
@@ -61,7 +60,13 @@ const Conversations = ({ productId, conversation, loggedUser, isActive, findFrie
                 unreadCnt={unreadCount}
             >
                 <span as='Avatar'>
-                    <Avatar className='conversation-avatar' src={friend?.profilePicture}/>
+                    {friend?.profilePicture ? (
+                        <img className='conversation-avatar' src={friend?.profilePicture} alt={friend?.username} />
+                    ) : (
+                        <div className='conversation-avatar-placeholder'>
+                        {friend?.username?.charAt(0)?.toUpperCase()}
+                        </div>
+                    )}
                 </span>
                 <div className='conversation-operations' as={Conversation.Operations}>
                         <div className='conversation-operations-info'>
