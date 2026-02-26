@@ -1,4 +1,40 @@
-.badge-container{
+.badge-container {
     display: flex;
     flex-wrap: wrap;
-}
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  
+  .filter-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: var(--color-primary-lightest);
+    color: var(--color-primary-darker);
+    border: 1px solid rgba(13, 148, 136, 0.2);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  
+  .filter-badge__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(13, 148, 136, 0.15);
+    color: var(--color-primary-dark);
+    cursor: pointer;
+    padding: 0;
+    font-size: 10px;
+    transition: all var(--transition-fast);
+  }
+  
+  .filter-badge__close:hover {
+    background: var(--color-primary);
+    color: white;
+  }

@@ -1,10 +1,31 @@
-.feedback-div{
-    position: absolute;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
-.feedback-banner {
+.feedback-div {
     position: fixed;
     bottom: 40px;
-}
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    z-index: 9999;
+    pointer-events: none;
+  }
+  
+  .feedback-banner {
+    pointer-events: auto;
+    min-width: 300px;
+    max-width: 500px;
+    box-shadow: var(--shadow-lg);
+    border-radius: var(--radius-md);
+    animation: slideUp 0.3s ease;
+    font-size: 0.9rem;
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }

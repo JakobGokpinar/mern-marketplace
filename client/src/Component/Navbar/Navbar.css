@@ -7,11 +7,46 @@
 
 .log-in-button {
     font-size: large;
-    
+}
+
+/* Avatar - replaces MUI Avatar */
+.navbar-avatar-img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 8px;
+}
+
+.navbar-avatar-placeholder {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--color-primary-lightest);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+}
+
+.navbar-avatar-placeholder i {
+    font-size: 14px;
+    color: var(--color-primary);
+}
+
+/* Unread message indicator */
+.navbar-unread-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    margin-left: 8px;
 }
 
 @media (max-width: 1200px) {
-    .navbar-avatar {
+    .navbar-avatar-img,
+    .navbar-avatar-placeholder {
         margin-top: 10px;
     }
 }

@@ -1,56 +1,43 @@
 import React, { useEffect, useState } from "react";
 import "./FilterBadge.css";
-import Chip from "@mui/material/Chip";
 
 const FilterBadge = ({ searchParams, removeSelectedFilter, counties }) => {
   const [params, setParams] = useState([]);
 
   const handleOnClick = (e, item) => {
     e.preventDefault();
-    let key = item.key;
-    let value = item.value;
-
-    if (key === "kommune") {
-      removeSelectedFilter(key, value);
+    if (item.key === "kommune") {
+      removeSelectedFilter(item.key, item.value);
       return;
     }
-    removeSelectedFilter(key);
+    removeSelectedFilter(item.key);
   };
 
-  const getParams = () => {
+  useEffect(() => {
     const paramsArray = [];
     for (const [key, value] of searchParams.entries()) {
       if (key !== "q") {
         if (key === "fylke" && counties !== false) {
           const county = counties.find((item) => item.fylkesnummer === value);
-          paramsArray.push({ key: key, value: county.fylkesnavn });
+          paramsArray.push({ key, value: county?.fylkesnavn || value });
         } else {
-          paramsArray.push({ key: key, value: value });
+          paramsArray.push({ key, value });
         }
       }
     }
     setParams(paramsArray);
-  };
-
-  useEffect(() => {
-    getParams();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, counties]);
 
   return (
     <div className="badge-container">
-      {params.length > 0 &&
-        params.map((item, index) => {
-          let msg = item.key + ": " + item.value;
-          return (
-            <Chip
-              key={index}
-              label={msg}
-              style={{ margin: 5}}
-              onDelete={(e) => handleOnClick(e, item)}
-            />
-          );
-        })}
+      {params.length > 0 && params.map((item, index) => (
+        <span key={index} className="filter-badge">
+          {item.key}: {item.value}
+          <button className="filter-badge__close" onClick={(e) => handleOnClick(e, item)}>
+            <i className="fa-solid fa-xmark" />
+          </button>
+        </span>
+      ))}
     </div>
   );
 };
