@@ -168,17 +168,27 @@
   color: white;
 }
 
+/* Carousel — constrain height so controls position correctly */
+.product-card .carousel,
+.product-card .carousel-inner,
+.product-card .carousel-item {
+  height: 100%;
+}
+
 /* Carousel arrows */
 .product-card .carousel-control-prev,
 .product-card .carousel-control-next {
   width: 28px;
   height: 28px;
+  bottom: auto;
   background: rgba(255, 255, 255, 0.9);
   border-radius: 50%;
   top: 50%;
   transform: translateY(-50%);
   opacity: 0;
   transition: opacity var(--transition-fast);
+  z-index: 3;
+  pointer-events: auto;
 }
 
 .product-card:hover .carousel-control-prev,

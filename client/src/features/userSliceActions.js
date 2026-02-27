@@ -101,8 +101,14 @@ export const logoutRequest = () => {
 export const updateUser = (data) => {
     return async (dispatch) => {
         const handleRequest = async () => {
-            if(data.formData !== null) { 
-                const response = await instanceAxs.post('/profile/upload/picture', data.formData)
+            if(data.formData !== null) {
+                const response = await instanceAxs.post('/profile/upload/picture', data.formData, {
+                    withCredentials: true
+                })
+                if (response.status === 401) {
+                    dispatch(uiSliceActions.setFeedbackBanner({severity: 'error', msg: 'Sesjonen din har utløpt. Logg inn på nytt.'}))
+                    return;
+                }
                 const msg = response.data.message;
                 if(msg === 'profile picture uploaded') {
                     dispatch(userActions.setUser({}))
@@ -110,7 +116,7 @@ export const updateUser = (data) => {
                     dispatch(uiSliceActions.setFeedbackBanner({severity: 'success', msg: msg}))
                 } else {
                     dispatch(uiSliceActions.setFeedbackBanner({severity: 'error', msg: msg}))
-                }        
+                }
         }
         setTimeout(async () => {
             const res = await instanceAxs.post('/profile/update/userinfo', data.userdata)

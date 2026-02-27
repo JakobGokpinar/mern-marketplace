@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import "./Navbar.css";
@@ -15,7 +15,7 @@ import { instanceAxs } from "../../config/api.js";
 import socket from "../../config/socket";
 
 const Navigation = () => {
-  const [currentY, setCurrentY] = useState(0);
+  const lastScrollY = useRef(0);
   const [isRender, setIsRender] = useState(true);
   const [isUnreadMsg, setIsUnreadMsg] = useState(false);
 
@@ -49,13 +49,29 @@ const Navigation = () => {
 
   // Hide navbar on scroll down, show on scroll up
   useEffect(() => {
+    const SCROLL_THRESHOLD = 80;
     const handleScroll = () => {
-      setIsRender(window.scrollY <= currentY);
-      setCurrentY(window.scrollY);
+      const y = window.scrollY;
+      // Always show navbar at the top (including overscroll/bounce)
+      if (y <= 0) {
+        setIsRender(true);
+        lastScrollY.current = 0;
+        return;
+      }
+      const delta = y - lastScrollY.current;
+      if (delta > SCROLL_THRESHOLD) {
+        // Scrolled down past threshold — hide
+        setIsRender(false);
+        lastScrollY.current = y;
+      } else if (delta < -SCROLL_THRESHOLD) {
+        // Scrolled up past threshold — show
+        setIsRender(true);
+        lastScrollY.current = y;
+      }
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  });
+  }, []);
 
   const logout = () => {
     navigate('/');

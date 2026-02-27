@@ -35,7 +35,6 @@ function ProductCard(props) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [isHovered, setHovered] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
@@ -78,12 +77,10 @@ function ProductCard(props) {
   return (
     <div
       className="product-card"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
     >
       {/* Image Section */}
       <div className="product-card__image-wrapper">
-        <Carousel indicators={false} controls={isHovered} interval={null}>
+        <Carousel indicators={false} controls={images.length > 1} interval={null}>
           {images.map((img, index) => (
             <Carousel.Item key={index}>
               <Link to={`/produkt/${id}`}>

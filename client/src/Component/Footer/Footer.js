@@ -24,7 +24,7 @@ const Footer = () => {
                       <Col className='footer-col' lg={4} md={4} sm={12}>
                           <div className='footer-content footer-brand'>
                               <span className='footer-logo-text'>Rego</span>
-                              <p className='footer-tagline'>Letteste veien å handle</p>
+                              <p className='footer-tagline'>Kjøp og selg lokalt</p>
                           </div>
                       </Col>
                       <Col className='footer-col' lg={4} md={4} sm={12}>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Searchbar.css';
 
@@ -13,6 +13,7 @@ export default function Searchbar() {
     const [suggestedCategories, setSuggestedCategories] = useState([]);
     const [searchInput, setSearchInput] = useState('');
     const [isShow, setIsShow] = useState(false);
+    const containerRef = useRef(null);
 
     const handleInput = (e) => {
         let input = e.target.value;
@@ -22,6 +23,16 @@ export default function Searchbar() {
     const handleLinkClick = () => {
         setIsShow(false)
     }
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (containerRef.current && !containerRef.current.contains(e.target)) {
+                setIsShow(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     useEffect(() => {
         if(searchInput === '') {
@@ -44,7 +55,7 @@ export default function Searchbar() {
     }, [searchInput])
 
   return (
-    <div>
+    <div ref={containerRef}>
             <Form action='/search'>
                 <InputGroup>
                         <Form.Control name='q' type='search' placeholder='Søk produkt eller kategori' 
