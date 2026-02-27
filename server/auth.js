@@ -45,12 +45,11 @@ passport.use('local-signup', new Strategy({ usernameField: 'email'}, async (emai
         var passwordSchema = new passwordValidator();
         passwordSchema.is().min(6);
         passwordSchema.is().max(32);
-        passwordSchema.has().lowercase();
-        passwordSchema.has().uppercase();
+        passwordSchema.has().letters();
         passwordSchema.has().digits(1);
 
         if(!passwordSchema.validate(password)) {
-            return done(null, false, { message: 'Password must contain at least one number and one uppercase and lowercase letter, and be between 6 and 32 characters'})
+            return done(null, false, { message: 'Password must contain at least one letter and one digit, and be between 6 and 32 characters'})
         }
 
         const user = await UserModel.create({ email, password });

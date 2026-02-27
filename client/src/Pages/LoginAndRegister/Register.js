@@ -113,8 +113,8 @@ function Register() {
                     type="password"
                     name="password"
                     onChange={e => setPassword(e.target.value)}
-                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,32}"
-                    title="Must contain at least one number and one uppercase and lowercase letter, and be between 6 and 32 characters"
+                    pattern="(?=.*\d)(?=.*[a-zA-Z]).{6,32}"
+                    title="Must contain at least one letter and one digit, and be between 6 and 32 characters"
                     required  
                   />
                 </Form.Group>
