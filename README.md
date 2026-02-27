@@ -57,4 +57,4 @@ Frontend runs on `localhost:3000`, API on `localhost:3080`.
 
 ## Author
 
-**Jakob Gøkpinar** — [jakobg.tech](https://jakobg.tech)
+**Jakob Gokpinar** — [jakobg.tech](https://jakobg.tech)
