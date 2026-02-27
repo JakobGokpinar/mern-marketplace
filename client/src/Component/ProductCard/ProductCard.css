@@ -23,7 +23,7 @@
   position: relative;
   height: 200px;
   overflow: hidden;
-  background-color: #f8f8f8;
+  background-color: var(--color-bg);
 }
 
 .product-card__image-wrapper img {

@@ -40,7 +40,7 @@
   position: relative;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  background: #f8f8f8;
+  background: var(--color-bg);
   margin-bottom: 24px;
 }
 

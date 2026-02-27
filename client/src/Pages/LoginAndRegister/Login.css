@@ -17,7 +17,7 @@
 
 .signup-link {
   text-decoration: none;
-  color: black;
+  color: var(--color-primary);
 }
 
 .login-div {

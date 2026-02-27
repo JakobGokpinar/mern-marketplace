@@ -6,8 +6,8 @@
 }
 
 .profile-content {
-    border: 2px solid black;
-    border-radius: 10px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
     width: 100%;
     padding: 3% 5%;
 }
@@ -39,14 +39,8 @@
     align-items: center;
     justify-content: center;
     margin-bottom: 30px;
-    border-radius: 20px;
-    background: repeating-linear-gradient(
-        45deg,
-        #000000,
-        #000000 10px,
-        #e0e0e0 10px,
-        #e0e0e0 20px
-    );
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--color-primary-lightest), var(--color-border-light));
 }
 
 .between {
