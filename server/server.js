@@ -72,6 +72,7 @@ app.use(
         secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: true,
+        rolling: true,
         proxy: true,
         store: MongoDbStore.create({
             mongoUrl: mongoUrl
@@ -79,7 +80,7 @@ app.use(
         cookie: {
             sameSite: isProduction ? 'none' : 'lax',
             secure: isProduction,
-            maxAge: 1000 * 60 * 60 * 24 * 30
+            maxAge: 1000 * 60 * 60 * 24 * 14
         }
     })
 );

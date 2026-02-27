@@ -39,8 +39,14 @@ const checkFileType = (req, file, cb) => {
     fileFilter: checkFileType
   }).single('profileImage')
 
+const ensureAuth = (req, res, next) => {
+    if (!req.isAuthenticated()) {
+        return res.status(401).json({ message: 'You have to login to upload files' });
+    }
+    next();
+};
+
 uploadImageToAws = (req, res, info) => {
-    if (!req.isAuthenticated()) return res.json({message: 'You have to login to upload files'});
     let fileLocation = req.user.email;  //bucket'da her kullanıcı için bir klasör var.
     let userId = req.user._id;
     const uploadImages = uploadImageToMulter(`${BUCKET_NAME}/${fileLocation}`)
@@ -82,8 +88,6 @@ removeProfileImage = (req, res) => {
 }
 
 updateUserInfo = (req, res) => {
-  if(!req.isAuthenticated()) return res.json({message: 'Please login to save your updates'});
-
   const {name, lastname } = req.body;
   const userId = req.user._id;
   const username = name + " " + lastname;
@@ -102,8 +106,6 @@ updateUserInfo = (req, res) => {
 }
 
 getProfileImage = (req, res) => {
-    if(!req.isAuthenticated()) return res.json('Please login to access this data.');
-    
     const user = req.user.email;
     const imageKey = user + "/profilePicture.jpeg";
     isProfileImageFound = false;
@@ -139,9 +141,9 @@ getProfileImage = (req, res) => {
 
 const router = express.Router();
 
-router.post('/upload/picture', uploadImageToAws);
-router.post('/update/userinfo', updateUserInfo)
-router.post('/delete/picture', removeProfileImage)
-router.get('/get/picture', getProfileImage);
+router.post('/upload/picture', ensureAuth, uploadImageToAws);
+router.post('/update/userinfo', ensureAuth, updateUserInfo);
+router.post('/delete/picture', ensureAuth, removeProfileImage);
+router.get('/get/picture', ensureAuth, getProfileImage);
 
 module.exports = router;
