@@ -6,26 +6,21 @@ This document is a structured task list for an AI coding assistant. Each section
 
 ## AUTHENTICATION
 
-### [BUG] Profile photo upload fails for authenticated users
-- Uploading a new profile photo returns the error: `'You have to login to upload files'` even when the user is logged in.
-- Investigate the file upload middleware/route — the authentication token is likely not being attached to the upload request. Check that the request includes the auth header and that the multer (or equivalent) middleware is positioned after the auth middleware in the route chain.
+### ~~[BUG] Profile photo upload fails for authenticated users~~ ✅ DONE
+- Fixed in a previous session.
 
-### [BUG] Profile photo preview breaks after cancelling file picker
-- Steps to reproduce: User opens file picker to choose a new profile photo → clicks Cancel → opens file picker again and selects a photo → the image preview does not render without a full page reload.
-- Fix the file input's `onChange` handler so it correctly handles re-selection after a cancelled pick. Reset the input value on cancel if needed.
+### ~~[BUG] Profile photo preview breaks after cancelling file picker~~ ✅ DONE
+- Fixed in a previous session.
 
 ---
 
 ## NAVBAR
 
-### [BUG] Search suggestion dropdown does not close on outside click
-- When the search suggestion window appears, clicking anywhere outside of it does not dismiss it.
-- Add a click-outside event listener (or use a `useRef` + `useEffect` pattern) to close the suggestion dropdown when the user clicks outside the component.
+### ~~[BUG] Search suggestion dropdown does not close on outside click~~ ✅ DONE
+- Fixed in a previous session.
 
-### [BUG] Navbar disappears unexpectedly on scroll
-- The navbar hides when the user scrolls to the bottom of the page.
-- It also disappears when the user has scrolled to the very top and there is no more scroll room (overscroll/bounce).
-- Review the scroll-direction detection logic. Add a threshold (e.g. only hide after scrolling down more than 80px) and treat position ≤ 0 (overscroll) as "at top" — always show navbar in that case.
+### ~~[BUG] Navbar disappears unexpectedly on scroll~~ ✅ DONE
+- Fixed in a previous session.
 
 ### [IMPROVEMENT] Search bar functionality and algorithm
 - The search bar is the most important UI element in the app. It must support keyword-based search, e.g. `bil`, `tesla`, `bmw`, `audi a4 2014`.
@@ -40,10 +35,8 @@ This document is a structured task list for an AI coding assistant. Each section
 
 ## PRODUCT CARD (Carousel)
 
-### [BUG] Image carousel arrow buttons stop appearing after first click
-- Clicking the right arrow once to view the next image works, but after that the left and right arrow buttons no longer appear on hover.
-- The user is stuck on the second image with no way to navigate further.
-- Debug the carousel component's hover/state logic. The buttons are likely being conditionally rendered based on state that isn't resetting correctly after the first interaction.
+### ~~[BUG] Image carousel arrow buttons stop appearing after first click~~ ✅ DONE
+- Fixed in a previous session.
 
 ---
 
@@ -69,10 +62,10 @@ This document is a structured task list for an AI coding assistant. Each section
   - **Favorites** — saved listings
   - **Messages** — chat inbox
 
-### [IMPROVEMENT] Profile section overall design
+### [IMPROVEMENT] Profile section overall design (partially done)
 - Redesign the profile/settings area to have a clean, clearly separated layout.
 - Users should be able to see a summary of their activity in the app (listings created, favorites, etc.).
-- The user avatar/icon in the navbar and its dropdown interaction should also be improved to feel polished.
+- ~~The user avatar/icon in the navbar and its dropdown interaction should also be improved to feel polished.~~ ✅ DONE — navbar avatar/dropdown redesigned.
 
 ---
 
@@ -159,14 +152,11 @@ This document is a structured task list for an AI coding assistant. Each section
 - Verify that logging out clears all cached data: JWT token, user state in React context/store, localStorage, and sessionStorage.
 - No user data should persist after logout.
 
-### [FEATURE] Delete account
-- Allow users to permanently delete their account.
-- On deletion, handle cascading cleanup: remove their annonces, remove them from other users' chat threads, remove their favorites references.
-- Show a confirmation dialog before deletion.
+### ~~[FEATURE] Delete account~~ ✅ DONE
+- Implemented in this session. Backend: `POST /profile/delete/account` with full cascading cleanup (S3 images, annonces, conversations, favorites references, profile picture, user document). Frontend: "Slett konto" button on Profile page with confirmation modal.
 
-### [IMPROVEMENT] Behavior when a user account is deleted by admin or self
-- Define and implement what happens to that user's data: annonces, chat messages, favorites.
-- Decide on a strategy: hard delete vs. soft delete with anonymization (e.g. "Deleted User").
+### ~~[IMPROVEMENT] Behavior when a user account is deleted by admin or self~~ ✅ DONE
+- Implemented hard delete strategy: all user data (annonces, conversations, S3 images, favorites references) is permanently removed. Annonce deletion also cascades (removes from other users' favorites, deletes related conversations).
 
 ### [FEATURE] Dark mode support
 - Add dark mode using CSS variables or a theming solution (e.g. Tailwind dark mode classes).
@@ -176,10 +166,12 @@ This document is a structured task list for an AI coding assistant. Each section
 
 ## DESIGN — GLOBAL REDESIGN
 
-### [IMPROVEMENT] Overall visual language
-- The app needs a cohesive redesign pass across: Login/Register, Product Page, Profile sections, Navbar, and Footer.
-- The current green accent color is too muted. Update it to a more vibrant, energetic shade that still works for a marketplace context.
-- Replace placeholder or low-quality icons throughout the app, particularly for: "Ny annonse", "Meldinger", "Mine annonser". Use a consistent icon library (e.g. Lucide or Heroicons).
+### [IMPROVEMENT] Overall visual language (partially done)
+- The app needs a cohesive redesign pass across: Login/Register, Product Page, Profile sections, ~~Navbar~~, and ~~Footer~~.
+- ~~The current green accent color is too muted. Update it to a more vibrant, energetic shade that still works for a marketplace context.~~ ✅ DONE — design system with teal palette in design.css.
+- ~~Replace placeholder or low-quality icons throughout the app, particularly for: "Ny annonse", "Meldinger", "Mine annonser". Use a consistent icon library.~~ ✅ DONE — Font Awesome icons used consistently in navbar.
+- Navbar redesigned: centered search bar, "Ny Annonse" CTA, icon links for messages/favorites, avatar dropdown.
+- Footer fixed: overscroll white gap resolved.
 
 ---
 
