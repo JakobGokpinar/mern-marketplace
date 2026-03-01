@@ -51,9 +51,6 @@ const AnnonceSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  isFavorite : {
-    type: Boolean
-  }
 });
 
 const myDB = mongoose.connection.useDb('announcements');

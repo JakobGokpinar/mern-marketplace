@@ -23,13 +23,7 @@ const UserSchema = new Schema({
     profilePicture: {
         type: String,
     },
-    annonces: {
-        type: Array
-    },
     favorites: {
-        type: Array
-    },
-    messages: {
         type: Array
     },
     lastActiveAt: {
