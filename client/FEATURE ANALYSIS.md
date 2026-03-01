@@ -4,8 +4,8 @@ Login/Register
     -login successsfully works
 
 Profile
-    -User profile picture update (err: 'You have to login to upload files', even though the user is logged in)
-    -User choose a new profile photo -> Avbryt -> Choose a new one -> UI doesn't render to show the photo preview, requiring a reload
+    -User profile picture update (err: 'You have to login to upload files', even though the user is logged in) (done)
+    -User choose a new profile photo -> Avbryt -> Choose a new one -> UI doesn't render to show the photo preview, requiring a reload (done)
 
 Navbar
     -works okay as a portfolio based project, it is nothing of fancy. However, the design of the searchbar can be better, it is the ultimate tool
@@ -13,22 +13,22 @@ Navbar
     Reason being, is to make the searching more stragihtforward and easy, allowing users to search directly with just keywords. The results we show them
     is the real deal. I should be able to just search "bil", "tesla", "bmw", "mercesdes", "audi a4 2014" etc. for each relevant topic.
     -design of the navbar could be better. when suggestion window pops up, it doesn't disappear when i click anywhere on the screen, outside of that
-    suggestion window. 
+    suggestion window. (done)
     -Nabar is very sensitive. It goes away when scrolled to the bottom of the page, and when user pulls up the screen by scrolling all the way to the top
-    of the page, and there is no more room to scroll, then navbar also disappears. 
-    -We want navbar to simple but powerful, avoiding clutter while enabling efficeny. 
+    of the page, and there is no more room to scroll, then navbar also disappears. (done)
+    -We want navbar to simple but powerful, avoiding clutter while enabling efficeny. (done)
     -I know this navbar topic is a complex one. there is no one-size-fits-all answer, and there are many designs, approaches of navbars out there. That's
-    why i struggled to describe what i really want from the navbar of our project, but we can take smaller steps to make it professional
+    why i struggled to describe what i really want from the navbar of our project, but we can take smaller steps to make it professional (done)
 
 Product Card
     -I can click the righ-arrow once, to review the next image however after that the right and left buttons
     don't appear when I hover the mouse again. so, we are stuck at the 2. image of the product in the carusoal. neither can go forward or back 
-    to other images. 
+    to other images. (done)
 
 Product Page
     -Overall good design with seller and product's contents. just a small improvment would be the breadcrumbs, and the "nøkkelinfø" (key info) section, 
     i thought this section would be cool to have to give the user a quick overall overview of the product. i'm not sure if it is doing it job, or if users
-    will use it properly, or it will just be a clutter. I don't know. This is also an issue related to announce creation, since it is where we assing it. 
+    will use it properly, or it will just be a clutter. I don't know. This is also an issue related to announce creation, since it is where we assing it. (done)
     -the product images getting changed in the carousal looks cool. 
 
 Profile
@@ -38,9 +38,9 @@ Profile
     - We might make all these more professional, have a clean separated design (Profile, settings, annonces, favorites etc)
     - Imagine it somewhere like, most websites have: a place wher user can see and track the actions he took in the app. 
     - We can make design improvments both in Profile, Profile/Profile, and how the user icon is placed on the navbar and how it is getting interacted
-    with
+    with (done)
 
-CreateAnnonce
+CreateAnnonce (not need changes here for now)
     - product categories. enrich them and make them sensible. 
     - Is image editing, rendering, and displaying good in create new annonce. 
     - Status nytt/brukt: a similar feature taken from Finn.no, don't know how useful is it
@@ -49,9 +49,9 @@ CreateAnnonce
     - Does giving id's to annonces to work perfectly, any issues there, is it convenient ?
 
 Favorites
-    - User are being to able to favorite their own annonces
+    - User are being to able to favorite their own annonces (done-fixed)
 
-MyAnnonces
+MyAnnonces (done)
     - Annonce update works (price, name etc)
     - Got an error: ERROR undefined is not an object (evaluating 'item.annonceImages[0]') @http://localhost:3000/static/js/bundle.js:6657:36 map@[native code]
     when trying to navigate and view annonces
@@ -64,10 +64,9 @@ Chat
     - some errors: rendering other person's photo while chatting, constant active now bubble etc.
 
 
-# DESIGN - remake
+# DESIGN - remake (done)
     - Overall design of the Login/Register, product page, Profile sections
     - Navbar and Footer. 
-    - didn't like the tone of the green. can be more enlightining and passinonate. 
     - using better icons (eg "ny annonse", "meldinger", "mine annonser")
 
 
