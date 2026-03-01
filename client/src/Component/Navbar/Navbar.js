@@ -7,7 +7,6 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
 
 import Searchbar from "./Searchbar";
 import { logoutRequest } from "../../features/userSliceActions";
@@ -58,6 +57,13 @@ const Navigation = () => {
         lastScrollY.current = 0;
         return;
       }
+      // Always show navbar at the bottom of the page
+      const atBottom = (window.innerHeight + y) >= (document.documentElement.scrollHeight - 10);
+      if (atBottom) {
+        setIsRender(true);
+        lastScrollY.current = y;
+        return;
+      }
       const delta = y - lastScrollY.current;
       if (delta > SCROLL_THRESHOLD) {
         // Scrolled down past threshold — hide
@@ -80,67 +86,69 @@ const Navigation = () => {
 
   return (
     <div>
-      {isRender &&
-        <Navbar expand="lg" fixed="top" className="navigation" bg="light">
+        <Navbar expand="lg" fixed="top" className={`navigation${isRender ? '' : ' navbar-hidden'}`}>
           <Container>
             <Navbar.Brand href="/">Rego</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav" style={{ margin: 10 }}>
-              <Searchbar />
+            <Navbar.Collapse id="basic-navbar-nav">
+              <div className="navbar-center">
+                <Searchbar />
+              </div>
               {isLoggedIn ? (
-                <Nav className="navbar-nav">
-                  {user.profilePicture ? (
-                    <img
-                      src={user.profilePicture}
-                      alt=""
-                      className="navbar-avatar-img"
-                    />
-                  ) : (
-                    <div className="navbar-avatar-placeholder">
-                      <i className="fa-solid fa-user" />
-                    </div>
-                  )}
-                  <DropdownButton
-                    id="dropdown-basic-button"
-                    title={user.username || user.email || ''}
-                    variant="light"
-                  >
-                    <Dropdown.Item href="min-konto">Min Konto</Dropdown.Item>
-                    <Dropdown.Divider />
-                    <Dropdown.Item href="/nyannonse">
-                      <i className="fa-solid fa-plus me-2" /> Ny Annonse
-                    </Dropdown.Item>
-                    <Dropdown.Item href="/profil">
-                      <i className="fa-regular fa-user me-2" /> Min Profil
-                    </Dropdown.Item>
-                    <Dropdown.Item href="/chat">
-                      <i className="fa-regular fa-message me-2" />
-                      {isUnreadMsg ? (
-                        <span>Meldinger <span className="navbar-unread-dot" /></span>
-                      ) : 'Meldinger'}
-                    </Dropdown.Item>
-                    <Dropdown.Item href="/mine-annonser">
-                      <i className="fa-solid fa-scroll me-2" /> Mine Annonser
-                    </Dropdown.Item>
-                    <Dropdown.Item href="/favoritter">
-                      <i className="fa-regular fa-heart me-2" /> Favoritter
-                    </Dropdown.Item>
-                    <Dropdown.Divider />
-                    <Dropdown.Item onClick={logout}>
-                      <i className="fa-solid fa-arrow-right-from-bracket me-2" /> Logg Ut
-                    </Dropdown.Item>
-                  </DropdownButton>
+                <Nav className="navbar-actions">
+                  <Nav.Link href="/nyannonse" className="navbar-new-listing">
+                    <i className="fa-solid fa-plus me-1" />
+                    <span className="navbar-new-listing-text">Ny Annonse</span>
+                  </Nav.Link>
+                  <Nav.Link href="/chat" className="navbar-icon-link">
+                    <i className="fa-regular fa-message" />
+                    {isUnreadMsg && <span className="navbar-unread-dot" />}
+                  </Nav.Link>
+                  <Nav.Link href="/favoritter" className="navbar-icon-link">
+                    <i className="fa-regular fa-heart" />
+                  </Nav.Link>
+                  <Dropdown align="end" className="navbar-user-dropdown">
+                    <Dropdown.Toggle variant="light" className="navbar-user-toggle">
+                      {user.profilePicture ? (
+                        <img src={user.profilePicture} alt="" className="navbar-avatar-img" />
+                      ) : (
+                        <div className="navbar-avatar-placeholder">
+                          <i className="fa-solid fa-user" />
+                        </div>
+                      )}
+                      <span className="navbar-username">{user.name || ''}</span>
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu className="navbar-dropdown-menu">
+                      <div className="navbar-dropdown-header">
+                        <span className="navbar-dropdown-name">{user.username || ''}</span>
+                        <span className="navbar-dropdown-email">{user.email}</span>
+                      </div>
+                      <Dropdown.Divider />
+                      <Dropdown.Item href="/min-konto">
+                        <i className="fa-solid fa-house me-2" /> Min Konto
+                      </Dropdown.Item>
+                      <Dropdown.Item href="/profil">
+                        <i className="fa-regular fa-user me-2" /> Min Profil
+                      </Dropdown.Item>
+                      <Dropdown.Item href="/mine-annonser">
+                        <i className="fa-solid fa-scroll me-2" /> Mine Annonser
+                      </Dropdown.Item>
+                      <Dropdown.Divider />
+                      <Dropdown.Item onClick={logout} className="navbar-logout-item">
+                        <i className="fa-solid fa-arrow-right-from-bracket me-2" /> Logg Ut
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
                 </Nav>
               ) : (
-                <Nav className="flex-grow-1 justify-content-end">
-                  <Nav.Link href="/login" className="log-in-button">Logg Inn</Nav.Link>
-                  <Nav.Link href="/register">Register</Nav.Link>
+                <Nav className="navbar-actions">
+                  <Nav.Link href="/login" className="navbar-login-link">Logg Inn</Nav.Link>
+                  <Nav.Link href="/register" className="navbar-register-link">Registrer</Nav.Link>
                 </Nav>
               )}
             </Navbar.Collapse>
           </Container>
         </Navbar>
-      }
     </div>
   );
 };

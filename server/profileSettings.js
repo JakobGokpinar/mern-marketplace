@@ -3,6 +3,8 @@ const AWS = require('aws-sdk');
 const multer = require('multer');   //dosya yükleme işlemi için kullanılır
 const multerS3 = require('multer-s3');
 const UserModel = require("./models/UserModel.js");
+const AnnonceModel = require("./models/AnnonceModel.js");
+const ConversationModel = require("./models/ConversationModel.js");
 const ObjectId = require('mongoose').Types.ObjectId;
 require('dotenv').config();
 
@@ -139,11 +141,72 @@ getProfileImage = (req, res) => {
 }
 
 
+deleteAccount = async (req, res) => {
+  const userId = req.user._id;
+  const email = req.user.email;
+
+  try {
+    // Find all annonces by this user
+    const userAnnonces = await AnnonceModel.find({ sellerId: ObjectId(userId) });
+    const annonceIds = userAnnonces.map(a => a._id);
+
+    // Delete S3 images for each annonce
+    for (const annonce of userAnnonces) {
+      const awsPrefix = email + '/annonce-' + annonce._id + '/';
+      try {
+        const listed = await s3.listObjectsV2({ Bucket: BUCKET_NAME, Prefix: awsPrefix }).promise();
+        if (listed.Contents.length > 0) {
+          const deleteParams = {
+            Bucket: BUCKET_NAME,
+            Delete: { Objects: listed.Contents.map(f => ({ Key: f.Key })) }
+          };
+          await s3.deleteObjects(deleteParams).promise();
+        }
+      } catch (err) {
+        // Continue even if S3 cleanup fails for one annonce
+      }
+    }
+
+    // Delete all user's annonces
+    await AnnonceModel.deleteMany({ sellerId: ObjectId(userId) });
+
+    // Delete all conversations involving this user
+    await ConversationModel.deleteMany({ $or: [{ buyer: ObjectId(userId) }, { seller: ObjectId(userId) }] });
+
+    // Remove annonce IDs from other users' favorites
+    if (annonceIds.length > 0) {
+      await UserModel.updateMany({}, { $pull: { favorites: { $in: annonceIds } } });
+    }
+
+    // Delete profile picture from S3
+    try {
+      const profileBucket = BUCKET_NAME + '/' + email;
+      await s3.deleteObject({ Bucket: profileBucket, Key: 'profilePicture.jpg' }).promise();
+    } catch (err) {
+      // Continue even if no profile picture exists
+    }
+
+    // Delete user document
+    await UserModel.deleteOne({ _id: ObjectId(userId) });
+
+    // Logout and destroy session
+    req.logout(function (err) {
+      if (err) {
+        return res.status(500).json({ message: 'Kunne ikke logge ut' });
+      }
+      return res.status(200).json({ message: 'Account deleted' });
+    });
+  } catch (error) {
+    return res.status(500).json({ error, message: 'Kunne ikke slette kontoen' });
+  }
+}
+
 const router = express.Router();
 
 router.post('/upload/picture', ensureAuth, uploadImageToAws);
 router.post('/update/userinfo', ensureAuth, updateUserInfo);
 router.post('/delete/picture', ensureAuth, removeProfileImage);
+router.post('/delete/account', ensureAuth, deleteAccount);
 router.get('/get/picture', ensureAuth, getProfileImage);
 
 module.exports = router;

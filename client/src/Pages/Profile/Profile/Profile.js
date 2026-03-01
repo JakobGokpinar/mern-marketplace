@@ -9,8 +9,9 @@ import Alert from 'react-bootstrap/Alert';
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
+import Modal from "react-bootstrap/Modal";
 
-import { updateUser, removeProfilePicture } from "../../../features/userSliceActions";
+import { updateUser, removeProfilePicture, deleteAccount } from "../../../features/userSliceActions";
 import { getCroppedImage } from '../../../utils/cropImage.js';
 import { dataURLtoFile } from "../../../utils/dataURltoFile.js";
 import { instanceAxs } from "../../../config/api.js";
@@ -28,6 +29,7 @@ const Profile = () => {
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
   const [profilePicture, setProfilePicture] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const convertImagesToFormData = async (data) => {
     var formData = new FormData();
@@ -52,10 +54,12 @@ const Profile = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
+    if (!file) return;
     setImageFile(file);
   };
 
   const handleButtonClick = () => {
+    hiddenFileInput.current.value = "";
     hiddenFileInput.current.click();
   };
 
@@ -80,6 +84,11 @@ const Profile = () => {
   const handleReset = (e) => {
     e.preventDefault();
     dispatch(removeProfilePicture());
+  };
+
+  const handleDeleteAccount = () => {
+    setShowDeleteModal(false);
+    dispatch(deleteAccount());
   };
 
   useEffect(() => {
@@ -208,6 +217,29 @@ const Profile = () => {
           </Col>
         </Row>
       </div>
+
+      <div className="profile-delete-section">
+        <Button variant="outline-danger" onClick={() => setShowDeleteModal(true)}>
+          Slett konto
+        </Button>
+      </div>
+
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Slett konto</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Er du sikker? Alle dine annonser, meldinger og data vil bli permanent slettet.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            Avbryt
+          </Button>
+          <Button variant="danger" onClick={handleDeleteAccount}>
+            Slett konto
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

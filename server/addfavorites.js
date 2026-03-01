@@ -11,6 +11,14 @@ addToFavorites = async (req, res) => {
   const userId = req.user.id;
   const annonceId = req.body.id;
 
+  const annonce = await AnnonceModel.findOne({ _id: ObjectId(annonceId) });
+  if (!annonce) {
+    return res.json({ message: "Annonce not found" });
+  }
+  if (String(annonce.sellerId) === String(userId)) {
+    return res.json({ message: "Du kan ikke favorisere din egen annonse" });
+  }
+
   const isExist = await UserModel.findOne({ _id: ObjectId(userId) });
   if (isExist.favorites.includes(annonceId)) {
     return res.json({ message: "The annonce already saved to Favorites" });

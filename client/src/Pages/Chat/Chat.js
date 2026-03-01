@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import './Chat.css';
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
-import { Button, Modal, Spinner } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import { format } from "timeago.js";
 import { instanceAxs } from "../../config/api.js";
 import socket from '../../config/socket.js'
@@ -37,7 +37,6 @@ const Chat = () => {
   const [currentProduct, setCurrentProduct] = useState(null);
   const [conversations, setConversations] = useState(null);
   const [messagesArray, setMessagesArray] = useState(null);
-  const [connectedUsers, setConnectedUsers] = useState(null);
   const [currentFriendStatus, setCurrentFriendStatus] = useState(null);
 
   var currentSender = '';
@@ -47,9 +46,6 @@ const Chat = () => {
       socket.on('getMessage', ({ sender, msg, sentAt }) => {
         setArrivalMessage({ sender, msg, sentAt })
         setIsFriendTyping(false);
-      })
-      socket.on('getUsers', data => {
-        setConnectedUsers(data)
       })
     }, [])
 
@@ -129,12 +125,7 @@ const Chat = () => {
             setFriend(responseFriend);
             setMessagesArray(currentChat?.messages);
             setProductId(currentChat?.productId)
-            let connectedFriend = connectedUsers?.find(user => user?.userId === responseFriend?._id)
-            if(connectedFriend) {
-              setCurrentFriendStatus('Active now')
-            } else {
-              setCurrentFriendStatus(format(responseFriend?.lastActiveAt))
-            }
+            setCurrentFriendStatus(responseFriend?.lastActiveAt ? format(responseFriend.lastActiveAt) : null)
             instanceAxs.post('/chat/resetunread', {roomId: currentChat?._id})
             .catch(error => {
               console.log(error)
@@ -169,10 +160,6 @@ const Chat = () => {
       }
     }, [messageInputValue]);
 
-    useEffect(() => {
-      // if(!connectedUsers || !currentChat || !friend) return;
-
-    }, [currentChat])
 
     function sendMessage() {
       instanceAxs.post('/chat/new/message', 
@@ -264,9 +251,9 @@ const Chat = () => {
                           <ConversationHeader>
                               <ConversationHeader.Back />
                               <Avatar src={friend?.profilePicture} name={friend?.username} size="lg"/>
-                              <ConversationHeader.Content className="mx-4" style={{color: 'green'}}
+                              <ConversationHeader.Content className="mx-4"
                                 userName={friend?.username}
-                                info={currentFriendStatus === 'Active now' ? <><Spinner animation="grow" variant="success" size="sm"/> Active Now</> : currentFriendStatus}
+                                info={currentFriendStatus}
                               />
                               <ConversationHeader.Actions className="conversationHeader-product">
                                   <p  style={{ margin: '0px 15px'}}>{currentProduct?.title}</p>

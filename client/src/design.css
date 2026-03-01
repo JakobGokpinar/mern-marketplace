@@ -110,27 +110,12 @@ a:hover {
   letter-spacing: -0.5px;
 }
 
-.navigation .form-control:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
-}
-
-.navigation .btn {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-.navigation .btn:hover {
-  background-color: var(--color-primary-dark);
-  border-color: var(--color-primary-dark);
-}
-
 /* ============================================
    Footer Override
    ============================================ */
 
 .footer-container {
-  background-color: var(--color-surface);
+  background-color: var(--color-primary-darker);
   border-top: 1px solid var(--color-border);
 }
 

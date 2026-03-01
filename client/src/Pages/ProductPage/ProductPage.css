@@ -313,28 +313,6 @@
   margin-bottom: 20px;
 }
 
-.pp__seller-status--online {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.82rem;
-  color: var(--color-success);
-  font-weight: 500;
-}
-
-.pp__status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--color-success);
-  display: inline-block;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
 
 .pp__seller-status--away {
   font-size: 0.82rem;

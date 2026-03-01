@@ -90,18 +90,20 @@ function ProductCard(props) {
           ))}
         </Carousel>
 
-        {/* Favorite Button */}
-        <button
-          className={`product-card__favorite ${isFavorite ? "product-card__favorite--active" : ""}`}
-          onClick={handleToggleFavorite}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <Spinner size="sm" animation="border" style={{ width: 14, height: 14 }} />
-          ) : (
-            <i className={`fa-${isFavorite ? "solid" : "regular"} fa-heart`} />
-          )}
-        </button>
+        {/* Favorite Button — hidden on own listings */}
+        {user?._id !== sellerId && (
+          <button
+            className={`product-card__favorite ${isFavorite ? "product-card__favorite--active" : ""}`}
+            onClick={handleToggleFavorite}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <Spinner size="sm" animation="border" style={{ width: 14, height: 14 }} />
+            ) : (
+              <i className={`fa-${isFavorite ? "solid" : "regular"} fa-heart`} />
+            )}
+          </button>
+        )}
 
         {/* Image count */}
         {images.length > 1 && (

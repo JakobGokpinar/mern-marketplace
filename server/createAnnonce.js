@@ -9,6 +9,7 @@ const ObjectId = require('mongoose').Types.ObjectId;
 
 const AnnonceModel = require('./models/AnnonceModel.js');
 const UserModel = require('./models/UserModel.js');
+const ConversationModel = require('./models/ConversationModel.js');
 
 const BUCKET_NAME = process.env.AWS_BUCKET_NAME;
 const ACCESS_KEY = process.env.AWS_ACCESS_KEY;
@@ -153,7 +154,7 @@ removeAnnonce = async (req, res) => {
       
       try {
         var response = await AnnonceModel.deleteOne({_id: ObjectId(annonceId)})
-        response = await UserModel.updateMany({_id: ObjectId(userId)}, 
+        response = await UserModel.updateMany({_id: ObjectId(userId)},
           {
             $pull: {
               annonces: {
@@ -161,6 +162,11 @@ removeAnnonce = async (req, res) => {
               }
             }
           })
+
+          // Remove from all users' favorites
+          await UserModel.updateMany({}, { $pull: { favorites: ObjectId(annonceId) } })
+          // Delete related conversations
+          await ConversationModel.deleteMany({ productId: ObjectId(annonceId) })
 
           return res.status(200).json({message: 'Annonce deleted from database'})
       } catch (error) {

@@ -54,7 +54,7 @@ const MyAnnonces = () => {
                         {(annonceArray && annonceArray.length > 0) && annonceArray.map((item, index) => {
                             return(
                                 <div key={index} className='myannonces-content-product border'>
-                                    <img src={item.annonceImages[0].location} className='content-product__img' alt='gg'/>
+                                    <img src={item.annonceImages?.[0]?.location} className='content-product__img' alt='gg'/>
                                     <div className='content-product__info'>
                                         <p className='content-product__info__title'>{item.title}</p>
                                         <p className='content-product__info__price mt-2'>{item.price} kr</p>

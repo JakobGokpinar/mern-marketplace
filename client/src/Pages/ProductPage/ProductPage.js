@@ -18,7 +18,6 @@ import Spinner from "react-bootstrap/Spinner";
 import { uiSliceActions } from "../../features/uiSlice.js";
 import { addToFavorites, removeFromFavorites } from "../../features/userSliceActions.js";
 import { format } from "timeago.js";
-import socket from "../../config/socket.js";
 
 const formatPrice = (price) => {
     if (!price && price !== 0) return "0 kr";
@@ -37,38 +36,19 @@ function ProductPage() {
     const [isLoading, setLoading] = useState(true);
     const [showSpinner, setShowSpinner] = useState(false);
     const [showShareModal, setShowShareModal] = useState(false);
-    const [sellerStatus, setSellerStatus] = useState(null);
-    const [connectedUsers, setConnectedUsers] = useState(null);
-
-    useEffect(() => {
-        socket.on('getUsers', data => {
-            setConnectedUsers(data);
-        });
-    }, []);
-
     const findProduct = useCallback(async () => {
         await instanceAxs.get(`/product?id=${annonceId}`)
             .then(respond => {
                 if (respond.status !== 200) {
                     setLoading(false);
                     return;
-                }                
+                }
                 setAnnonce(respond.data.product);
                 setSeller(respond.data.seller);
-            })   
+            })
             .catch(err => console.log(err));
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
-
-    useEffect(() => {
-        if (!connectedUsers || !user || !seller) return;
-        let connectedFriend = connectedUsers?.find(u => u.userId === seller._id);
-        if (connectedFriend) {
-            setSellerStatus('Active now');
-        } else {
-            setSellerStatus(format(seller?.lastActiveAt));
-        }
-    }, [user, seller, connectedUsers, annonce, isLoading]);
     
     const sendMessage = (event) => {
         event.preventDefault();
@@ -136,7 +116,7 @@ function ProductPage() {
                     {/* Image Carousel */}
                     <div className="pp__carousel-wrapper">
                         <Carousel variant="dark" className="pp__carousel">
-                            {annonce.annonceImages.map((item, index) => (
+                            {(annonce.annonceImages || []).map((item, index) => (
                                 <Carousel.Item key={index}>
                                     <img src={item.location} alt={annonce.title} className="pp__carousel-img" />
                                     {item.description && (
@@ -148,7 +128,7 @@ function ProductPage() {
                             ))}
                         </Carousel>
                         <div className="pp__img-count">
-                            <i className="fa-regular fa-image" /> {annonce.annonceImages.length}
+                            <i className="fa-regular fa-image" /> {annonce.annonceImages?.length || 0}
                         </div>
                     </div>
 
@@ -159,14 +139,16 @@ function ProductPage() {
                             {annonce.pricePeriod && <span className="pp__price-period">{annonce.pricePeriod}</span>}
                         </div>
                         <div className="pp__actions">
-                            {annonce.isFavorite ? (
-                                <button className="pp__action-btn pp__action-btn--fav-active" onClick={handleRemoveFromFavorites}>
-                                    {showSpinner ? <Spinner size="sm" /> : <><i className="fa-solid fa-heart" /> Favoritt</>}
-                                </button>
-                            ) : (
-                                <button className="pp__action-btn" onClick={handleAddToFavorites}>
-                                    {showSpinner ? <Spinner size="sm" /> : <><i className="fa-regular fa-heart" /> Favoritt</>}
-                                </button>
+                            {user?._id !== seller?._id && (
+                                annonce.isFavorite ? (
+                                    <button className="pp__action-btn pp__action-btn--fav-active" onClick={handleRemoveFromFavorites}>
+                                        {showSpinner ? <Spinner size="sm" /> : <><i className="fa-solid fa-heart" /> Favoritt</>}
+                                    </button>
+                                ) : (
+                                    <button className="pp__action-btn" onClick={handleAddToFavorites}>
+                                        {showSpinner ? <Spinner size="sm" /> : <><i className="fa-regular fa-heart" /> Favoritt</>}
+                                    </button>
+                                )
                             )}
                             <button className="pp__action-btn" onClick={() => setShowShareModal(true)}>
                                 <i className="fa-solid fa-arrow-up-from-bracket" /> Del
@@ -229,15 +211,13 @@ function ProductPage() {
                         </div>
                         <p className="pp__seller-name">{seller?.username}</p>
                         <p className="pp__seller-since">Bruker siden {new Date(seller?.userCreatedAt).getFullYear()}</p>
-                        <div className="pp__seller-status">
-                            {sellerStatus === 'Active now' ? (
-                                <span className="pp__seller-status--online">
-                                    <span className="pp__status-dot" /> Aktiv n&aring;
+                        {seller?.lastActiveAt && (
+                            <div className="pp__seller-status">
+                                <span className="pp__seller-status--away">
+                                    Sist aktiv {format(seller.lastActiveAt)}
                                 </span>
-                            ) : (
-                                <span className="pp__seller-status--away">{sellerStatus}</span>
-                            )}
-                        </div>
+                            </div>
+                        )}
                         <button className="pp__seller-msg-btn" onClick={sendMessage}>
                             <i className="fa-regular fa-message" /> Send Melding
                         </button>

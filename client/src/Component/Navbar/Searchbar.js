@@ -43,7 +43,7 @@ export default function Searchbar() {
         instanceAxs.post('/searchproduct', {q: searchInput})
         .then(response => {
                 var responseData = response.data.productArray.map(item => {
-                return {title: item.title, img: item.annonceImages[0], id: item._id}
+                return {title: item.title, img: item.annonceImages?.[0], id: item._id}
             })
             const suggestedCat = response.data.categories.slice(0,3);
             responseData = responseData.slice(0,3);
@@ -56,14 +56,13 @@ export default function Searchbar() {
 
   return (
     <div ref={containerRef}>
-            <Form action='/search'>
-                <InputGroup>
-                        <Form.Control name='q' type='search' placeholder='Søk produkt eller kategori' 
-                            style={{width: 250}} onChange={handleInput} autoComplete='off'
+            <Form action='/search' className="searchbar-form">
+                <InputGroup className="searchbar-group">
+                        <Form.Control name='q' type='search' placeholder='Søk etter produkter...'
+                            onChange={handleInput} autoComplete='off'
                         />
-                        <Button type='search'> 
-                            Søk
-                            <i className="fa-solid fa-magnifying-glass fa-sm mx-2"/>
+                        <Button type='submit' className="searchbar-btn">
+                            <i className="fa-solid fa-magnifying-glass"/>
                         </Button>
                 </InputGroup>
             </Form>
@@ -86,7 +85,7 @@ export default function Searchbar() {
                                             <Link to={`/produkt/${item.id}`} key={index} onClick={handleLinkClick}>
                                                 <div className='suggestion-component__content' key={item.title}>
                                                     <p style={{margin: 0}}>{item.title}</p>
-                                                    <img className='suggestion-component__img' src={item.img.location} alt="annonce"/>
+                                                    <img className='suggestion-component__img' src={item.img?.location} alt="annonce"/>
                                                 </div>
                                             </Link>
                                         )

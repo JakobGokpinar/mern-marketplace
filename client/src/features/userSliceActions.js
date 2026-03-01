@@ -202,6 +202,25 @@ export const fetchFavorites = () => {
     }
 }
 
+export const deleteAccount = () => {
+    return async (dispatch) => {
+        const handleRequest = async () => {
+            instanceAxs.post('/profile/delete/account').then(response => {
+                if(response.status === 200) {
+                    dispatch(userActions.logout())
+                    dispatch(uiSliceActions.setFeedbackBanner({severity: 'success', msg: 'Kontoen din er slettet'}))
+                    window.location.href = '/';
+                } else {
+                    dispatch(uiSliceActions.setFeedbackBanner({severity: 'error', msg: 'Kunne ikke slette kontoen'}))
+                }
+            }).catch(error => {
+                dispatch(uiSliceActions.setFeedbackBanner({severity: 'error', msg: 'Kunne ikke slette kontoen'}))
+            })
+        }
+        await handleRequest();
+    }
+}
+
 export const removeAnnonce = (annonceId) => {
     return async (dispatch) => {
         const handleRequest = async () => {
