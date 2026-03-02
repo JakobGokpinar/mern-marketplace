@@ -52,7 +52,7 @@ passport.use('local-signup', new Strategy({ usernameField: 'email'}, async (emai
             return done(null, false, { message: 'Password must contain at least one letter and one digit, and be between 6 and 32 characters'})
         }
 
-        const user = await UserModel.create({ email, password });
+        const user = await UserModel.create({ email, password, isEmailVerified: process.env.NODE_ENV === 'development' });
         return done(null, user, { message: 'user created'})
     } catch (err) {
         console.log(err)

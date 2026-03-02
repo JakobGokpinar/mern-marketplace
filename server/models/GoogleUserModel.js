@@ -19,9 +19,6 @@ const GoogleUserSchema = new Schema({
     profilePicture: {
         type: String,
     },
-    annonces: {
-        type: Array
-    },
     favorites: {
         type: Array
     }

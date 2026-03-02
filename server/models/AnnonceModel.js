@@ -53,7 +53,6 @@ const AnnonceSchema = mongoose.Schema({
   },
 });
 
-const myDB = mongoose.connection.useDb('announcements');
-const AnnonceModel = myDB.model("Annonce", AnnonceSchema);
+const AnnonceModel = mongoose.model("Annonce", AnnonceSchema);
 
 module.exports = AnnonceModel;

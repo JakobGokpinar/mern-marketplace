@@ -2,18 +2,18 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 const connectToDatabase = async (mongoUrl) => {
-  var connectionType = process.env.NODE_ENV == "production" ? "production" : "development";
+  const dbName = process.env.NODE_ENV === 'development' ? 'rego-dev' : 'rego-prod';
     try {
       mongoose.connect(
-        mongoUrl,
+        `${mongoUrl}/${dbName}`,
         {
           useNewUrlParser: true,
           useUnifiedTopology: true
         }
       );
 
-      console.log('MongoDB is connected to', connectionType, "server \n");
-    } catch (err) {
+      console.log('Mongo is connected to ', dbName, " env\n");
+    } catch (err) { 
       console.error(err.message);
       process.exit(1);
     }

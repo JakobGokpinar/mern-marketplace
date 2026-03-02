@@ -80,33 +80,14 @@ saveAnnonceToDatabase = (req, res) => {
     newAnnonce.annonceImages = annonceImages;
     newAnnonce.sellerId = new ObjectId(user._id)
 
-    uploadToUser(user, newAnnonce);
     uploadToAnnonces(newAnnonce, res)
-}
-
-// save  annonce to the user's annonces
-uploadToUser = (user, newAnnonce, res) => {
-  mongoose.connection.useDb('user').collection('users')
-  .updateOne({ _id: user._id}, { $push: { annonces: newAnnonce } })
-  .then(() => {
-      // console.log('annonce saved to the user')
-  })
-  .catch (error => {
-    res.json(error)
-  })
 }
 
 //  save annonce to the general annonces database
 uploadToAnnonces = (newAnnonce, res) => {
-  mongoose.connection.useDb('announcements').collection('annonces')
-        .insertOne(newAnnonce)
-        .then(result => {
-          // console.log('annonce saved to the annonce collection')
-          res.json({ message: 'annonce created', result})
-        })
-        .catch (error => {
-          res.json(error)
-      })
+  newAnnonce.save()
+  .then(() => res.json({ message: 'annonce created' }))
+  .catch(error => res.json(error))
 }
 
 removeAnnonce = async (req, res) => {

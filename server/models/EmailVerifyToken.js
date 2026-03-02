@@ -16,7 +16,6 @@ var EmailVerifySchema = new Schema({
     }
 })
 
-const tokenDB = mongoose.connection.useDb('token')
-const EmailVerifyToken = tokenDB.model('email', EmailVerifySchema)
+const EmailVerifyToken = mongoose.model('email', EmailVerifySchema);
 
 module.exports = EmailVerifyToken;

@@ -27,7 +27,6 @@ const ConversationSchema = mongoose.Schema({
     }
 })
 
-const myDb = mongoose.connection.useDb('messages')
-const ConversationModel = myDb.model('rooms', ConversationSchema);
+const ConversationModel = mongoose.model('rooms', ConversationSchema);
 
 module.exports = ConversationModel;
