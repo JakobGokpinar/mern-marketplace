@@ -29,7 +29,7 @@ const verifyEmail = async (req, res) => {
             return res.json({ success: false, message: 'The session has expired. Please try sending a new verification email'})
         }
         data = await UserModel.findOneAndUpdate(
-            { _id: ObjectId(userId)},
+            { _id: new ObjectId(userId)},
             { isEmailVerified: true},
             { new: true, useFindAndModify: false }
         )

@@ -8,7 +8,7 @@ const getItems = (req,res) => {
     let favoritesArray = [];
     if(req.isAuthenticated()) {
         const user = req.user._id;
-        UserModel.findOne({_id: ObjectId(user)}).then(result => {
+        UserModel.findOne({_id: new ObjectId(user)}).then(result => {
             favoritesArray = result.favorites
 
         }).catch(error => {
@@ -37,7 +37,7 @@ const getItems = (req,res) => {
 const getUserAnnonces = (req, res) => {
     if (!req.isAuthenticated()) return res.json({ message: 'Please login' });
     const userId = req.user._id;
-    AnnonceModel.find({ sellerId: ObjectId(userId) })
+    AnnonceModel.find({ sellerId: new ObjectId(userId) })
       .then(result => res.status(200).json({ productArray: result }))
       .catch(err => res.status(500).json({ error: err }));
   }

@@ -76,9 +76,9 @@ const saveAnnonceToDatabase = (req, res) => {
     const annonceId = req.body.annonceid;
 
     let newAnnonce = AnnonceModel(annonceProps)
-    newAnnonce._id = new ObjectId(annonceId);
+    newAnnonce._id = new new ObjectId(annonceId);
     newAnnonce.annonceImages = annonceImages;
-    newAnnonce.sellerId = new ObjectId(user._id)
+    newAnnonce.sellerId = new new ObjectId(user._id)
 
     uploadToAnnonces(newAnnonce, res)
 }
@@ -134,11 +134,11 @@ const removeAnnonce = async (req, res) => {
       }
       
       try {
-          await AnnonceModel.deleteOne({_id: ObjectId(annonceId)})
+          await AnnonceModel.deleteOne({_id: new ObjectId(annonceId)})
           // Remove from all users' favorites
-          await UserModel.updateMany({}, { $pull: { favorites: ObjectId(annonceId) } })
+          await UserModel.updateMany({}, { $pull: { favorites: new ObjectId(annonceId) } })
           // Delete related conversations
-          await ConversationModel.deleteMany({ productId: ObjectId(annonceId) })
+          await ConversationModel.deleteMany({ productId: new ObjectId(annonceId) })
 
           return res.status(200).json({message: 'Annonce deleted from database'})
       } catch (error) {
@@ -191,12 +191,12 @@ const updateAnnonce = async (req, res) => {
 
   try {
       let newAnnonce = AnnonceModel(annonceProperties)
-      newAnnonce._id = new ObjectId(annonceId);
+      newAnnonce._id = new new ObjectId(annonceId);
       newAnnonce.annonceImages = annonceImages;
-      newAnnonce.sellerId = new ObjectId(userId)
+      newAnnonce.sellerId = new new ObjectId(userId)
 
       await AnnonceModel.replaceOne(
-        {_id: ObjectId(annonceId)},
+        {_id: new ObjectId(annonceId)},
         newAnnonce)
 
       return res.status(200).json({message: 'mission successful'})

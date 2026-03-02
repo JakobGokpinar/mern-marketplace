@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer');
-const EmailVerifyToken = require('./models/EmailVerifyToken.js');
+const EmailVerifyToken = require('../models/EmailVerifyToken');
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,

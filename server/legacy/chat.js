@@ -6,9 +6,9 @@ const ConversationModel = require('./models/ConversationModel.js');
 //new room
 const createRoom = async (req, res) => {
     let conversation =  ConversationModel({
-        seller: new ObjectId(req.body.seller), 
-        buyer: new ObjectId(req.body.buyer),
-        productId: new ObjectId(req.body.product_id)
+        seller: new new ObjectId(req.body.seller), 
+        buyer: new new ObjectId(req.body.buyer),
+        productId: new new ObjectId(req.body.product_id)
     });
     try {
         const response = await conversation.save()
@@ -25,8 +25,8 @@ const getRooms = async (req, res) => {
     try {
         let response = await ConversationModel.find({
             $or: [
-                { buyer: ObjectId(user) },
-                { seller: ObjectId(user) }
+                { buyer: new ObjectId(user) },
+                { seller: new ObjectId(user) }
             ]        
         })
         return res.status(200).json(response)
@@ -43,9 +43,9 @@ const getRoomByCredentials = async (req, res) => {
     let productId = req.query.productId;  
     try {
         const response = await ConversationModel.find({ 
-            seller: ObjectId(seller),
-            buyer: ObjectId(buyer),
-            productId: ObjectId(productId)
+            seller: new ObjectId(seller),
+            buyer: new ObjectId(buyer),
+            productId: new ObjectId(productId)
          });
         return res.status(200).json(response)
     } catch (error) {
@@ -56,9 +56,9 @@ const getRoomByCredentials = async (req, res) => {
 
 //add message
 const newMessage = async (req, res) => {
-    const roomId = ObjectId(req.body.roomId);
+    const roomId = new ObjectId(req.body.roomId);
     const newMessage = {
-        sender: ObjectId(req.body.sender),
+        sender: new ObjectId(req.body.sender),
         msg: req.body.msg,
         sentAt: Date.now()
     };

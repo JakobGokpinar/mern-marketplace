@@ -58,7 +58,7 @@ const uploadImageToAws = (req, res, info) => {
             res.json({message: 'picture could not uploaded', error: err})
             return;
         }
-        UserModel.findByIdAndUpdate({_id: ObjectId(userId)}, {
+        UserModel.findByIdAndUpdate({_id: new ObjectId(userId)}, {
             profilePicture: req.file.location
         }, {useFindAndModify: false, returnDocument: 'after'}).then(result => {
             if(result) {
@@ -80,7 +80,7 @@ const removeProfileImage = (req, res) => {
     if(err) return console.error(err);
   })
 
-  UserModel.findByIdAndUpdate({_id: ObjectId(userId)}, {
+  UserModel.findByIdAndUpdate({_id: new ObjectId(userId)}, {
     $unset: {
       profilePicture: ""
     }
@@ -94,7 +94,7 @@ const updateUserInfo = (req, res) => {
   const userId = req.user._id;
   const username = name + " " + lastname;
   
-  UserModel.findByIdAndUpdate({_id: ObjectId(userId)}, {
+  UserModel.findByIdAndUpdate({_id: new ObjectId(userId)}, {
     $set: {
       name: name,
       lastname: lastname,
@@ -147,7 +147,7 @@ const deleteAccount = async (req, res) => {
 
   try {
     // Find all annonces by this user
-    const userAnnonces = await AnnonceModel.find({ sellerId: ObjectId(userId) });
+    const userAnnonces = await AnnonceModel.find({ sellerId: new ObjectId(userId) });
     const annonceIds = userAnnonces.map(a => a._id);
 
     // Delete S3 images for each annonce
@@ -168,10 +168,10 @@ const deleteAccount = async (req, res) => {
     }
 
     // Delete all user's annonces
-    await AnnonceModel.deleteMany({ sellerId: ObjectId(userId) });
+    await AnnonceModel.deleteMany({ sellerId: new ObjectId(userId) });
 
     // Delete all conversations involving this user
-    await ConversationModel.deleteMany({ $or: [{ buyer: ObjectId(userId) }, { seller: ObjectId(userId) }] });
+    await ConversationModel.deleteMany({ $or: [{ buyer: new ObjectId(userId) }, { seller: new ObjectId(userId) }] });
 
     // Remove annonce IDs from other users' favorites
     if (annonceIds.length > 0) {
@@ -187,7 +187,7 @@ const deleteAccount = async (req, res) => {
     }
 
     // Delete user document
-    await UserModel.deleteOne({ _id: ObjectId(userId) });
+    await UserModel.deleteOne({ _id: new ObjectId(userId) });
 
     // Logout and destroy session
     req.logout(function (err) {

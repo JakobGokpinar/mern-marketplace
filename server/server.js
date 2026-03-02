@@ -11,15 +11,15 @@ const ObjectId = require('mongoose').Types.ObjectId
 require('dotenv').config();
 
 var authRouter = require('./auth');
-var userRouter = require('./fetchUser.js');
+var userRouter = require('./routes/user.routes');
 var annonceRouter = require('./createAnnonce.js');
 var searchRouter = require('./search.js')
-var findProductRouter = require('./findProduct.js');
+var findProductRouter = require('./routes/product.routes');
 var searchProductRouter = require('./searchProduct.js');
 var addFavoritesRouter = require('./addfavorites.js');
 var profileSettingsRouter = require('./profileSettings.js');
-var chatRouter = require('./chat.js');
-var emailRouter = require('./emailRoute.js')
+var chatRouter = require('./routes/chat.routes');
+var emailRouter = require('./routes/email.routes')
 
 // Determine environment
 if (process.argv.includes('dev')) {
@@ -144,7 +144,7 @@ io.on('connection', (socket) => {
         let user = connectedUsers.find(user => user.socketId === socket.id)
         removeUser(socket.id)
         if(!user) return;
-        await UserModel.updateOne({ _id: ObjectId(user.userId) }, { $set: { lastActiveAt: Date.now() }})
+        await UserModel.updateOne({ _id: new ObjectId(user.userId) }, { $set: { lastActiveAt: Date.now() }})
     })
 
     socket.on('disconnect', async () => {
@@ -152,9 +152,17 @@ io.on('connection', (socket) => {
         if(!user) return;
         removeUser(socket.id)
         io.emit('getUsers', connectedUsers)
-        await UserModel.updateOne({ _id: ObjectId(user.userId) }, { $set: { lastActiveAt: Date.now() }})
+        await UserModel.updateOne({ _id: new ObjectId(user.userId) }, { $set: { lastActiveAt: Date.now() }})
     })
 })
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(err.status || 500).json({ 
+      message: err.message || 'Internal server error'
+    });
+});
+
 
 server.listen(PORT, "0.0.0.0", () => console.log(`Server is running on port ${PORT}`));
 

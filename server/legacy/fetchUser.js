@@ -6,7 +6,7 @@ const UserModel = require("./models/UserModel.js");
 const fetchUser = (req, res) => {
     if(!req.isAuthenticated()) return res.json({ message: 'Du må logge inn'});
     let userId = req.user.id;
-    UserModel.findOne({_id: ObjectId(userId)})
+    UserModel.findOne({_id: new ObjectId(userId)})
         .then(response => {
             return res.status(200).json({user: response})
         })

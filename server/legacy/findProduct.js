@@ -11,7 +11,7 @@ const findProduct = async (req, res) => {
     let favoritesArray = [];
     if(req.isAuthenticated()) {
         const user = req.user._id;
-        UserModel.findOne({_id: ObjectId(user)}).then(result => {
+        UserModel.findOne({_id: new ObjectId(user)}).then(result => {
             favoritesArray = result.favorites
         }).catch(error => {
             console.error(error);
@@ -20,8 +20,8 @@ const findProduct = async (req, res) => {
     }
 
     try {
-        var result = await AnnonceModel.findOne({ _id: ObjectId(productId)});
-        var seller = await UserModel.findOne({_id: ObjectId(result.sellerId)});
+        var result = await AnnonceModel.findOne({ _id: new ObjectId(productId)});
+        var seller = await UserModel.findOne({_id: new ObjectId(result.sellerId)});
         var sellerObj = {
             username: seller?.username,
             userDate: seller?.userCreatedAt,

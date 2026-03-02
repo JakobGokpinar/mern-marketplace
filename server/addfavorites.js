@@ -11,7 +11,7 @@ const addToFavorites = async (req, res) => {
   const userId = req.user.id;
   const annonceId = req.body.id;
 
-  const annonce = await AnnonceModel.findOne({ _id: ObjectId(annonceId) });
+  const annonce = await AnnonceModel.findOne({ _id: new ObjectId(annonceId) });
   if (!annonce) {
     return res.json({ message: "Annonce not found" });
   }
@@ -19,12 +19,12 @@ const addToFavorites = async (req, res) => {
     return res.json({ message: "Du kan ikke favorisere din egen annonse" });
   }
 
-  const isExist = await UserModel.findOne({ _id: ObjectId(userId) });
+  const isExist = await UserModel.findOne({ _id: new ObjectId(userId) });
   if (isExist.favorites.includes(annonceId)) {
     return res.json({ message: "The annonce already saved to Favorites" });
   }
 
-  AnnonceModel.findOne({ _id: ObjectId(annonceId) })
+  AnnonceModel.findOne({ _id: new ObjectId(annonceId) })
     .then((response) => {
       var annonce = response._id;
       UserModel.findByIdAndUpdate(
@@ -59,10 +59,10 @@ const removeFromFavorites = (req, res) => {
   }
 
   UserModel.findByIdAndUpdate(
-    { _id: ObjectId(userId) },
+    { _id: new ObjectId(userId) },
     {
       $pull: {
-        favorites: ObjectId(annonceId),
+        favorites: new ObjectId(annonceId),
       },
     },
     { useFindAndModify: false, returnDocument: "after" }
@@ -82,7 +82,7 @@ const getFavorites = (req, res) => {
   if (!req.isAuthenticated())
     return res.json({ message: "Please login to access this data" });
   var userId = req.user.id;
-  UserModel.findOne({ _id: ObjectId(userId) })
+  UserModel.findOne({ _id: new ObjectId(userId) })
     .then((result) => {
       const favoritesArray = result.favorites;
       if (favoritesArray.length <= 0) return res.json({ productArray: [] });

@@ -5,7 +5,7 @@ const Strategy  = require("passport-local").Strategy;
 var validator = require('validator');
 var passwordValidator = require('password-validator');
 const generateUniqueId = require('generate-unique-id');
-const emailVerify = require('./sendEmail.js')
+const emailVerify = require('./config/sendEmail.js')
 require('dotenv').config();
 
 const UserModel = require('./models/UserModel.js');

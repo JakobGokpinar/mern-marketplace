@@ -97,7 +97,7 @@ async function run() {
 
     // 2. Delete annonce from AnnonceModel
     if (!DRY_RUN) {
-      await AnnonceModel.deleteOne({ _id: ObjectId(annonceId) });
+      await AnnonceModel.deleteOne({ _id: new ObjectId(annonceId) });
     }
     console.log(`  DB: annonce ${DRY_RUN ? 'would be deleted' : 'deleted'}`);
 
@@ -105,7 +105,7 @@ async function run() {
     if (annonce.sellerId && !DRY_RUN) {
       await UserModel.updateOne(
         { _id: annonce.sellerId },
-        { $pull: { annonces: { _id: ObjectId(annonceId) } } }
+        { $pull: { annonces: { _id: new ObjectId(annonceId) } } }
       );
     }
     console.log(`  User.annonces: ${DRY_RUN ? 'would be cleaned' : 'cleaned'}`);
@@ -113,20 +113,20 @@ async function run() {
     // 4. Remove from ALL users' favorites
     if (!DRY_RUN) {
       const favResult = await UserModel.updateMany(
-        { favorites: ObjectId(annonceId) },
-        { $pull: { favorites: ObjectId(annonceId) } }
+        { favorites: new ObjectId(annonceId) },
+        { $pull: { favorites: new ObjectId(annonceId) } }
       );
       totalFavoritesCleanups += favResult.modifiedCount || 0;
     } else {
-      const affectedUsers = await UserModel.countDocuments({ favorites: ObjectId(annonceId) });
+      const affectedUsers = await UserModel.countDocuments({ favorites: new ObjectId(annonceId) });
       totalFavoritesCleanups += affectedUsers;
     }
     console.log(`  Favorites: ${DRY_RUN ? 'would be cleaned' : 'cleaned'}`);
 
     // 5. Delete related conversations
-    const convCount = await ConversationModel.countDocuments({ productId: ObjectId(annonceId) });
+    const convCount = await ConversationModel.countDocuments({ productId: new ObjectId(annonceId) });
     if (!DRY_RUN && convCount > 0) {
-      await ConversationModel.deleteMany({ productId: ObjectId(annonceId) });
+      await ConversationModel.deleteMany({ productId: new ObjectId(annonceId) });
     }
     totalConversations += convCount;
     console.log(`  Conversations: ${convCount} ${DRY_RUN ? 'would be deleted' : 'deleted'}`);

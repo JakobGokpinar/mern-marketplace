@@ -80,7 +80,7 @@ const findProducts = async (req, res) => {
   let favoriteProducts = [];
 
   if(userId) {
-    UserModel.findOne({ _id: ObjectId(userId) })
+    UserModel.findOne({ _id: new ObjectId(userId) })
     .then((result) => {
       favoriteProducts = result.favorites;
     })
