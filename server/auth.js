@@ -4,15 +4,12 @@ const bcrypt = require('bcrypt');
 const Strategy  = require("passport-local").Strategy;
 var validator = require('validator');
 var passwordValidator = require('password-validator');
-const { OAuth2Client } = require('google-auth-library');
 const generateUniqueId = require('generate-unique-id');
 const emailVerify = require('./sendEmail.js')
 require('dotenv').config();
 
 const UserModel = require('./models/UserModel.js');
-const GoogleUserModel = require('./models/GoogleUserModel.js');
 
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID
 
 // Sign-in strategy
 passport.use('local-signin', new Strategy({ usernameField: 'email'}, async (email, password, done) => {
@@ -60,43 +57,6 @@ passport.use('local-signup', new Strategy({ usernameField: 'email'}, async (emai
     }
 }))
 
-// Google OAuth strategy
-passport.use('google-auth', new Strategy({ usernameField: 'credential'}, async (credential, password, done) => {
-    try {
-        const decodedToken = await getDecodedOAuthJwtGoogle(credential)
-        
-        const email = decodedToken["payload"].email;    
-        const userExists = await UserModel.findOne({ 'email': email})
-        if (userExists) {
-            return done(null, userExists, {message: 'existing user'})
-        }
-
-        const name = decodedToken["payload"].given_name;
-        const lastname = decodedToken["payload"].family_name;
-        const username = decodedToken["payload"].name;
-        const profilePicture = decodedToken["payload"].picture;
-        
-        const user = await GoogleUserModel.create({ name, lastname, username, email, profilePicture });
-        return done(null, user, { message: 'new user created'})
-    } catch (err) {
-        return done(err)
-    }
-}))
-
-getDecodedOAuthJwtGoogle = async (token) => {  
-    try {
-      const client = new OAuth2Client(GOOGLE_CLIENT_ID)
-  
-      const ticket = await client.verifyIdToken({
-        idToken: token,
-        audience: GOOGLE_CLIENT_ID,
-      })
-      return ticket;
-    } catch (error) {
-      return { status: 500, data: error }
-    }
-}
-
 passport.serializeUser((user, done) => {
     done(null, user.id)
 })
@@ -108,18 +68,6 @@ passport.deserializeUser((id, done) => {
 })
 
 var router = express.Router();
-
-googleAuthentication = async (req, res, next) => {
-    passport.authenticate('google-auth', function(err, user, info) {
-        if(err) {
-            return res.json(err)
-        }
-        req.logIn(user, function(err) {
-            if (err) return next(err);
-            return res.json({ user, message: 'User logged in'})
-        }) 
-    })(req, res, next)
-}
 
 signin = async (req, res, next) => {
     passport.authenticate("local-signin", function(err, user, info) {
@@ -173,6 +121,5 @@ logout = (req, res) => {
 router.post('/login', signin);
 router.post('/signup', signup);
 router.delete('/logout', logout);
-router.post('/google/auth', googleAuthentication);
 
 module.exports = router;
