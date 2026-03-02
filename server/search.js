@@ -34,8 +34,17 @@ getItems = (req,res) => {
     .catch(err => console.log(err)) 
 }
 
+getUserAnnonces = (req, res) => {
+    if (!req.isAuthenticated()) return res.json({ message: 'Please login' });
+    const userId = req.user._id;
+    AnnonceModel.find({ sellerId: ObjectId(userId) })
+      .then(result => res.status(200).json({ productArray: result }))
+      .catch(err => res.status(500).json({ error: err }));
+  }
+
 const router = express.Router();
 
 router.get('/', getItems)
+router.get('/mine', getUserAnnonces);
 
 module.exports = router;

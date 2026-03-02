@@ -134,16 +134,7 @@ removeAnnonce = async (req, res) => {
       }
       
       try {
-        var response = await AnnonceModel.deleteOne({_id: ObjectId(annonceId)})
-        response = await UserModel.updateMany({_id: ObjectId(userId)},
-          {
-            $pull: {
-              annonces: {
-                 _id: ObjectId(annonceId)
-              }
-            }
-          })
-
+          await AnnonceModel.deleteOne({_id: ObjectId(annonceId)})
           // Remove from all users' favorites
           await UserModel.updateMany({}, { $pull: { favorites: ObjectId(annonceId) } })
           // Delete related conversations
@@ -205,11 +196,6 @@ updateAnnonce = async (req, res) => {
       newAnnonce.annonceImages = annonceImages;
       newAnnonce.sellerId = new ObjectId(userId)
 
-      const query = { _id: ObjectId(userId), "annonces._id": ObjectId(annonceId) };
-      const updateDocument = {
-        $set: { "annonces.$": newAnnonce }
-      };
-      await UserModel.updateOne(query, updateDocument);
       await AnnonceModel.replaceOne(
         {_id: ObjectId(annonceId)},
         newAnnonce)

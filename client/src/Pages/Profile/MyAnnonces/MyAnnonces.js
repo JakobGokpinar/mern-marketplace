@@ -9,16 +9,17 @@ import Form from 'react-bootstrap/Form';
 
 import { removeAnnonce, fetchUser } from '../../../features/userSliceActions';
 import { useNavigate } from 'react-router-dom';
+import { instanceAxs } from '../../../config/api.js';
 
 const MyAnnonces = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const user = useSelector(state => state.user.user);
-    const [annonceArray, setAnnonceArray] = useState(user.annonces);
     const [showRemoveModal, setShowRemoveModal] = useState(false);
     const [showChangeModal, setChangeModal] = useState(false);
     const [selectedItem, setSelectedItem] = useState('');
+    const [annonceArray, setAnnonceArray] = useState([]);
 
     const visibleRemoveModal = (e,item) => {
         e.preventDefault();
@@ -38,11 +39,13 @@ const MyAnnonces = () => {
         }, 1000);
         setShowRemoveModal(false);
     }
-
-    useEffect(() => {
-        setAnnonceArray(user.annonces)
-    }, [user])
     
+    useEffect(() => {
+        instanceAxs.get('/search/mine')
+          .then(response => setAnnonceArray(response.data.productArray || []))
+          .catch(err => console.log(err));
+      }, []);
+      
         return(
             <div className='myannonces-container'>
                 <Breadcrumb>
