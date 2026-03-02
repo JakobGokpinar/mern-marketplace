@@ -45,7 +45,7 @@ const s3 = new AWS.S3({
     fileFilter: checkFileType
   }).array('annonceImages',10);  //post request atarken kullanılması gerekn key değeri ve aynı anda maks. kaç dosya yüklenebilir
 
-uploadImagesToAws = (req, res, info) => {
+const uploadImagesToAws = (req, res, info) => {
     if (!req.isAuthenticated()) return res.json({message: 'You have to login to upload files'});
     const user = req.user.email;  //bucket'da her kullanıcı için bir klasör var.
    
@@ -67,7 +67,7 @@ uploadImagesToAws = (req, res, info) => {
     })
 }
 
-saveAnnonceToDatabase = (req, res) => {
+const saveAnnonceToDatabase = (req, res) => {
   if(!req.isAuthenticated()) return res.send('user not logged in')
 
     const user = req.user;
@@ -84,13 +84,13 @@ saveAnnonceToDatabase = (req, res) => {
 }
 
 //  save annonce to the general annonces database
-uploadToAnnonces = (newAnnonce, res) => {
+const uploadToAnnonces = (newAnnonce, res) => {
   newAnnonce.save()
   .then(() => res.json({ message: 'annonce created' }))
   .catch(error => res.json(error))
 }
 
-removeAnnonce = async (req, res) => {
+const removeAnnonce = async (req, res) => {
   if (!req.isAuthenticated()) return;
 
   const email = req.user.email;
@@ -105,7 +105,7 @@ removeAnnonce = async (req, res) => {
   
   s3.listObjectsV2(params, async (err, data) => {
     if(err) {
-      console.log(err);
+      console.error(err);
       res.json({error: err, message: 'Error occured'})
       return;
     }
@@ -128,7 +128,7 @@ removeAnnonce = async (req, res) => {
   
     s3.deleteObjects(deleteParams, async (err, data) => {
       if (err) {
-        console.log(err, err.stack);
+        console.error(err, err.stack);
         res.json({error: err, message: 'Error occured while deleting objects'})
         return;
       }
@@ -142,16 +142,15 @@ removeAnnonce = async (req, res) => {
 
           return res.status(200).json({message: 'Annonce deleted from database'})
       } catch (error) {
-        console.log(error);
+        console.error(error);
         return res.json({error, message: 'Error occured'})
       }
     });
   })
 }
 
-removeAnnonceImagesFromAWS = async (req, res) => {
+const removeAnnonceImagesFromAWS = async (req, res) => {
   if(!req.isAuthenticated()) return res.status(300);
-  console.log("sa")
 
   try {
       const userEmail = req.user.email;
@@ -177,12 +176,12 @@ removeAnnonceImagesFromAWS = async (req, res) => {
       response = await s3.deleteObjects(deleteParams).promise();
       return res.status(200).json({message: 'annonce images deleted successfully'})
   } catch (error) {
-      console.log(error);
+      console.error(error);
       return res.status(300).json({error, message: 'Error occured while deleting s3 objects'})
   }
 }
 
-updateAnnonce = async (req, res) => {
+const updateAnnonce = async (req, res) => {
   if(!req.isAuthenticated()) return;
 
   const userId = req.user.id;
@@ -203,7 +202,7 @@ updateAnnonce = async (req, res) => {
       return res.status(200).json({message: 'mission successful'})
 
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(300).json({error, message: 'Error occured while updating annonce'})
   }
 }

@@ -4,7 +4,7 @@ const AnnonceModel = require('./models/AnnonceModel.js')
 const UserModel = require('./models/UserModel.js')
 const ObjectId = mongoose.Types.ObjectId;
 
-getItems = (req,res) => {
+const getItems = (req,res) => {
     let favoritesArray = [];
     if(req.isAuthenticated()) {
         const user = req.user._id;
@@ -12,7 +12,7 @@ getItems = (req,res) => {
             favoritesArray = result.favorites
 
         }).catch(error => {
-            console.log(error);
+            console.error(error);
             return res.json({message: 'Error occured while fetching annonces'})
         })
     }
@@ -31,10 +31,10 @@ getItems = (req,res) => {
         })
         return res.json({productArray: productArray, message: 'Items found'})
     })
-    .catch(err => console.log(err)) 
+    .catch(err => console.error(err)) 
 }
 
-getUserAnnonces = (req, res) => {
+const getUserAnnonces = (req, res) => {
     if (!req.isAuthenticated()) return res.json({ message: 'Please login' });
     const userId = req.user._id;
     AnnonceModel.find({ sellerId: ObjectId(userId) })

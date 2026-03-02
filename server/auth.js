@@ -52,7 +52,7 @@ passport.use('local-signup', new Strategy({ usernameField: 'email'}, async (emai
         const user = await UserModel.create({ email, password, isEmailVerified: process.env.NODE_ENV === 'development' });
         return done(null, user, { message: 'user created'})
     } catch (err) {
-        console.log(err)
+        console.error(err)
         return done(err)
     }
 }))
@@ -69,7 +69,7 @@ passport.deserializeUser((id, done) => {
 
 var router = express.Router();
 
-signin = async (req, res, next) => {
+const signin = async (req, res, next) => {
     passport.authenticate("local-signin", function(err, user, info) {
         if (err) return next(err);
         if (!user) return res.json(info);
@@ -80,7 +80,7 @@ signin = async (req, res, next) => {
     })(req, res, next);
 }
 
-signup = async (req, res, next) => {
+const signup = async (req, res, next) => {
     passport.authenticate("local-signup", async function(err, user, info) {
         if (err) return next(err);       
         if (!user) return res.json(info);
@@ -108,7 +108,7 @@ signup = async (req, res, next) => {
     })(req, res, next);
 } 
 
-logout = (req, res) => {
+const logout = (req, res) => {
     if(req.isAuthenticated()) {
         req.session.destroy();
         res.json({user: req.user, message: 'user logged out'});

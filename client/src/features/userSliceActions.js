@@ -9,7 +9,7 @@ export const fetchUser = () => {
                 if(response.status === 200) {
                     dispatch(userActions.setUser(response.data.user))
                 }
-            }).catch(error => console.log(error))
+            }).catch(error => console.error(error))
         }
         await handleRequest();
     }
@@ -19,7 +19,6 @@ export const sendSignUpRequest = (user) => {
     return async (dispatch) => {
         const handleRequest = async () => {
             instanceAxs.post('/signup', user).then(response => {
-                console.log("🚀 ~ file: userSliceActions.js:22 ~ instanceAxs.post ~ response:", response)
                 const responseMsg = response.data.message;
                 
                 if(responseMsg === 'user created') {
@@ -31,7 +30,7 @@ export const sendSignUpRequest = (user) => {
                     dispatch(uiSliceActions.setFeedbackBanner({severity: 'error', msg: response.data.message}))
                 }
             }).catch(error => {
-                console.log(error)
+                console.error(error)
             })
         }
         await handleRequest();
@@ -43,7 +42,6 @@ export const sendLoginRequest = (user) => {
 
         const handleRequest = async () => {
             instanceAxs.post('/login', user).then(response => {
-                console.log(response)
                 const responseMsg = response.data.message;
                 if(responseMsg === 'user logged in') {
                     const user = response.data.user;
@@ -53,7 +51,7 @@ export const sendLoginRequest = (user) => {
                     dispatch(uiSliceActions.setFeedbackBanner({severity: 'error', msg: response.data.message}))
                 }
             }).catch(error => {
-                console.log(error)
+                console.error(error)
             })
         }
         await handleRequest();
@@ -71,7 +69,7 @@ export const logoutRequest = () => {
                     dispatch(uiSliceActions.setFeedbackBanner({severity: 'error', msg: 'Det oppsto et feil. Prøve igjen senere'}))
                 }
             }).catch(error => {
-                console.log(error)
+                console.error(error)
             })
         }
         await handleRequest();

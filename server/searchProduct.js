@@ -59,7 +59,7 @@ function getStatus(value) {
   return status;
 }
 
-findProducts = async (req, res) => {
+const findProducts = async (req, res) => {
   const queryObject = {};
   let queryParams = req.body;
   const userId = req.user ? req.user.id : null
@@ -85,7 +85,7 @@ findProducts = async (req, res) => {
       favoriteProducts = result.favorites;
     })
     .catch((error) => {
-      console.log(error);
+      console.error(error);
     });
   }
   
@@ -119,7 +119,7 @@ findProducts = async (req, res) => {
         });
     })
     .catch((err) => {
-      console.log(err);
+      console.error(err);
       res
         .status(300)
         .json({

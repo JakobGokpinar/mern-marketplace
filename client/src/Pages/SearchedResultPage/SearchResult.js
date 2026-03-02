@@ -83,7 +83,6 @@ const SearchResult = () => {
       default:
         break;
     }
-    console.log(products)
     setProductArray(!dummy);
     setDummy(!dummy)
     setTimeout(() => {
@@ -116,10 +115,9 @@ const SearchResult = () => {
           setResultNumber(products.length)
           return;
         } 
-        console.log(response.data.message)       
       })
       .catch((err) => {
-        console.log(err); 
+        console.error(err); 
       });
   }
 

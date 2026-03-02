@@ -56,7 +56,7 @@ const Chat = () => {
           setConversations(response.data)
         })
         .catch(error => {
-          console.log(error)
+          console.error(error)
         })
       }
       fetchConversations();
@@ -80,7 +80,7 @@ const Chat = () => {
               setConversations(prev => [...prev, response.data.response])
             }
           } catch (error) {
-            console.log(error)
+            console.error(error)
           }
       }
       fetchConversation();
@@ -103,11 +103,8 @@ const Chat = () => {
       if(!arrivalMessage || arrivalMessage === '' || arrivalMessage.sender !== friend?._id) return;
       setMessagesArray(prev => [...prev, arrivalMessage])  
       instanceAxs.post('/chat/resetunread', {roomId: currentChat?._id})
-      .then(response => {
-        console.log(response)
-      })
       .catch(error => {
-        console.log(error)
+        console.error(error)
       })
     }, [arrivalMessage, friend])
 
@@ -128,11 +125,11 @@ const Chat = () => {
             setCurrentFriendStatus(responseFriend?.lastActiveAt ? format(responseFriend.lastActiveAt) : null)
             instanceAxs.post('/chat/resetunread', {roomId: currentChat?._id})
             .catch(error => {
-              console.log(error)
+              console.error(error)
             })
           })
           .catch(error => {
-            console.log(error)
+            console.error(error)
           })
         }
       }
@@ -146,7 +143,7 @@ const Chat = () => {
                 setCurrentProduct(response.data.product)
             })
             .catch(err => {
-                console.log(err)
+                console.error(err)
             })
         }
         fetchProduct();
@@ -165,7 +162,6 @@ const Chat = () => {
       instanceAxs.post('/chat/new/message', 
         {sender: user._id, msg: messageInputValue, roomId: currentChat?._id})
         .then(response => {
-          console.log(response)
             if(response.status !== 200) {
               dispatch(uiSliceActions.setFeedbackBanner({ severity: 'error', msg: 'Feil mens sender en melding'}))
               return;
@@ -174,7 +170,7 @@ const Chat = () => {
             }
         })
         .catch(err => {
-            console.log(err)
+            console.error(err)
         })
 
       socket.emit('sendMessage', {

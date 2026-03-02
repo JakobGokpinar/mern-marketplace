@@ -48,7 +48,7 @@ const ensureAuth = (req, res, next) => {
     next();
 };
 
-uploadImageToAws = (req, res, info) => {
+const uploadImageToAws = (req, res, info) => {
     let fileLocation = req.user.email;  //bucket'da her kullanıcı için bir klasör var.
     let userId = req.user._id;
     const uploadImages = uploadImageToMulter(`${BUCKET_NAME}/${fileLocation}`)
@@ -70,14 +70,14 @@ uploadImageToAws = (req, res, info) => {
     })
 }
 
-removeProfileImage = (req, res) => {
+const removeProfileImage = (req, res) => {
   const userId = req.user._id;
   const user = req.user.email;
   const bucket = BUCKET_NAME + "/" + user
   var params = {  Bucket: bucket, Key: 'profilePicture.jpg' };
 
   s3.deleteObject(params, (err, data) => {
-    if(err) return console.log(err);
+    if(err) return console.error(err);
   })
 
   UserModel.findByIdAndUpdate({_id: ObjectId(userId)}, {
@@ -89,7 +89,7 @@ removeProfileImage = (req, res) => {
   })
 }
 
-updateUserInfo = (req, res) => {
+const updateUserInfo = (req, res) => {
   const {name, lastname } = req.body;
   const userId = req.user._id;
   const username = name + " " + lastname;
@@ -103,11 +103,11 @@ updateUserInfo = (req, res) => {
   }, {useFindAndModify: false, returnDocument: 'after'}).then(result => {
     return res.json({user: result, message: 'User updated'})
   }).catch(error => {
-    console.log(error)
+    console.error(error)
   })
 }
 
-getProfileImage = (req, res) => {
+const getProfileImage = (req, res) => {
     const user = req.user.email;
     const imageKey = user + "/profilePicture.jpeg";
     isProfileImageFound = false;
@@ -141,7 +141,7 @@ getProfileImage = (req, res) => {
 }
 
 
-deleteAccount = async (req, res) => {
+const deleteAccount = async (req, res) => {
   const userId = req.user._id;
   const email = req.user.email;
 

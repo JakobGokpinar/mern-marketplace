@@ -21,7 +21,7 @@ const emailVerify = async (receiver_email, receiver_username, receiver_id, token
   // Send Email
   transporter.sendMail(options, (err, info) => {
     if(err) {
-      console.log(err)
+      console.error(err)
     } 
   })
 } 

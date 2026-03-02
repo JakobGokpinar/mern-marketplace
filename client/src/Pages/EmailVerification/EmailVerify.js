@@ -36,7 +36,6 @@ const EmailVerify = () => {
         setIsLoading(true)
         instanceAxs.post('/email/verify', {userId: user?._id, token})
         .then(response => {
-            console.log(response)
             if(response.data.success === true) {
                 dispatch(userSlice.actions.setUser(response.data.user))
                 setAlertVarient("success")
@@ -54,7 +53,7 @@ const EmailVerify = () => {
             }
         })
         .catch(error => {
-            console.log(error)
+            console.error(error)
         })
     }
 

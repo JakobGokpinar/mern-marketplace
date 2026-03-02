@@ -17,10 +17,14 @@ const Conversations = ({ productId, conversation, loggedUser, isActive, findFrie
             instanceAxs.get(`/fetchuser?userId=${friendId}`).then(response => {
                 let fetchedUser = response.data.user;
                 setFriend(fetchedUser);
-                setLastMessage(fetchedUser.messages.length > 0 && fetchedUser.messages[fetchedUser.messages.length-1])
+                setLastMessage(
+                conversation.messages?.length > 0 
+                    ? conversation.messages[conversation.messages.length - 1] 
+                    : null
+                );
             })
             .catch(err => {
-                console.log(err)
+                console.error(err)
             })
         }
         fetchUser();
@@ -33,7 +37,7 @@ const Conversations = ({ productId, conversation, loggedUser, isActive, findFrie
                 setProduct(response.data.product)
             })
             .catch(err => {
-                console.log(err)
+                console.error(err)
             })
         }
         fetchProduct();
@@ -53,7 +57,7 @@ const Conversations = ({ productId, conversation, loggedUser, isActive, findFrie
   return (
             <Conversation className='conversation-div'
                 name={friend?.username}
-                lastSenderName={lastMessage?.sender}
+                lastSenderName={lastMessage?.sender === loggedUser?._id ? 'Du' : friend?.username}
                 info={lastMessage?.msg}
                 active={isActive}
                 lastActivityTime={conversation.lastActivity}

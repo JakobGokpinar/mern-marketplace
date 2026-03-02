@@ -17,9 +17,8 @@ const Favorites = () => {
                 setFavoritesArray(productArray)
                 return;
             }
-           console.log(response.data.message);
         }).catch(error => {
-            console.log("error happened while fetching Favorites", error)
+            console.error("error happened while fetching Favorites", error)
         })
     }, [user])
     

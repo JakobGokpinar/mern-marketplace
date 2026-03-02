@@ -155,10 +155,8 @@ const submitAnnonce = async (event) => {
       const formData = await convertImagesToFormData();
       const annonceId = annoncePropertyObject["_id"];
       const annonceproperties = annonceProperties;
-      const res = await instanceAxs.post('/newannonce/remove/annonceimages', {annonceId})
-      console.log('res', res)
+      await instanceAxs.post('/newannonce/remove/annonceimages', {annonceId})
       const result = await instanceAxs.post(`/newannonce/imageupload?annonceid=${annonceId}`, formData);
-      console.log('result', result)
       var copyImages = imageArray;
       var returnedImages = result.data.files;
       for (let img of copyImages) {
@@ -166,7 +164,6 @@ const submitAnnonce = async (event) => {
           item.originalname === img.name).location;
       }
       const response = await instanceAxs.post('/newannonce/update', {annonceImages: copyImages, annonceproperties, annonceId})
-      console.log('response', response)
       if(response.status !== 200) {
         dispatch(uiSliceActions.setFeedbackBanner({severity: 'error', msg: 'Annonsen kunne ikke oppdateres akkurat nå. Vennligst prøv igjen senere.'}));
         setIsPublishing(false);
@@ -179,7 +176,7 @@ const submitAnnonce = async (event) => {
         }, 2000)
       }
     } catch (error) {
-        console.log(error)
+        console.error(error)
         dispatch(uiSliceActions.setFeedbackBanner({severity: 'error', msg: 'Annonsen kunne ikke oppdateres akkurat nå. Vennligst prøv igjen senere.'}));
         setIsPublishing(false);
     }
@@ -222,7 +219,6 @@ const submitAnnonce = async (event) => {
 
  const uploadImagesToServer =  async (formData, annonceProps, cb) => {
   await instanceAxs.post('/newannonce/imageupload', formData).then(result => {
-    console.log(result)
       if (result.data.message === 'images uploaded') {
         let annonceId = result.data.annonceId;
         let copyImages = imageArray;
@@ -244,7 +240,7 @@ const submitAnnonce = async (event) => {
         setIsPublishing(false)
       }
     })
-    .catch( err => console.log(err) );
+    .catch( err => console.error(err) );
  }
 
  const uploadAnnonceToServer =  async (anProp, imageLoc, anId) => {
@@ -254,7 +250,6 @@ const submitAnnonce = async (event) => {
     annonceid: anId
   } 
   await instanceAxs.post('/newannonce/create', annonce).then(result => {
-    console.log(result)
     if(result.status === 200) {
       dispatch(uiSliceActions.setFeedbackBanner({severity: 'success', msg: 'Annonsen ble publisert'}));
       setIsPublishing(false);
@@ -267,7 +262,7 @@ const submitAnnonce = async (event) => {
       setIsPublishing(false);
     }
   })
-  .catch( err => console.log(err) );
+  .catch( err => console.error(err) );
  }
 
  useEffect(() => { 
@@ -289,7 +284,7 @@ const submitAnnonce = async (event) => {
       }
       setPostAddress(placeName ? placeName.placeName : 'Ugyldig postnummer');
   }).catch(err => {
-    console.log(err)
+    console.error(err)
   })
 // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [postNumber])
@@ -298,7 +293,6 @@ const submitAnnonce = async (event) => {
     const routerState = routerLocation.state;
   
     if(routerState) {
-      console.log("🚀 ~ useEffect ~ routerState: Passed parameters from router", routerState)
       let stateAnnonce = routerState.annonce;
       let foundCategory = data.categories.find(item => item.maincategory === stateAnnonce.category)
       setIsModifyAnnonce(true);

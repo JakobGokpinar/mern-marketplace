@@ -43,7 +43,7 @@ const MyAnnonces = () => {
     useEffect(() => {
         instanceAxs.get('/search/mine')
           .then(response => setAnnonceArray(response.data.productArray || []))
-          .catch(err => console.log(err));
+          .catch(err => console.error(err));
       }, []);
       
         return(

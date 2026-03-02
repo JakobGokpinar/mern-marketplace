@@ -4,7 +4,7 @@ const ObjectId = mongoose.Types.ObjectId;
 const AnnonceModel = require("./models/AnnonceModel.js");
 const UserModel = require("./models/UserModel.js");
 
-addToFavorites = async (req, res) => {
+const addToFavorites = async (req, res) => {
   if (!req.isAuthenticated())
     return res.json({ message: "Please login to access this data" });
 
@@ -40,7 +40,7 @@ addToFavorites = async (req, res) => {
       });
     })
     .catch((error) => {
-      console.log(error);
+      console.error(error);
       return res.json({
         error: error,
         message: "Annonce could not be saved to Favorites",
@@ -48,7 +48,7 @@ addToFavorites = async (req, res) => {
     });
 };
 
-removeFromFavorites = (req, res) => {
+const removeFromFavorites = (req, res) => {
   if (!req.isAuthenticated())
     return res.json({ message: "Please login to access this data" });
 
@@ -74,11 +74,11 @@ removeFromFavorites = (req, res) => {
       });
     })
     .catch((error) => {
-      console.log(error);
+      console.error(error);
     });
 };
 
-getFavorites = (req, res) => {
+const getFavorites = (req, res) => {
   if (!req.isAuthenticated())
     return res.json({ message: "Please login to access this data" });
   var userId = req.user.id;
@@ -100,10 +100,10 @@ getFavorites = (req, res) => {
             message: "Items fetched",
           });
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.error(err));
     })
     .catch((error) => {
-      console.log(error);
+      console.error(error);
       return res.json({ message: "Error occured while fetching annonces" });
     });
 };

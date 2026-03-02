@@ -4,7 +4,7 @@ const express = require('express');
 const ConversationModel = require('./models/ConversationModel.js');
 
 //new room
-createRoom = async (req, res) => {
+const createRoom = async (req, res) => {
     let conversation =  ConversationModel({
         seller: new ObjectId(req.body.seller), 
         buyer: new ObjectId(req.body.buyer),
@@ -14,13 +14,13 @@ createRoom = async (req, res) => {
         const response = await conversation.save()
         return res.status(200).json({message: 'Room created', response})
     } catch (error) {
-        console.log(error)
+        console.error(error)
         return res.status(500).json({ error })
     }
 }
 
 //get room
-getRooms = async (req, res) => {
+const getRooms = async (req, res) => {
     const user = req.body.user
     try {
         let response = await ConversationModel.find({
@@ -31,13 +31,13 @@ getRooms = async (req, res) => {
         })
         return res.status(200).json(response)
     } catch (error) {
-        console.log(error)
+        console.error(error)
         return res.status(500).json(error)
     }
 }
 
 //get room with buyer, seller and productId
-getRoomByCredentials = async (req, res) => {
+const getRoomByCredentials = async (req, res) => {
     let buyer = req.query.buyer;
     let seller = req.query.seller;
     let productId = req.query.productId;  
@@ -49,13 +49,13 @@ getRoomByCredentials = async (req, res) => {
          });
         return res.status(200).json(response)
     } catch (error) {
-        console.log(error)
+        console.error(error)
         return res.status(500).json(error)
     }
 }
 
 //add message
-newMessage = async (req, res) => {
+const newMessage = async (req, res) => {
     const roomId = ObjectId(req.body.roomId);
     const newMessage = {
         sender: ObjectId(req.body.sender),
@@ -69,12 +69,12 @@ newMessage = async (req, res) => {
         })
         return res.status(200).json({ message: 'Message sent' })       
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return res.status(500).json({ message: 'Error occured while sending the message', error})
     }
 }
 
-resetUnread = async (req, res) => {
+const resetUnread = async (req, res) => {
     const roomId = req.body.roomId;
     try {
         await ConversationModel.updateOne({ _id: roomId}, {
@@ -82,7 +82,7 @@ resetUnread = async (req, res) => {
         })
         res.status(200).json({ message: 'Unread messages resetted' })
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return res.status(500).json({ message: 'Error occured while sending the message', error})
     }
 }
