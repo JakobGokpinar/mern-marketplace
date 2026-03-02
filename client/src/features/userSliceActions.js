@@ -60,26 +60,6 @@ export const sendLoginRequest = (user) => {
     }
 }
 
-export const googleLoginRequest = (credentials) => {
-    return async (dispatch) => {
-        const handleRequest = async () => {
-            instanceAxs.post('/google/auth', credentials).then(response => {
-                const responseMsg = response.data.message;
-                if(responseMsg === 'User logged in') {
-                    const user = response.data.user;
-                    dispatch(userActions.login(user))
-                    dispatch(uiSliceActions.setFeedbackBanner({severity: 'success', msg: 'Logget inn'}))
-                } else {
-                    dispatch(uiSliceActions.setFeedbackBanner({severity: 'error', msg: response.data.message}))
-                }
-            }).catch(error => {
-                console.log(error)
-            })
-        }
-        await handleRequest();
-    }
-}
-
 export const logoutRequest = () => {
     return async (dispatch) => {
         const handleRequest = async () => {

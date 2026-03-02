@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Form, Row, Col, Container, Spinner } from "react-bootstrap";
-import { GoogleLogin } from "@react-oauth/google";
 import "./Login.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -32,21 +31,6 @@ const Login = () => {
       dispatch(sendLoginRequest({ email, password }));
       setIsloading(false)
     }, 1000);
-  };
-
-  const handleGoogleAuth = (credentialResponse) => {
-    dispatch(uiSliceActions.setFeedbackBanner({
-      severity: 'info', 
-      msg: 'Google Service is currently under development. Please use your email to login'
-    }))
-  return;
-    dispatch(
-      googleLoginRequest({
-        credential: credentialResponse.credential,
-        email: "example@com",
-        password: "pass123",
-      })
-    );
   };
 
   return (
@@ -106,14 +90,6 @@ const Login = () => {
                   </a>
                 </Form.Text>
               </Form.Group>
-
-              <hr />
-              <GoogleLogin
-                onSuccess={handleGoogleAuth}
-                onFailure={handleGoogleAuth}
-                text="signin_with"
-                theme="filled_blue"
-              ></GoogleLogin>
             </Form>
           </div>
         </Col>
