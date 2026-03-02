@@ -10,16 +10,19 @@ const UserModel = require('./models/UserModel.js')
 const ObjectId = require('mongoose').Types.ObjectId
 require('dotenv').config();
 
-var authRouter = require('./auth');
-var userRouter = require('./routes/user.routes');
-var annonceRouter = require('./createAnnonce.js');
-var searchRouter = require('./search.js')
-var findProductRouter = require('./routes/product.routes');
-var searchProductRouter = require('./searchProduct.js');
-var addFavoritesRouter = require('./addfavorites.js');
-var profileSettingsRouter = require('./profileSettings.js');
-var chatRouter = require('./routes/chat.routes');
-var emailRouter = require('./routes/email.routes')
+// Initialize passport strategies (must be before routes that use passport)
+require('./config/passport');
+
+// Route imports
+const authRouter = require('./routes/auth.routes');
+const userRouter = require('./routes/user.routes');
+const annonceRouter = require('./routes/annonce.routes');
+const searchRouter = require('./routes/search.routes');
+const findProductRouter = require('./routes/product.routes');
+const favoritesRouter = require('./routes/favorites.routes');
+const profileRouter = require('./routes/profile.routes');
+const chatRouter = require('./routes/chat.routes');
+const emailRouter = require('./routes/email.routes');
 
 // Determine environment
 if (process.argv.includes('dev')) {
@@ -91,16 +94,16 @@ app.use(passport.session());
 
 // Routes
 app.get("/", (req, res) => res.send("Rego API is running"));
-app.use('/', authRouter)
-app.use('/fetchuser', userRouter)
-app.use('/newannonce', annonceRouter)
-app.use('/search', searchRouter)
-app.use('/product', findProductRouter)
-app.use('/searchproduct', searchProductRouter)
-app.use('/favorites', addFavoritesRouter);
-app.use('/profile', profileSettingsRouter);
-app.use('/chat', chatRouter);
-app.use('/email', emailRouter)
+app.use('/', authRouter);                // POST /login, /signup, DELETE /logout
+app.use('/fetchuser', userRouter);       // GET /fetchuser, /fetchuser/find, /fetchuser/find/seller
+app.use('/newannonce', annonceRouter);   // POST /newannonce/imageupload, /create, /update, /delete, /remove/annonceimages
+app.use('/search', searchRouter);        // GET /search, /search/mine, POST /search
+app.use('/searchproduct', searchRouter); // POST /searchproduct (frontend compatibility)
+app.use('/product', findProductRouter);  // GET /product?id=
+app.use('/favorites', favoritesRouter);  // POST /favorites/add, /remove, GET /favorites/get
+app.use('/profile', profileRouter);      // POST /profile/upload/picture, /update/userinfo, /delete/picture, /delete/account, GET /profile/get/picture
+app.use('/chat', chatRouter);            // POST /chat/new/room, /new/message, /get/rooms, /resetunread, GET /chat/get/room
+app.use('/email', emailRouter);          // POST /email/verify, /newverificationemail
 
 // Socket.io
 let connectedUsers = [];
@@ -162,7 +165,6 @@ app.use((err, req, res, next) => {
       message: err.message || 'Internal server error'
     });
 });
-
 
 server.listen(PORT, "0.0.0.0", () => console.log(`Server is running on port ${PORT}`));
 
