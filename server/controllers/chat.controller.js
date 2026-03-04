@@ -73,14 +73,14 @@ const newMessage = async (req, res) => {
     }
 
     // Sender is always the authenticated user — never trust req.body.sender
-    const newMessage = {
+    const message = {
         sender: req.user._id,
         msg: req.body.msg,
         sentAt: Date.now()
     };
     try {
         await ConversationModel.updateOne({ _id: roomId }, {
-            $push: { messages: newMessage },
+            $push: { messages: message },
             $inc: { unreadMessages: 1 }
         });
         return res.status(200).json({ message: 'Message sent' });

@@ -1,6 +1,6 @@
 const passport = require('passport');
-const generateUniqueId = require('generate-unique-id');
-const emailVerify = require('../config/sendEmail.js');
+const { randomUUID } = require('crypto');
+const sendVerificationEmail = require('../config/sendEmail.js');
 
 const signin = async (req, res, next) => {
     passport.authenticate('local-signin', function (err, user, info) {
@@ -21,8 +21,8 @@ const signup = async (req, res, next) => {
         if (!user) return res.json(info);
 
         try {
-            const email_verify_token = generateUniqueId();
-            await emailVerify(user.email, user.username, user._id, email_verify_token);
+            const email_verify_token = randomUUID();
+            await sendVerificationEmail(user.email, user.username, user._id, email_verify_token);
             res.status(200).json({ success: true, user, message: 'user created' });
         } catch (error) {
             return res.status(500).json({ success: false, user, message: 'user could not be created', err: error.message });

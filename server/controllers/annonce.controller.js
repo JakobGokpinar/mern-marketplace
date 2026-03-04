@@ -89,41 +89,24 @@ const removeAnnonce = async (req, res) => {
 
     const awsKey = getEnvFolder() + '/' + email + '/annonce-' + annonceId + '/';
 
-    const params = { Bucket: BUCKET_NAME, Prefix: awsKey };
-
-    s3.listObjectsV2(params, async (err, data) => {
-        if (err) {
-            console.error(err);
-            return res.json({ error: err, message: 'Error occured' });
+    try {
+        const listed = await s3.listObjectsV2({ Bucket: BUCKET_NAME, Prefix: awsKey }).promise();
+        if (listed.Contents.length > 0) {
+            const deleteParams = {
+                Bucket: BUCKET_NAME,
+                Delete: { Objects: listed.Contents.map(file => ({ Key: file.Key })) }
+            };
+            await s3.deleteObjects(deleteParams).promise();
         }
 
-        const files = data.Contents;
-        if (files.length === 0) {
-            return res.status(200).json({ message: 'File already been deleted' });
-        }
-
-        const deleteParams = {
-            Bucket: BUCKET_NAME,
-            Delete: { Objects: files.map(file => ({ Key: file.Key })) }
-        };
-
-        s3.deleteObjects(deleteParams, async (err) => {
-            if (err) {
-                console.error(err);
-                return res.json({ error: err, message: 'Error occured while deleting objects' });
-            }
-
-            try {
-                await AnnonceModel.deleteOne({ _id: new ObjectId(annonceId) });
-                await UserModel.updateMany({}, { $pull: { favorites: new ObjectId(annonceId) } });
-                await ConversationModel.deleteMany({ productId: new ObjectId(annonceId) });
-                return res.status(200).json({ message: 'Annonce deleted from database' });
-            } catch (error) {
-                console.error(error);
-                return res.json({ error, message: 'Error occured' });
-            }
-        });
-    });
+        await AnnonceModel.deleteOne({ _id: new ObjectId(annonceId) });
+        await UserModel.updateMany({}, { $pull: { favorites: new ObjectId(annonceId) } });
+        await ConversationModel.deleteMany({ productId: new ObjectId(annonceId) });
+        return res.status(200).json({ message: 'Annonce deleted from database' });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error, message: 'Error occured' });
+    }
 };
 
 // FIX: Changed status 300 → 500 (300 is "Multiple Choices" redirect, not an error code)

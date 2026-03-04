@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const { Schema, Types } = mongoose;
 
-var EmailVerifySchema = new Schema({
+const EmailVerifySchema = new Schema({
     userId: {
-        type: String,
+        type: Types.ObjectId,
         required: true
     },
     token: {
@@ -14,7 +14,7 @@ var EmailVerifySchema = new Schema({
         type: Date,
         default: Date.now
     }
-})
+});
 
 const EmailVerifyToken = mongoose.model('email', EmailVerifySchema);
 

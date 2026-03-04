@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const ObjectId = require('mongoose').Types.ObjectId;
+const mongoose = require('mongoose');
+const { ObjectId } = mongoose.Types;
 
 const AnnonceSchema = mongoose.Schema({
   _id: {

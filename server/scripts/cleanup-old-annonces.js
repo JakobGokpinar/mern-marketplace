@@ -87,7 +87,8 @@ async function run() {
 
     // 1. Delete S3 images
     if (sellerEmail) {
-      const prefix = `${sellerEmail}/annonce-${annonceId}/`;
+      // prod/ prefix matches the env folder structure added to all uploads
+      const prefix = `prod/${sellerEmail}/annonce-${annonceId}/`;
       const imageCount = await deleteS3Images(prefix);
       totalImages += imageCount;
       console.log(`  S3: ${imageCount} file(s) ${DRY_RUN ? 'would be deleted' : 'deleted'} (${prefix})`);

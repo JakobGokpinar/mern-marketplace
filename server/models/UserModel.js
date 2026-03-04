@@ -23,9 +23,10 @@ const UserSchema = new Schema({
     profilePicture: {
         type: String,
     },
-    favorites: {
-        type: Array
-    },
+    favorites: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Annonce'
+    }],
     lastActiveAt: {
         type: Date
     },

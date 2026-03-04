@@ -1,8 +1,8 @@
 const ObjectId = require('mongoose').Types.ObjectId;
 const EmailVerifyToken = require('../models/EmailVerifyToken');
 const UserModel = require('../models/UserModel');
-const emailVerify = require('../config/sendEmail');
-const generateUniqueId = require('generate-unique-id');
+const sendVerificationEmail = require('../config/sendEmail');
+const { randomUUID } = require('crypto');
 
 const verifyEmail = async (req, res) => {
     if (!req.isAuthenticated()) return res.json({ status: false, message: 'Please login for verifying' });
@@ -48,8 +48,8 @@ const sendVerificationEmail = async (req, res) => {
         const receiver_email = req.user.email;
         const receiver_username = req.user.username;
         const receiver_id = req.user._id;
-        const email_verify_token = generateUniqueId();
-        await emailVerify(receiver_email, receiver_username, receiver_id, email_verify_token);
+        const email_verify_token = randomUUID();
+        await sendVerificationEmail(receiver_email, receiver_username, receiver_id, email_verify_token);
         return res.status(200).json({ success: true, message: 'A new verification email has been sent. Please check your Input or Spam folder.' });
     } catch (error) {
         console.error(error);
