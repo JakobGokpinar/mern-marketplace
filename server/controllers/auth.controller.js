@@ -1,7 +1,6 @@
 const passport = require('passport');
 const generateUniqueId = require('generate-unique-id');
 const emailVerify = require('../config/sendEmail.js');
-const UserModel = require('../models/UserModel.js');
 
 const signin = async (req, res, next) => {
     passport.authenticate('local-signin', function (err, user, info) {
@@ -14,25 +13,17 @@ const signin = async (req, res, next) => {
     })(req, res, next);
 };
 
+// Passport strategy now creates the user with all fields in one write (passReqToCallback).
+// This controller only handles the post-creation email verification step.
 const signup = async (req, res, next) => {
     passport.authenticate('local-signup', async function (err, user, info) {
         if (err) return next(err);
         if (!user) return res.json(info);
 
-        const email = req.body.email;
-        const name = req.body.name;
-        const lastname = req.body.lastname;
-        const username = name + ' ' + lastname;
-
         try {
-            const data = await UserModel.findOneAndUpdate(
-                { email: email },
-                { name, lastname, username },
-                { new: true, useFindAndModify: false }
-            );
             const email_verify_token = generateUniqueId();
-            await emailVerify(email, username, data._id, email_verify_token);
-            res.status(200).json({ success: true, user: data, message: 'user created' });
+            await emailVerify(user.email, user.username, user._id, email_verify_token);
+            res.status(200).json({ success: true, user, message: 'user created' });
         } catch (error) {
             return res.status(500).json({ success: false, user, message: 'user could not be created', err: error.message });
         }
@@ -40,12 +31,12 @@ const signup = async (req, res, next) => {
 };
 
 const logout = (req, res) => {
-    if (req.isAuthenticated()) {
+    if (!req.isAuthenticated()) return res.json({ message: 'Not logged in' });
+    req.logout(function (err) {
+        if (err) return res.status(500).json({ message: 'Logout failed' });
         req.session.destroy();
-        res.json({ user: req.user, message: 'user logged out' });
-        return;
-    }
-    res.json();
+        res.json({ message: 'user logged out' });
+    });
 };
 
 module.exports = { signin, signup, logout };

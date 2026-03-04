@@ -20,14 +20,12 @@ passport.use('local-signin', new Strategy({ usernameField: 'email' }, async (ema
     }
 }));
 
-// Sign-up strategy
-passport.use('local-signup', new Strategy({ usernameField: 'email' }, async (email, password, done) => {
+// Sign-up strategy — passReqToCallback lets us read name/lastname from the request
+// so the user can be fully created in one DB write instead of create + update.
+passport.use('local-signup', new Strategy({ usernameField: 'email', passReqToCallback: true }, async (req, email, password, done) => {
     try {
-        const userExists = await UserModel.findOne({ 'email': email });
-        if (userExists) {
-            return done(null, false, { message: 'Denne e-postadressen er allerede registrert i systemet.' });
-        }
-        if (validator.isEmail(email) === false) {
+        // Validate format before hitting the database
+        if (!validator.isEmail(email)) {
             return done(null, false, { message: 'Vennligst oppgi en gyldig e-post' });
         }
 
@@ -41,7 +39,21 @@ passport.use('local-signup', new Strategy({ usernameField: 'email' }, async (ema
             return done(null, false, { message: 'Password must contain at least one letter and one digit, and be between 6 and 32 characters' });
         }
 
-        const user = await UserModel.create({ email, password, isEmailVerified: process.env.NODE_ENV === 'development' });
+        const userExists = await UserModel.findOne({ email });
+        if (userExists) {
+            return done(null, false, { message: 'Denne e-postadressen er allerede registrert i systemet.' });
+        }
+
+        const { name, lastname } = req.body;
+        const username = name + ' ' + lastname;
+        const user = await UserModel.create({
+            email,
+            password,
+            name,
+            lastname,
+            username,
+            isEmailVerified: process.env.NODE_ENV === 'development'
+        });
         return done(null, user, { message: 'user created' });
     } catch (err) {
         console.error(err);

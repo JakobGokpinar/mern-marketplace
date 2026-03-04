@@ -32,7 +32,8 @@ const uploadImageToMulter = (bucketName) => multer({
             cb(null, { fieldName: file.fieldname });
         },
         key: function (req, file, cb) {
-            cb(null, file.originalname);
+            // Always store as profilePicture.jpeg so get/delete always target the same key
+            cb(null, 'profilePicture.jpeg');
         },
     }),
     fileFilter: checkFileType
@@ -63,7 +64,7 @@ const removeProfileImage = async (req, res) => {
     const userId = req.user._id;
     const user = req.user.email;
     const bucket = BUCKET_NAME + '/' + getEnvFolder() + '/' + user;
-    const params = { Bucket: bucket, Key: 'profilePicture.jpg' };
+    const params = { Bucket: bucket, Key: 'profilePicture.jpeg' };
 
     try {
         await s3.deleteObject(params).promise();
@@ -161,7 +162,7 @@ const deleteAccount = async (req, res) => {
         // Delete profile picture from S3
         try {
             const profileBucket = BUCKET_NAME + '/' + getEnvFolder() + '/' + email;
-            await s3.deleteObject({ Bucket: profileBucket, Key: 'profilePicture.jpg' }).promise();
+            await s3.deleteObject({ Bucket: profileBucket, Key: 'profilePicture.jpeg' }).promise();
         } catch (err) {
             // Continue even if no profile picture exists
         }

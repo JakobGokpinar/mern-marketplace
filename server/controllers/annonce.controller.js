@@ -33,7 +33,8 @@ const uploadImagesToMulter = (bucketName) => multer({
             cb(null, { fieldName: file.fieldname });
         },
         key: function (req, file, cb) {
-            cb(null, file.originalname);
+            // Prefix with random bytes to prevent same-name files overwriting each other
+            cb(null, crypto.randomBytes(8).toString('hex') + '-' + file.originalname);
         },
     }),
     fileFilter: checkFileType
@@ -74,10 +75,18 @@ const saveAnnonceToDatabase = (req, res) => {
 };
 
 const removeAnnonce = async (req, res) => {
-    if (!req.isAuthenticated()) return;
+    if (!req.isAuthenticated()) return res.status(401).json({ message: 'Not authenticated' });
 
     const email = req.user.email;
     const annonceId = req.body.annonceid;
+
+    // Verify ownership before deleting
+    const annonce = await AnnonceModel.findById(new ObjectId(annonceId));
+    if (!annonce) return res.status(404).json({ message: 'Annonce not found' });
+    if (annonce.sellerId.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ message: 'Forbidden' });
+    }
+
     const awsKey = getEnvFolder() + '/' + email + '/annonce-' + annonceId + '/';
 
     const params = { Bucket: BUCKET_NAME, Prefix: awsKey };
@@ -143,7 +152,7 @@ const removeAnnonceImagesFromAWS = async (req, res) => {
 
 // FIX: Changed status 300 → 500
 const updateAnnonce = async (req, res) => {
-    if (!req.isAuthenticated()) return;
+    if (!req.isAuthenticated()) return res.status(401).json({ message: 'Not authenticated' });
 
     const userId = req.user.id;
     const annonceId = req.body.annonceId;
@@ -151,6 +160,13 @@ const updateAnnonce = async (req, res) => {
     const annonceProperties = req.body.annonceproperties;
 
     try {
+        // Verify ownership before updating
+        const existing = await AnnonceModel.findById(new ObjectId(annonceId));
+        if (!existing) return res.status(404).json({ message: 'Annonce not found' });
+        if (existing.sellerId.toString() !== userId.toString()) {
+            return res.status(403).json({ message: 'Forbidden' });
+        }
+
         const newAnnonce = AnnonceModel(annonceProperties);
         newAnnonce._id = new ObjectId(annonceId);
         newAnnonce.annonceImages = annonceImages;

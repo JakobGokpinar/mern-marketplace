@@ -3,6 +3,13 @@ const ObjectId = mongoose.Types.ObjectId;
 const ConversationModel = require('../models/ConversationModel');
 
 const createRoom = async (req, res) => {
+    if (!req.isAuthenticated()) return res.status(401).json({ message: 'Not authenticated' });
+
+    // Buyer must be the authenticated user — prevent creating rooms on behalf of others
+    if (req.body.buyer !== req.user.id) {
+        return res.status(403).json({ message: 'Forbidden' });
+    }
+
     let conversation = ConversationModel({
         seller: new ObjectId(req.body.seller),
         buyer: new ObjectId(req.body.buyer),
@@ -17,12 +24,15 @@ const createRoom = async (req, res) => {
 }
 
 const getRooms = async (req, res) => {
-    const user = req.body.user;
+    if (!req.isAuthenticated()) return res.status(401).json({ message: 'Not authenticated' });
+
+    // Use authenticated user's ID — never trust the client to send the right user ID
+    const userId = req.user._id;
     try {
         const response = await ConversationModel.find({
             $or: [
-                { buyer: new ObjectId(user) },
-                { seller: new ObjectId(user) }
+                { buyer: new ObjectId(userId) },
+                { seller: new ObjectId(userId) }
             ]
         });
         return res.status(200).json(response);
@@ -32,6 +42,8 @@ const getRooms = async (req, res) => {
 }
 
 const getRoomByCredentials = async (req, res) => {
+    if (!req.isAuthenticated()) return res.status(401).json({ message: 'Not authenticated' });
+
     let buyer = req.query.buyer;
     let seller = req.query.seller;
     let productId = req.query.productId;
@@ -48,9 +60,21 @@ const getRoomByCredentials = async (req, res) => {
 }
 
 const newMessage = async (req, res) => {
+    if (!req.isAuthenticated()) return res.status(401).json({ message: 'Not authenticated' });
+
     const roomId = new ObjectId(req.body.roomId);
+
+    // Verify caller is a member of this room before allowing them to post
+    const room = await ConversationModel.findById(roomId);
+    if (!room) return res.status(404).json({ message: 'Room not found' });
+    const userId = req.user._id.toString();
+    if (room.buyer.toString() !== userId && room.seller.toString() !== userId) {
+        return res.status(403).json({ message: 'Forbidden' });
+    }
+
+    // Sender is always the authenticated user — never trust req.body.sender
     const newMessage = {
-        sender: new ObjectId(req.body.sender),
+        sender: req.user._id,
         msg: req.body.msg,
         sentAt: Date.now()
     };
@@ -66,7 +90,18 @@ const newMessage = async (req, res) => {
 }
 
 const resetUnread = async (req, res) => {
+    if (!req.isAuthenticated()) return res.status(401).json({ message: 'Not authenticated' });
+
     const roomId = req.body.roomId;
+
+    // Verify caller is a member of this room
+    const room = await ConversationModel.findById(roomId);
+    if (!room) return res.status(404).json({ message: 'Room not found' });
+    const userId = req.user._id.toString();
+    if (room.buyer.toString() !== userId && room.seller.toString() !== userId) {
+        return res.status(403).json({ message: 'Forbidden' });
+    }
+
     try {
         await ConversationModel.updateOne({ _id: roomId }, {
             $set: { unreadMessages: 0 }

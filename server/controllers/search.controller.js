@@ -48,8 +48,11 @@ const getUserAnnonces = async (req, res) => {
 };
 
 // --- Search/filter helpers ---
+function escapeRegex(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 function getTitle(value) {
-    return { title: { $regex: value, $options: 'i' } };
+    return { title: { $regex: escapeRegex(value), $options: 'i' } };
 }
 function getLocation(kommuneArr) {
     if (!kommuneArr) return;
