@@ -1,4 +1,4 @@
-const AWS = require('aws-sdk');
+const { S3Client, ListObjectsV2Command, DeleteObjectsCommand } = require('@aws-sdk/client-s3');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 const crypto = require('crypto');
@@ -11,9 +11,11 @@ const ConversationModel = require('../models/ConversationModel.js');
 const BUCKET_NAME = process.env.AWS_BUCKET_NAME;
 const getEnvFolder = () => process.env.NODE_ENV === 'production' ? 'prod' : 'dev';
 
-const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+const s3 = new S3Client({
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    },
     region: process.env.AWS_BUCKET_REGION,
 });
 
@@ -25,28 +27,29 @@ const checkFileType = (req, file, cb) => {
     }
 };
 
-const uploadImagesToMulter = (bucketName) => multer({
+// keyPrefix is the S3 folder path — bucket name is always kept separate (v3 requirement)
+const uploadImagesToMulter = (keyPrefix) => multer({
     storage: multerS3({
-        s3: s3,
-        bucket: bucketName,
+        s3,
+        bucket: BUCKET_NAME,
         metadata: function (req, file, cb) {
             cb(null, { fieldName: file.fieldname });
         },
         key: function (req, file, cb) {
             // Prefix with random bytes to prevent same-name files overwriting each other
-            cb(null, crypto.randomBytes(8).toString('hex') + '-' + file.originalname);
+            cb(null, keyPrefix + '/' + crypto.randomBytes(8).toString('hex') + '-' + file.originalname);
         },
     }),
     fileFilter: checkFileType
 }).array('annonceImages', 10);
 
 const uploadImagesToAws = (req, res) => {
-    if (!req.isAuthenticated()) return res.json({ message: 'You have to login to upload files' });
+    if (!req.isAuthenticated()) return res.status(401).json({ message: 'You have to login to upload files' });
     const user = req.user.email;
 
     let annonceId = req.query.annonceid || crypto.randomBytes(12).toString('hex');
-    const fileLocation = getEnvFolder() + '/' + user + '/annonce-' + annonceId;
-    const uploadImages = uploadImagesToMulter(`${BUCKET_NAME}/${fileLocation}`);
+    const keyPrefix = getEnvFolder() + '/' + user + '/annonce-' + annonceId;
+    const uploadImages = uploadImagesToMulter(keyPrefix);
 
     uploadImages(req, res, err => {
         if (err) {
@@ -57,7 +60,7 @@ const uploadImagesToAws = (req, res) => {
 };
 
 const saveAnnonceToDatabase = (req, res) => {
-    if (!req.isAuthenticated()) return res.send('user not logged in');
+    if (!req.isAuthenticated()) return res.status(401).json({ message: 'Not authenticated' });
 
     const user = req.user;
     const annonceProps = req.body.annonceproperties;
@@ -87,16 +90,15 @@ const removeAnnonce = async (req, res) => {
         return res.status(403).json({ message: 'Forbidden' });
     }
 
-    const awsKey = getEnvFolder() + '/' + email + '/annonce-' + annonceId + '/';
+    const awsPrefix = getEnvFolder() + '/' + email + '/annonce-' + annonceId + '/';
 
     try {
-        const listed = await s3.listObjectsV2({ Bucket: BUCKET_NAME, Prefix: awsKey }).promise();
+        const listed = await s3.send(new ListObjectsV2Command({ Bucket: BUCKET_NAME, Prefix: awsPrefix }));
         if (listed.Contents.length > 0) {
-            const deleteParams = {
+            await s3.send(new DeleteObjectsCommand({
                 Bucket: BUCKET_NAME,
                 Delete: { Objects: listed.Contents.map(file => ({ Key: file.Key })) }
-            };
-            await s3.deleteObjects(deleteParams).promise();
+            }));
         }
 
         await AnnonceModel.deleteOne({ _id: new ObjectId(annonceId) });
@@ -109,7 +111,6 @@ const removeAnnonce = async (req, res) => {
     }
 };
 
-// FIX: Changed status 300 → 500 (300 is "Multiple Choices" redirect, not an error code)
 const removeAnnonceImagesFromAWS = async (req, res) => {
     if (!req.isAuthenticated()) return res.status(401).json({ message: 'Not authenticated' });
 
@@ -118,14 +119,13 @@ const removeAnnonceImagesFromAWS = async (req, res) => {
         const annonceId = req.body.annonceId;
         const awsPrefix = getEnvFolder() + '/' + userEmail + '/annonce-' + annonceId + '/';
 
-        const response = await s3.listObjectsV2({ Bucket: BUCKET_NAME, Prefix: awsPrefix }).promise();
-        const bucketFiles = response.Contents;
-        const deleteParams = {
-            Bucket: BUCKET_NAME,
-            Delete: { Objects: bucketFiles.map(file => ({ Key: file.Key })) }
-        };
-
-        await s3.deleteObjects(deleteParams).promise();
+        const listed = await s3.send(new ListObjectsV2Command({ Bucket: BUCKET_NAME, Prefix: awsPrefix }));
+        if (listed.Contents.length > 0) {
+            await s3.send(new DeleteObjectsCommand({
+                Bucket: BUCKET_NAME,
+                Delete: { Objects: listed.Contents.map(file => ({ Key: file.Key })) }
+            }));
+        }
         return res.status(200).json({ message: 'annonce images deleted successfully' });
     } catch (error) {
         console.error(error);
@@ -133,7 +133,6 @@ const removeAnnonceImagesFromAWS = async (req, res) => {
     }
 };
 
-// FIX: Changed status 300 → 500
 const updateAnnonce = async (req, res) => {
     if (!req.isAuthenticated()) return res.status(401).json({ message: 'Not authenticated' });
 

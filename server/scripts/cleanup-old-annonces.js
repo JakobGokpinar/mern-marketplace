@@ -6,7 +6,7 @@
  *   node server/scripts/cleanup-old-annonces.js --execute # actually deletes
  */
 
-const AWS = require('aws-sdk');
+const { S3Client, ListObjectsV2Command, DeleteObjectsCommand } = require('@aws-sdk/client-s3');
 const mongoose = require('mongoose');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
@@ -18,10 +18,11 @@ const AnnonceModel = require('../models/AnnonceModel.js');
 const UserModel = require('../models/UserModel.js');
 const ConversationModel = require('../models/ConversationModel.js');
 
-// S3 config (same as createAnnonce.js)
-const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+const s3 = new S3Client({
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
   region: process.env.AWS_BUCKET_REGION,
 });
 const BUCKET_NAME = process.env.AWS_BUCKET_NAME;
@@ -30,17 +31,15 @@ const CUTOFF_DATE = new Date('2026-01-01');
 const DRY_RUN = !process.argv.includes('--execute');
 
 async function deleteS3Images(prefix) {
-  const listed = await s3.listObjectsV2({ Bucket: BUCKET_NAME, Prefix: prefix }).promise();
+  const listed = await s3.send(new ListObjectsV2Command({ Bucket: BUCKET_NAME, Prefix: prefix }));
   const files = listed.Contents || [];
   if (files.length === 0) return 0;
 
-  const deleteParams = {
-    Bucket: BUCKET_NAME,
-    Delete: { Objects: files.map(f => ({ Key: f.Key })) },
-  };
-
   if (!DRY_RUN) {
-    await s3.deleteObjects(deleteParams).promise();
+    await s3.send(new DeleteObjectsCommand({
+      Bucket: BUCKET_NAME,
+      Delete: { Objects: files.map(f => ({ Key: f.Key })) },
+    }));
   }
   return files.length;
 }

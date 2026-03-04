@@ -1,4 +1,4 @@
-const AWS = require('aws-sdk');
+const { S3Client, GetObjectCommand, DeleteObjectCommand, ListObjectsV2Command, DeleteObjectsCommand } = require('@aws-sdk/client-s3');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 const ObjectId = require('mongoose').Types.ObjectId;
@@ -10,11 +10,22 @@ const ConversationModel = require('../models/ConversationModel.js');
 const BUCKET_NAME = process.env.AWS_BUCKET_NAME;
 const getEnvFolder = () => process.env.NODE_ENV === 'production' ? 'prod' : 'dev';
 
-const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+const s3 = new S3Client({
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    },
     region: process.env.AWS_BUCKET_REGION,
 });
+
+// Converts an S3 v3 response Body stream to a Buffer
+const streamToBuffer = async (stream) => {
+    const chunks = [];
+    for await (const chunk of stream) {
+        chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+    }
+    return Buffer.concat(chunks);
+};
 
 const checkFileType = (req, file, cb) => {
     if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg' || file.mimetype === 'image/png') {
@@ -24,25 +35,26 @@ const checkFileType = (req, file, cb) => {
     }
 };
 
-const uploadImageToMulter = (bucketName) => multer({
+// keyPrefix is the S3 folder path — bucket name is always kept separate (v3 requirement)
+const uploadImageToMulter = (keyPrefix) => multer({
     storage: multerS3({
-        s3: s3,
-        bucket: bucketName,
+        s3,
+        bucket: BUCKET_NAME,
         metadata: function (req, file, cb) {
             cb(null, { fieldName: file.fieldname });
         },
         key: function (req, file, cb) {
             // Always store as profilePicture.jpeg so get/delete always target the same key
-            cb(null, 'profilePicture.jpeg');
+            cb(null, keyPrefix + '/profilePicture.jpeg');
         },
     }),
     fileFilter: checkFileType
 }).single('profileImage');
 
 const uploadImageToAws = (req, res) => {
-    const fileLocation = getEnvFolder() + '/' + req.user.email;
+    const keyPrefix = getEnvFolder() + '/' + req.user.email;
     const userId = req.user._id;
-    const uploadImages = uploadImageToMulter(`${BUCKET_NAME}/${fileLocation}`);
+    const uploadImages = uploadImageToMulter(keyPrefix);
 
     uploadImages(req, res, err => {
         if (err) {
@@ -62,12 +74,10 @@ const uploadImageToAws = (req, res) => {
 
 const removeProfileImage = async (req, res) => {
     const userId = req.user._id;
-    const user = req.user.email;
-    const bucket = BUCKET_NAME + '/' + getEnvFolder() + '/' + user;
-    const params = { Bucket: bucket, Key: 'profilePicture.jpeg' };
+    const imageKey = getEnvFolder() + '/' + req.user.email + '/profilePicture.jpeg';
 
     try {
-        await s3.deleteObject(params).promise();
+        await s3.send(new DeleteObjectCommand({ Bucket: BUCKET_NAME, Key: imageKey }));
     } catch (err) {
         console.error(err);
     }
@@ -99,27 +109,25 @@ const updateUserInfo = async (req, res) => {
     }
 };
 
-// FIX: Original checked isProfileImageFound synchronously after async s3.getObject callback.
-// The flag was always false when checked, so both requests fired → "headers already sent" crash.
-// Now uses promise-based flow with proper fallback chain.
 const getProfileImage = async (req, res) => {
-    const user = req.user.email;
-    const imageKey = getEnvFolder() + '/' + user + '/profilePicture.jpeg';
+    const imageKey = getEnvFolder() + '/' + req.user.email + '/profilePicture.jpeg';
 
     try {
-        const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: imageKey }).promise();
+        const data = await s3.send(new GetObjectCommand({ Bucket: BUCKET_NAME, Key: imageKey }));
+        const buffer = await streamToBuffer(data.Body);
         res.writeHead(200, { 'Content-Type': 'image/jpeg' });
-        res.write(data.Body, 'binary');
+        res.write(buffer, 'binary');
         res.end(null, 'binary');
     } catch (err) {
         // Profile image not found, try fallback
         try {
-            const fallbackData = await s3.getObject({
+            const fallbackData = await s3.send(new GetObjectCommand({
                 Bucket: BUCKET_NAME,
-                Key: getEnvFolder() + '/' + user + '/defaultProfileImage.png'
-            }).promise();
+                Key: getEnvFolder() + '/' + req.user.email + '/defaultProfileImage.png'
+            }));
+            const buffer = await streamToBuffer(fallbackData.Body);
             res.writeHead(200, { 'Content-Type': 'image/png' });
-            res.write(fallbackData.Body, 'binary');
+            res.write(buffer, 'binary');
             res.end(null, 'binary');
         } catch (fallbackErr) {
             return res.status(404).json({ message: 'No profile image found' });
@@ -139,13 +147,12 @@ const deleteAccount = async (req, res) => {
         for (const annonce of userAnnonces) {
             const awsPrefix = getEnvFolder() + '/' + email + '/annonce-' + annonce._id + '/';
             try {
-                const listed = await s3.listObjectsV2({ Bucket: BUCKET_NAME, Prefix: awsPrefix }).promise();
+                const listed = await s3.send(new ListObjectsV2Command({ Bucket: BUCKET_NAME, Prefix: awsPrefix }));
                 if (listed.Contents.length > 0) {
-                    const deleteParams = {
+                    await s3.send(new DeleteObjectsCommand({
                         Bucket: BUCKET_NAME,
                         Delete: { Objects: listed.Contents.map(f => ({ Key: f.Key })) }
-                    };
-                    await s3.deleteObjects(deleteParams).promise();
+                    }));
                 }
             } catch (err) {
                 // Continue even if S3 cleanup fails for one annonce
@@ -161,8 +168,8 @@ const deleteAccount = async (req, res) => {
 
         // Delete profile picture from S3
         try {
-            const profileBucket = BUCKET_NAME + '/' + getEnvFolder() + '/' + email;
-            await s3.deleteObject({ Bucket: profileBucket, Key: 'profilePicture.jpeg' }).promise();
+            const profileKey = getEnvFolder() + '/' + email + '/profilePicture.jpeg';
+            await s3.send(new DeleteObjectCommand({ Bucket: BUCKET_NAME, Key: profileKey }));
         } catch (err) {
             // Continue even if no profile picture exists
         }
