@@ -9,6 +9,7 @@ const UserModel = require('../models/UserModel.js');
 const ConversationModel = require('../models/ConversationModel.js');
 
 const BUCKET_NAME = process.env.AWS_BUCKET_NAME;
+const getEnvFolder = () => process.env.NODE_ENV === 'production' ? 'prod' : 'dev';
 
 const s3 = new AWS.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY,
@@ -43,7 +44,7 @@ const uploadImagesToAws = (req, res) => {
     const user = req.user.email;
 
     let annonceId = req.query.annonceid || crypto.randomBytes(12).toString('hex');
-    const fileLocation = user + '/annonce-' + annonceId;
+    const fileLocation = getEnvFolder() + '/' + user + '/annonce-' + annonceId;
     const uploadImages = uploadImagesToMulter(`${BUCKET_NAME}/${fileLocation}`);
 
     uploadImages(req, res, err => {
@@ -77,7 +78,7 @@ const removeAnnonce = async (req, res) => {
 
     const email = req.user.email;
     const annonceId = req.body.annonceid;
-    const awsKey = email + '/annonce-' + annonceId + '/';
+    const awsKey = getEnvFolder() + '/' + email + '/annonce-' + annonceId + '/';
 
     const params = { Bucket: BUCKET_NAME, Prefix: awsKey };
 
@@ -123,7 +124,7 @@ const removeAnnonceImagesFromAWS = async (req, res) => {
     try {
         const userEmail = req.user.email;
         const annonceId = req.body.annonceId;
-        const awsPrefix = userEmail + '/annonce-' + annonceId + '/';
+        const awsPrefix = getEnvFolder() + '/' + userEmail + '/annonce-' + annonceId + '/';
 
         const response = await s3.listObjectsV2({ Bucket: BUCKET_NAME, Prefix: awsPrefix }).promise();
         const bucketFiles = response.Contents;

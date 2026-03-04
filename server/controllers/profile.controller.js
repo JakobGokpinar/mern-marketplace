@@ -8,6 +8,7 @@ const AnnonceModel = require('../models/AnnonceModel.js');
 const ConversationModel = require('../models/ConversationModel.js');
 
 const BUCKET_NAME = process.env.AWS_BUCKET_NAME;
+const getEnvFolder = () => process.env.NODE_ENV === 'production' ? 'prod' : 'dev';
 
 const s3 = new AWS.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY,
@@ -38,7 +39,7 @@ const uploadImageToMulter = (bucketName) => multer({
 }).single('profileImage');
 
 const uploadImageToAws = (req, res) => {
-    const fileLocation = req.user.email;
+    const fileLocation = getEnvFolder() + '/' + req.user.email;
     const userId = req.user._id;
     const uploadImages = uploadImageToMulter(`${BUCKET_NAME}/${fileLocation}`);
 
@@ -61,7 +62,7 @@ const uploadImageToAws = (req, res) => {
 const removeProfileImage = async (req, res) => {
     const userId = req.user._id;
     const user = req.user.email;
-    const bucket = BUCKET_NAME + '/' + user;
+    const bucket = BUCKET_NAME + '/' + getEnvFolder() + '/' + user;
     const params = { Bucket: bucket, Key: 'profilePicture.jpg' };
 
     try {
@@ -102,7 +103,7 @@ const updateUserInfo = async (req, res) => {
 // Now uses promise-based flow with proper fallback chain.
 const getProfileImage = async (req, res) => {
     const user = req.user.email;
-    const imageKey = user + '/profilePicture.jpeg';
+    const imageKey = getEnvFolder() + '/' + user + '/profilePicture.jpeg';
 
     try {
         const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: imageKey }).promise();
@@ -114,7 +115,7 @@ const getProfileImage = async (req, res) => {
         try {
             const fallbackData = await s3.getObject({
                 Bucket: BUCKET_NAME,
-                Key: user + '/defaultProfileImage.png'
+                Key: getEnvFolder() + '/' + user + '/defaultProfileImage.png'
             }).promise();
             res.writeHead(200, { 'Content-Type': 'image/png' });
             res.write(fallbackData.Body, 'binary');
@@ -135,7 +136,7 @@ const deleteAccount = async (req, res) => {
 
         // Delete S3 images for each annonce
         for (const annonce of userAnnonces) {
-            const awsPrefix = email + '/annonce-' + annonce._id + '/';
+            const awsPrefix = getEnvFolder() + '/' + email + '/annonce-' + annonce._id + '/';
             try {
                 const listed = await s3.listObjectsV2({ Bucket: BUCKET_NAME, Prefix: awsPrefix }).promise();
                 if (listed.Contents.length > 0) {
@@ -159,7 +160,7 @@ const deleteAccount = async (req, res) => {
 
         // Delete profile picture from S3
         try {
-            const profileBucket = BUCKET_NAME + '/' + email;
+            const profileBucket = BUCKET_NAME + '/' + getEnvFolder() + '/' + email;
             await s3.deleteObject({ Bucket: profileBucket, Key: 'profilePicture.jpg' }).promise();
         } catch (err) {
             // Continue even if no profile picture exists
