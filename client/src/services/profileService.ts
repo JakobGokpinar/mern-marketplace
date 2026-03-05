@@ -25,7 +25,7 @@ export const deleteAccountApi = async (): Promise<void> => {
   await instanceAxs.post('/profile/delete/account');
 };
 
-export const removeAnnonceApi = async (annonceId: string): Promise<{ message: string }> => {
-  const res = await instanceAxs.post<{ message: string }>('/newannonce/delete', { annonceid: annonceId });
+export const removeListingApi = async (listingId: string): Promise<{ message: string }> => {
+  const res = await instanceAxs.post<{ message: string }>('/listing/delete', { listingId });
   return res.data;
 };

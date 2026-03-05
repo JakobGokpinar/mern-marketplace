@@ -1,17 +1,17 @@
-const { z } = require('zod');
+import { z } from 'zod';
 
 const objectId = z.string().regex(/^[a-f\d]{24}$/i, 'Invalid ID');
 
-const findProductQuery = z.object({
+export const findProductQuery = z.object({
   id: objectId,
 });
 
-const uploadImagesQuery = z.object({
-  annonceid: objectId.optional(),
+export const uploadImagesQuery = z.object({
+  listingId: objectId.optional(),
 });
 
-const saveAnnonce = z.object({
-  annonceproperties: z.object({
+export const saveListing = z.object({
+  listingProperties: z.object({
     title: z.string().min(1).max(200),
     price: z.number().min(0),
     pricePeriod: z.string().optional(),
@@ -25,22 +25,22 @@ const saveAnnonce = z.object({
     location: z.string().optional(),
     postnumber: z.string().optional(),
   }),
-  imagelocations: z.array(z.any()),
-  annonceid: objectId,
+  imageLocations: z.array(z.any()),
+  listingId: objectId,
 });
 
-const removeAnnonce = z.object({
-  annonceid: objectId,
+export const removeListing = z.object({
+  listingId: objectId,
 });
 
-const removeImages = z.object({
-  annonceId: objectId,
+export const removeImages = z.object({
+  listingId: objectId,
 });
 
-const updateAnnonce = z.object({
-  annonceId: objectId,
-  annonceImages: z.array(z.any()),
-  annonceproperties: z.object({
+export const updateListing = z.object({
+  listingId: objectId,
+  images: z.array(z.any()),
+  listingProperties: z.object({
     title: z.string().min(1).max(200),
     price: z.number().min(0),
     pricePeriod: z.string().optional(),
@@ -55,5 +55,3 @@ const updateAnnonce = z.object({
     postnumber: z.string().optional(),
   }),
 });
-
-module.exports = { findProductQuery, uploadImagesQuery, saveAnnonce, removeAnnonce, removeImages, updateAnnonce };

@@ -1,14 +1,14 @@
 import express from 'express';
 import request from 'supertest';
-import ensureAuth from '../middleware/ensureAuth.js';
+import ensureAuth from '../middleware/ensureAuth';
 
-function createApp(isAuthenticated) {
+function createApp(isAuthenticated: boolean) {
   const app = express();
-  app.use((req, res, next) => {
+  app.use((req: any, _res, next) => {
     req.isAuthenticated = () => isAuthenticated;
     next();
   });
-  app.get('/protected', ensureAuth, (req, res) => res.json({ ok: true }));
+  app.get('/protected', ensureAuth, (_req, res) => res.json({ ok: true }));
   return app;
 }
 

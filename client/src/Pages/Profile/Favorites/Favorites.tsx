@@ -27,7 +27,7 @@ const Favorites = () => {
           {favoritesArray.length > 0 ? favoritesArray.map(product => (
             <div className={styles['favorites-product']} key={product._id || product.title}>
               <ProductCard
-                images={product.annonceImages}
+                images={product.images}
                 title={product.title}
                 price={product.price}
                 id={product._id}

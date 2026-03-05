@@ -29,7 +29,7 @@ interface ProductPageData {
 }
 
 function ProductPage() {
-  const { annonceId } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
   const siteLink = import.meta.env.VITE_SITE_URL || window.location.origin;
 
@@ -38,37 +38,37 @@ function ProductPage() {
   const { toggleFavorite, isLoading: isFavLoading } = useFavorites();
 
   const { data, isPending } = useQuery<ProductPageData>({
-    queryKey: queryKeys.products.detail(annonceId ?? ''),
+    queryKey: queryKeys.products.detail(id ?? ''),
     queryFn: async () => {
-      const res = await instanceAxs.get(`/product?id=${annonceId}`);
+      const res = await instanceAxs.get(`/listing?id=${id}`);
       return res.data as ProductPageData;
     },
-    enabled: !!annonceId,
+    enabled: !!id,
   });
 
-  const annonce = data?.product;
+  const listing = data?.product;
   const seller = data?.seller;
 
   const sendMessage = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    if (user?._id === seller?._id || !user || !seller || !annonce) return;
+    if (user?._id === seller?._id || !user || !seller || !listing) return;
     navigate('/chat', {
       state: {
         buyer: user._id,
         seller: seller._id,
-        product_id: annonce._id,
+        product_id: listing._id,
       },
     });
   };
 
-  const copyAnnonceLink = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const copyListingLink = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    navigator.clipboard.writeText(`${siteLink}/produkt/${annonceId}`);
+    navigator.clipboard.writeText(`${siteLink}/listing/${id}`);
     toast.success('Lenken ble kopiert');
     setShowShareModal(false);
   };
 
-  if (isPending || !annonce) {
+  if (isPending || !listing) {
     return (
       <div className={styles['pp__empty']}>
         <Spinner animation="border" variant="secondary" />
@@ -80,17 +80,17 @@ function ProductPage() {
     <Container className={styles['pp']}>
       <Breadcrumb className={styles['pp__breadcrumb']}>
         <Breadcrumb.Item href="/">Hjem</Breadcrumb.Item>
-        <Breadcrumb.Item href={`/search?category=${annonce.category}`}>{annonce.category}</Breadcrumb.Item>
-        <Breadcrumb.Item active>{annonce.subCategory}</Breadcrumb.Item>
+        <Breadcrumb.Item href={`/search?category=${listing.category}`}>{listing.category}</Breadcrumb.Item>
+        <Breadcrumb.Item active>{listing.subCategory}</Breadcrumb.Item>
       </Breadcrumb>
 
       <Row className={styles['pp__row']}>
         <Col lg={8} className={styles['pp__main']}>
           <div className={styles['pp__carousel-wrapper']}>
             <Carousel variant="dark" className={styles['pp__carousel']}>
-              {(annonce.annonceImages || []).map((item) => (
+              {(listing.images || []).map((item) => (
                 <Carousel.Item key={item.location}>
-                  <img src={item.location} alt={annonce.title} className={styles['pp__carousel-img']} />
+                  <img src={item.location} alt={listing.title} className={styles['pp__carousel-img']} />
                   {item.description && (
                     <Carousel.Caption className={styles['pp__carousel-caption']}>
                       <span>{item.description}</span>
@@ -100,21 +100,21 @@ function ProductPage() {
               ))}
             </Carousel>
             <div className={styles['pp__img-count']}>
-              <i className="fa-regular fa-image" /> {annonce.annonceImages?.length || 0}
+              <i className="fa-regular fa-image" /> {listing.images?.length || 0}
             </div>
           </div>
 
           <div className={styles['pp__price-bar']}>
             <div className={styles['pp__price']}>
-              {formatPrice(annonce.price)}
-              {annonce.pricePeriod && <span className={styles['pp__price-period']}>{annonce.pricePeriod}</span>}
+              {formatPrice(listing.price)}
+              {listing.pricePeriod && <span className={styles['pp__price-period']}>{listing.pricePeriod}</span>}
             </div>
             <div className={styles['pp__actions']}>
               {user?._id !== seller?._id && (
-                annonce.isFavorite ? (
+                listing.isFavorite ? (
                   <button
                     className={`${styles['pp__action-btn']} ${styles['pp__action-btn--fav-active']}`}
-                    onClick={() => annonceId && toggleFavorite(annonceId, true)}
+                    onClick={() => id && toggleFavorite(id, true)}
                     disabled={isFavLoading}
                   >
                     {isFavLoading ? <Spinner size="sm" /> : <><i className="fa-solid fa-heart" /> Favoritt</>}
@@ -122,7 +122,7 @@ function ProductPage() {
                 ) : (
                   <button
                     className={styles['pp__action-btn']}
-                    onClick={() => annonceId && toggleFavorite(annonceId, false)}
+                    onClick={() => id && toggleFavorite(id, false)}
                     disabled={isFavLoading}
                   >
                     {isFavLoading ? <Spinner size="sm" /> : <><i className="fa-regular fa-heart" /> Favoritt</>}
@@ -135,23 +135,23 @@ function ProductPage() {
             </div>
           </div>
 
-          <h1 className={styles['pp__title']}>{annonce.title}</h1>
+          <h1 className={styles['pp__title']}>{listing.title}</h1>
 
           <div className={styles['pp__section']}>
             <h3 className={styles['pp__section-title']}>Beskrivelse</h3>
-            <textarea className={styles['pp__description']} value={annonce.description} disabled readOnly />
+            <textarea className={styles['pp__description']} value={listing.description} disabled readOnly />
           </div>
 
           <div className={styles['pp__section']}>
             <h3 className={styles['pp__section-title']}>N&oslash;kkelinfo</h3>
             <div className={styles['pp__info-grid']}>
-              {annonce.status && (
+              {listing.status && (
                 <div className={styles['pp__info-card']}>
                   <span className={styles['pp__info-label']}>Status</span>
-                  <span className={styles['pp__info-value']}>{annonce.status}</span>
+                  <span className={styles['pp__info-value']}>{listing.status}</span>
                 </div>
               )}
-              {(annonce.specialProperties || []).map((item) => (
+              {(listing.specialProperties || []).map((item) => (
                 <div key={item.title} className={styles['pp__info-card']}>
                   <span className={styles['pp__info-label']}>{item.title}</span>
                   <span className={styles['pp__info-value']}>{item.value}</span>
@@ -165,8 +165,8 @@ function ProductPage() {
             <div className={styles['pp__address']}>
               <i className="fa-solid fa-location-dot" />
               <div>
-                <p>{annonce.postnumber}</p>
-                <p>{annonce.location}</p>
+                <p>{listing.postnumber}</p>
+                <p>{listing.location}</p>
               </div>
             </div>
           </div>
@@ -204,8 +204,8 @@ function ProductPage() {
           <Modal.Title>Del annonsen</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form.Control type="text" className="mb-3" value={`${siteLink}/produkt/${annonceId}`} readOnly />
-          <Button variant="primary" onClick={copyAnnonceLink}>Kopier Lenken</Button>
+          <Form.Control type="text" className="mb-3" value={`${siteLink}/listing/${id}`} readOnly />
+          <Button variant="primary" onClick={copyListingLink}>Kopier Lenken</Button>
         </Modal.Body>
       </Modal>
     </Container>

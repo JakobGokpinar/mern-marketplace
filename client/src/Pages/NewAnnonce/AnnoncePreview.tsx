@@ -1,33 +1,33 @@
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import Carousel from 'react-bootstrap/Carousel';
 import styles from './AnnoncePreview.module.css';
-import type { AnnonceImage, SpecProp, AnnoncePropertyObject, CategoryItem } from './types';
+import type { ListingImage, SpecProp, ListingPropertyObject, CategoryItem } from './types';
 
-interface AnnoncePreviewProps {
-  annonce: AnnoncePropertyObject;
+interface ListingPreviewProps {
+  listing: ListingPropertyObject;
   selectedMainCat: CategoryItem | '';
-  imageArray: AnnonceImage[];
+  imageArray: ListingImage[];
   specPropArray: SpecProp[];
   postNumber: string;
   postAddress: string;
   onRemoveSpecProp: (title: string) => void;
 }
 
-const AnnoncePreview = ({
-  annonce,
+const ListingPreview = ({
+  listing,
   selectedMainCat,
   imageArray,
   specPropArray,
   postNumber,
   postAddress,
   onRemoveSpecProp,
-}: AnnoncePreviewProps) => {
+}: ListingPreviewProps) => {
   const isEmpty =
     selectedMainCat === '' &&
     imageArray.length === 0 &&
-    !annonce.title &&
-    !annonce.description &&
-    !annonce.price &&
+    !listing.title &&
+    !listing.description &&
+    !listing.price &&
     specPropArray.length === 0 &&
     !postNumber;
 
@@ -58,8 +58,8 @@ const AnnoncePreview = ({
             <Breadcrumb className={styles['breadcrumb']}>
               <Breadcrumb.Item active>Kategori</Breadcrumb.Item>
               <Breadcrumb.Item href="#">{selectedMainCat.maincategory}</Breadcrumb.Item>
-              {annonce.subCategory && <Breadcrumb.Item>{annonce.subCategory}</Breadcrumb.Item>}
-              {annonce.subSubCategory && <Breadcrumb.Item>{annonce.subSubCategory}</Breadcrumb.Item>}
+              {listing.subCategory && <Breadcrumb.Item>{listing.subCategory}</Breadcrumb.Item>}
+              {listing.subSubCategory && <Breadcrumb.Item>{listing.subSubCategory}</Breadcrumb.Item>}
             </Breadcrumb>
           )}
           {imageArray.length > 0 && (
@@ -86,16 +86,16 @@ const AnnoncePreview = ({
       )}
 
       {/* ── Title + Price — tight group ────────────── */}
-      {(annonce.title || annonce.price) && (
+      {(listing.title || listing.price) && (
         <div className={styles['title-price-group']}>
-          {annonce.title && <h1 className={styles['title']}>{annonce.title}</h1>}
-          {annonce.price && (
+          {listing.title && <h1 className={styles['title']}>{listing.title}</h1>}
+          {listing.price && (
             <div className={styles['price-bar']}>
               <span className={styles['price']}>
-                {Number(annonce.price).toLocaleString('nb-NO')} kr
+                {Number(listing.price).toLocaleString('nb-NO')} kr
               </span>
-              {annonce.pricePeriod && (
-                <span className={styles['price-period']}>{annonce.pricePeriod}</span>
+              {listing.pricePeriod && (
+                <span className={styles['price-period']}>{listing.pricePeriod}</span>
               )}
             </div>
           )}
@@ -103,12 +103,12 @@ const AnnoncePreview = ({
       )}
 
       {/* ── Beskrivelse ────────────────────────────── */}
-      {annonce.description && (
+      {listing.description && (
         <div className={styles['section']}>
           <p className={styles['section-label']}>Beskrivelse</p>
           <textarea
             className={styles['description']}
-            value={annonce.description}
+            value={listing.description}
             disabled
             readOnly
           />
@@ -155,4 +155,4 @@ const AnnoncePreview = ({
   );
 };
 
-export default AnnoncePreview;
+export default ListingPreview;

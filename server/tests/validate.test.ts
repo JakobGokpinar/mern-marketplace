@@ -1,9 +1,9 @@
 import express from 'express';
 import request from 'supertest';
-import validate from '../middleware/validate.js';
+import validate from '../middleware/validate';
 import { z } from 'zod';
 
-function createApp(schema, source = 'body') {
+function createApp(schema: z.ZodSchema, source = 'body') {
   const app = express();
   app.use(express.json());
   if (source === 'body') {

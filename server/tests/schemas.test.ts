@@ -1,10 +1,7 @@
-import { favoriteBody } from '../modules/user/user.schema.js';
-import { createRoom, newMessage, resetUnread } from '../modules/chat/chat.schema.js';
-import { verifyEmail } from '../modules/auth/auth.schema.js';
-import { findUserQuery } from '../modules/user/user.schema.js';
-
-// updateUserInfo is now in user.schema too
-import { updateUserInfo } from '../modules/user/user.schema.js';
+import { favoriteBody } from '../modules/user/user.schema';
+import { createRoom, newMessage, resetUnread } from '../modules/chat/chat.schema';
+import { verifyEmail } from '../modules/auth/auth.schema';
+import { findUserQuery, updateUserInfo } from '../modules/user/user.schema';
 
 const validId = '507f1f77bcf86cd799439011';
 

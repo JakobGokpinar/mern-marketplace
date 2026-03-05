@@ -1,7 +1,7 @@
 import { instanceAxs } from '../lib/axios';
 import type { Product, SpecialProp } from '../types/product';
 
-interface AnnonceProperties {
+interface ListingProperties {
   title: string;
   description: string;
   price: number;
@@ -13,45 +13,45 @@ interface AnnonceProperties {
   specialProps?: SpecialProp[];
 }
 
-interface CreateAnnonceResponse {
+interface CreateListingResponse {
   message: string;
-  annonce?: Product;
+  listing?: Product;
 }
 
-export const uploadAnnonceImagesApi = async (formData: FormData, annonceId?: string): Promise<string[]> => {
-  const url = annonceId
-    ? `/newannonce/imageupload?annonceid=${annonceId}`
-    : '/newannonce/imageupload';
+export const uploadListingImagesApi = async (formData: FormData, listingId?: string): Promise<string[]> => {
+  const url = listingId
+    ? `/listing/imageupload?listingId=${listingId}`
+    : '/listing/imageupload';
   const res = await instanceAxs.post<string[]>(url, formData);
   return res.data;
 };
 
-export const createAnnonceApi = async (
-  annonceproperties: AnnonceProperties,
-  imagelocations: string[],
-  annonceid: string
-): Promise<CreateAnnonceResponse> => {
-  const res = await instanceAxs.post<CreateAnnonceResponse>('/newannonce/create', {
-    annonceproperties,
-    imagelocations,
-    annonceid,
+export const createListingApi = async (
+  listingProperties: ListingProperties,
+  imageLocations: string[],
+  listingId: string
+): Promise<CreateListingResponse> => {
+  const res = await instanceAxs.post<CreateListingResponse>('/listing/create', {
+    listingProperties,
+    imageLocations,
+    listingId,
   });
   return res.data;
 };
 
-export const updateAnnonceApi = async (
-  annonceImages: string[],
-  annonceproperties: AnnonceProperties,
-  annonceId: string
-): Promise<CreateAnnonceResponse> => {
-  const res = await instanceAxs.post<CreateAnnonceResponse>('/newannonce/update', {
-    annonceImages,
-    annonceproperties,
-    annonceId,
+export const updateListingApi = async (
+  images: string[],
+  listingProperties: ListingProperties,
+  listingId: string
+): Promise<CreateListingResponse> => {
+  const res = await instanceAxs.post<CreateListingResponse>('/listing/update', {
+    images,
+    listingProperties,
+    listingId,
   });
   return res.data;
 };
 
-export const removeAnnonceImagesApi = async (annonceId: string): Promise<void> => {
-  await instanceAxs.post('/newannonce/remove/annonceimages', { annonceId });
+export const removeListingImagesApi = async (listingId: string): Promise<void> => {
+  await instanceAxs.post('/listing/remove/images', { listingId });
 };

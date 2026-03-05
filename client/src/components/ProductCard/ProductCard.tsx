@@ -64,7 +64,7 @@ function ProductCard({
 
   const handleCopyLink = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    navigator.clipboard.writeText(`${siteLink}/produkt/${id}`);
+    navigator.clipboard.writeText(`${siteLink}/listing/${id}`);
     toast.success('Lenken ble kopiert');
     setShowModal(false);
   };
@@ -75,7 +75,7 @@ function ProductCard({
         <Carousel indicators={false} controls={images.length > 1} interval={null}>
           {images.map((img, index) => (
             <Carousel.Item key={index}>
-              <Link to={`/produkt/${id}`}>
+              <Link to={`/listing/${id}`}>
                 <img src={img.location} alt={title} loading="lazy" />
               </Link>
             </Carousel.Item>
@@ -134,7 +134,7 @@ function ProductCard({
           <Form.Control
             type="text"
             className="mb-3"
-            value={`${siteLink}/produkt/${id}`}
+            value={`${siteLink}/listing/${id}`}
             readOnly
           />
           <Button variant="primary" onClick={handleCopyLink}>

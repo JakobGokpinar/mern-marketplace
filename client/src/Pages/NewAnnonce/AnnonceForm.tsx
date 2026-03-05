@@ -4,15 +4,15 @@ import Spinner from 'react-bootstrap/Spinner';
 import styles from './AnnonceForm.module.css';
 import ImageManager from './ImageManager';
 import SpecialPropsEditor from './SpecialPropsEditor';
-import type { AnnonceImage, AnnoncePropertyObject, CategoryItem, SubCategoryItem } from './types';
+import type { ListingImage, ListingPropertyObject, CategoryItem, SubCategoryItem } from './types';
 import categoryData from '../../categories.json';
 
-interface AnnonceFormProps {
-  annonce: AnnoncePropertyObject;
+interface ListingFormProps {
+  listing: ListingPropertyObject;
   selectedMainCat: CategoryItem | '';
   selectedSubCat: SubCategoryItem | '';
-  imageArray: AnnonceImage[];
-  isModifyAnnonce: boolean;
+  imageArray: ListingImage[];
+  isModifyListing: boolean;
   isPublishing: boolean;
   errors: Record<string, string>;
   onPropertyChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
@@ -20,19 +20,19 @@ interface AnnonceFormProps {
   onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onImageDelete: (name: string) => void;
   onImageDescriptionChange: (name: string, description: string) => void;
-  onImageReorder: (images: AnnonceImage[]) => void;
+  onImageReorder: (images: ListingImage[]) => void;
   onSpecPropAdd: (title: string, value: string) => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   onCancel: () => void;
   postAddress: string;
 }
 
-const AnnonceForm = ({
-  annonce,
+const ListingForm = ({
+  listing,
   selectedMainCat,
   selectedSubCat,
   imageArray,
-  isModifyAnnonce,
+  isModifyListing,
   isPublishing,
   errors,
   onPropertyChange,
@@ -45,7 +45,7 @@ const AnnonceForm = ({
   onSubmit,
   onCancel,
   postAddress,
-}: AnnonceFormProps) => (
+}: ListingFormProps) => (
   <Form onSubmit={onSubmit} noValidate className={styles['form']}>
 
     {/* ── KATEGORI ──────────────────────────────── */}
@@ -93,7 +93,7 @@ const AnnonceForm = ({
           <Form.Label className={styles['field-label']}>Type</Form.Label>
           <Form.Select
             id="subSubCategory"
-            value={annonce.subSubCategory ?? ''}
+            value={listing.subSubCategory ?? ''}
             onChange={onPropertyChange}
             disabled={isPublishing}
           >
@@ -145,7 +145,7 @@ const AnnonceForm = ({
         <Form.Control
           type="text"
           id="title"
-          value={annonce.title}
+          value={listing.title}
           placeholder="F.eks. iPhone 14 Pro 256GB"
           onChange={onPropertyChange}
           disabled={isPublishing}
@@ -159,7 +159,7 @@ const AnnonceForm = ({
         <Form.Control
           as="textarea"
           id="description"
-          value={annonce.description}
+          value={listing.description}
           rows={5}
           placeholder="Beskriv produktet ditt — stand, brukstid, hva som følger med..."
           onChange={onPropertyChange}
@@ -175,7 +175,7 @@ const AnnonceForm = ({
         <div className={styles['status-toggle']}>
           <button
             type="button"
-            className={`${styles['status-btn']} ${annonce.status === 'nytt' ? styles['status-btn--active'] : ''}`}
+            className={`${styles['status-btn']} ${listing.status === 'nytt' ? styles['status-btn--active'] : ''}`}
             onClick={() => onStatusChange('nytt')}
             disabled={isPublishing}
           >
@@ -184,7 +184,7 @@ const AnnonceForm = ({
           </button>
           <button
             type="button"
-            className={`${styles['status-btn']} ${annonce.status === 'brukt' ? styles['status-btn--active'] : ''}`}
+            className={`${styles['status-btn']} ${listing.status === 'brukt' ? styles['status-btn--active'] : ''}`}
             onClick={() => onStatusChange('brukt')}
             disabled={isPublishing}
           >
@@ -205,7 +205,7 @@ const AnnonceForm = ({
             <Form.Control
               type="number"
               id="price"
-              value={annonce.price}
+              value={listing.price}
               required
               placeholder="0"
               min={0}
@@ -218,7 +218,7 @@ const AnnonceForm = ({
           </div>
           <Form.Select
             id="pricePeriod"
-            value={annonce.pricePeriod}
+            value={listing.pricePeriod}
             onChange={onPropertyChange}
             required
             disabled={isPublishing}
@@ -253,7 +253,7 @@ const AnnonceForm = ({
             type="text"
             id="postnumber"
             placeholder="0000"
-            value={annonce.postnumber}
+            value={listing.postnumber}
             required
             maxLength={4}
             onChange={onPropertyChange}
@@ -276,8 +276,8 @@ const AnnonceForm = ({
     <div className={styles['submit-row']}>
       <Button type="submit" variant="primary" className={styles['submit-btn']} disabled={isPublishing}>
         {isPublishing
-          ? <><Spinner size="sm" className="me-2" />{isModifyAnnonce ? 'Lagrer...' : 'Publiserer...'}</>
-          : isModifyAnnonce ? 'Lagre endringer' : 'Publiser annonse'}
+          ? <><Spinner size="sm" className="me-2" />{isModifyListing ? 'Lagrer...' : 'Publiserer...'}</>
+          : isModifyListing ? 'Lagre endringer' : 'Publiser annonse'}
       </Button>
       <Button variant="outline-secondary" type="button" onClick={onCancel} disabled={isPublishing} className={styles['cancel-btn']}>
         Avbryt
@@ -286,4 +286,4 @@ const AnnonceForm = ({
   </Form>
 );
 
-export default AnnonceForm;
+export default ListingForm;

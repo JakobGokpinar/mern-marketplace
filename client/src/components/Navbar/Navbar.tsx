@@ -87,7 +87,7 @@ const Navigation = () => {
 
           {isLoggedIn ? (
             <Nav className={styles['navbar-actions']}>
-              <Nav.Link href="/nyannonse" className={styles['navbar-new-listing']}>
+              <Nav.Link href="/new-listing" className={styles['navbar-new-listing']}>
                 <i className="fa-solid fa-plus me-1" />
                 <span>Ny Annonse</span>
               </Nav.Link>
@@ -120,7 +120,7 @@ const Navigation = () => {
                   <Dropdown.Item href="/profil">
                     <i className="fa-regular fa-user me-2" /> Min Profil
                   </Dropdown.Item>
-                  <Dropdown.Item href="/mine-annonser">
+                  <Dropdown.Item href="/my-listings">
                     <i className="fa-solid fa-scroll me-2" /> Mine Annonser
                   </Dropdown.Item>
                   <Dropdown.Divider />

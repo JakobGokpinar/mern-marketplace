@@ -20,8 +20,7 @@ export interface Product {
   title: string;
   description: string;
   price: number;
-  images: ProductImage[];
-  annonceImages?: Array<{ location: string; description?: string }>;
+  images?: Array<{ location: string; description?: string }>;
   location: string;
   postNumber?: string;
   postnumber?: string;

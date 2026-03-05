@@ -1,12 +1,12 @@
 import { useRef, DragEvent } from 'react';
 import styles from './ImageManager.module.css';
-import type { AnnonceImage } from './types';
+import type { ListingImage } from './types';
 
 interface ImageManagerProps {
-  imageArray: AnnonceImage[];
+  imageArray: ListingImage[];
   onDelete: (name: string) => void;
   onDescriptionChange: (name: string, description: string) => void;
-  onReorder: (images: AnnonceImage[]) => void;
+  onReorder: (images: ListingImage[]) => void;
 }
 
 const ImageManager = ({ imageArray, onDelete, onDescriptionChange, onReorder }: ImageManagerProps) => {

@@ -33,7 +33,7 @@ export default function Searchbar() {
   const allItems = useMemo<SuggestionItem[]>(() => {
     if (!isShow) return [];
     const items: SuggestionItem[] = [{ url: `/search?q=${searchInput}` }];
-    productObjects.forEach(p => items.push({ url: `/produkt/${p.id}` }));
+    productObjects.forEach(p => items.push({ url: `/listing/${p.id}` }));
     suggestedCategories.filter(Boolean).forEach(c => items.push({ url: `/search?category=${c}` }));
     return items;
   }, [isShow, searchInput, productObjects, suggestedCategories]);
@@ -64,11 +64,11 @@ export default function Searchbar() {
       return;
     }
 
-    instanceAxs.post('/searchproduct', { q: debouncedSearch })
+    instanceAxs.post('/listings/search', { q: debouncedSearch })
       .then(response => {
-        const responseData = (response.data.productArray as Array<{ title: string; annonceImages?: Array<{ location: string }>; _id: string }>).map(item => ({
+        const responseData = (response.data.productArray as Array<{ title: string; images?: Array<{ location: string }>; _id: string }>).map(item => ({
           title: item.title,
-          img: item.annonceImages?.[0],
+          img: item.images?.[0],
           id: item._id,
         })).slice(0, 3);
         const suggestedCat = (response.data.categories as string[]).slice(0, 3);
@@ -154,7 +154,7 @@ export default function Searchbar() {
                 return (
                   <a
                     key={item.id}
-                    href={`/produkt/${item.id}`}
+                    href={`/listing/${item.id}`}
                     onClick={close}
                     className={`${styles['suggestion-product']}${focusedIndex === idx ? ` ${styles['suggestion-item--focused']}` : ''}`}
                     role="option"

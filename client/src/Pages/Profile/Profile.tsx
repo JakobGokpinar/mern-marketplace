@@ -22,7 +22,7 @@ const Account = () => {
                       <p>Se meldingene dine</p>
                   </div>
               </a>
-              <a href='/nyannonse'>
+              <a href='/new-listing'>
                   <div className={styles['profilelink-box']}>
                       <i className={`fa-regular fa-square-plus ${styles['profilelink-box-icon']}`}/>
                       <h3>Ny Annonse</h3>
@@ -38,7 +38,7 @@ const Account = () => {
                       <p>Se og endre dine favoritte annonser</p>
                   </div>
               </a>
-              <a href='/mine-annonser'>
+              <a href='/my-listings'>
                   <div className={styles['profilelink-box']}>
                       <i className={`fa-solid fa-receipt ${styles['profilelink-box-icon']}`}/>
                       <h3>Annonsene Mine</h3>

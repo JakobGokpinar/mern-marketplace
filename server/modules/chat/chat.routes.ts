@@ -1,9 +1,10 @@
-const express = require('express');
+import express from 'express';
+import * as chatController from './chat.controller';
+import ensureAuth from '../../middleware/ensureAuth';
+import validate from '../../middleware/validate';
+import { createRoom, getRoomByCredentials, getMessages, newMessage, resetUnread } from './chat.schema';
+
 const router = express.Router();
-const chatController = require('./chat.controller');
-const ensureAuth = require('../../middleware/ensureAuth');
-const validate = require('../../middleware/validate');
-const { createRoom, getRoomByCredentials, getMessages, newMessage, resetUnread } = require('./chat.schema');
 
 router.post('/chat/new/room', ensureAuth, validate(createRoom), chatController.createRoom);
 router.post('/chat/new/message', ensureAuth, validate(newMessage), chatController.newMessage);
@@ -12,4 +13,4 @@ router.get('/chat/get/room', ensureAuth, validate(getRoomByCredentials, 'query')
 router.get('/chat/get/messages', ensureAuth, validate(getMessages, 'query'), chatController.getMessages);
 router.post('/chat/resetunread', ensureAuth, validate(resetUnread), chatController.resetUnread);
 
-module.exports = router;
+export default router;

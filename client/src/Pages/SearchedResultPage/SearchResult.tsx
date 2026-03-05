@@ -163,7 +163,7 @@ const SearchResult = () => {
             ) : displayProducts.map((product) => (
               <div key={product._id}>
                 <ProductCard
-                  images={product.annonceImages}
+                  images={product.images}
                   title={product.title}
                   price={product.price}
                   id={product._id}

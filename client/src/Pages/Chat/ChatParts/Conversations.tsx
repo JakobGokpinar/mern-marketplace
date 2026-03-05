@@ -17,7 +17,7 @@ interface FriendData {
 
 interface ProductData {
   title?: string;
-  annonceImages?: Array<{ location: string }>;
+  images?: Array<{ location: string }>;
 }
 
 interface ConversationsProps {
@@ -42,7 +42,7 @@ const Conversations = ({ productId, conversation, loggedUser, isActive, findFrie
 
   useEffect(() => {
     if (!productId) return;
-    instanceAxs.get(`/product?id=${productId}`)
+    instanceAxs.get(`/listing?id=${productId}`)
       .then(r => setProduct(r.data.product))
       .catch(() => {});
   }, [productId]);
@@ -79,9 +79,9 @@ const Conversations = ({ productId, conversation, loggedUser, isActive, findFrie
       </div>
 
       <div className={styles['meta']}>
-        {product?.annonceImages?.[0]?.location && (
+        {product?.images?.[0]?.location && (
           <img
-            src={product.annonceImages[0].location}
+            src={product.images[0].location}
             alt={product.title}
             className={styles['product-img']}
           />

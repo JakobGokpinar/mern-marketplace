@@ -8,22 +8,20 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Spinner from 'react-bootstrap/Spinner';
 
-import { removeAnnonceApi } from '../../../services/profileService';
+import { removeListingApi } from '../../../services/profileService';
 import { fetchMyProductsApi } from '../../../services/productService';
 import { queryKeys } from '../../../lib/queryKeys';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import type { Product } from '../../../types/product';
 
-type AnnonceItem = Product;
-
-const MyAnnonces = () => {
+const MyListings = () => {
   const navigate = useNavigate();
   const queryClientHook = useQueryClient();
   const [showRemoveModal, setShowRemoveModal] = useState<boolean>(false);
-  const [selectedItem, setSelectedItem] = useState<AnnonceItem | null>(null);
+  const [selectedItem, setSelectedItem] = useState<Product | null>(null);
 
-  const { data: annonceArray = [], isPending } = useQuery({
+  const { data: listingArray = [], isPending } = useQuery({
     queryKey: queryKeys.products.mine(),
     queryFn: async () => {
       const products = await fetchMyProductsApi();
@@ -32,7 +30,7 @@ const MyAnnonces = () => {
   });
 
   const removeMutation = useMutation({
-    mutationFn: (id: string) => removeAnnonceApi(id),
+    mutationFn: (id: string) => removeListingApi(id),
     onSuccess: (data) => {
       toast.success(data.message);
       void queryClientHook.invalidateQueries({ queryKey: queryKeys.products.mine() });
@@ -43,18 +41,18 @@ const MyAnnonces = () => {
     },
   });
 
-  const visibleRemoveModal = (e: React.MouseEvent<HTMLButtonElement>, item: AnnonceItem) => {
+  const visibleRemoveModal = (e: React.MouseEvent<HTMLButtonElement>, item: Product) => {
     e.preventDefault();
     setSelectedItem(item);
     setShowRemoveModal(true);
   };
 
-  const makeChangeModalVisible = (e: React.MouseEvent<HTMLButtonElement>, item: AnnonceItem) => {
+  const makeChangeModalVisible = (e: React.MouseEvent<HTMLButtonElement>, item: Product) => {
     e.preventDefault();
-    navigate('/nyannonse', { state: { annonce: item } });
+    navigate('/new-listing', { state: { annonce: item } });
   };
 
-  const deleteAnnonce = () => {
+  const deleteListing = () => {
     if (selectedItem) removeMutation.mutate(selectedItem._id);
   };
 
@@ -62,18 +60,18 @@ const MyAnnonces = () => {
     <div className={styles['myannonces-container']}>
       <Breadcrumb>
         <Breadcrumb.Item href='/min-konto'>Min konto</Breadcrumb.Item>
-        <Breadcrumb.Item href='/mine-annonser' active>Mine Annonser</Breadcrumb.Item>
+        <Breadcrumb.Item href='/my-listings' active>Mine Annonser</Breadcrumb.Item>
       </Breadcrumb>
 
       {isPending ? (
         <div className="d-flex justify-content-center py-5">
           <Spinner animation="border" variant="secondary" />
         </div>
-      ) : annonceArray.length > 0 ? (
+      ) : listingArray.length > 0 ? (
         <div className={styles['myannonces-content']}>
-          {annonceArray.map((item) => (
+          {listingArray.map((item) => (
             <div key={item._id} className={`${styles['myannonces-content-product']} border`}>
-              <img src={item.annonceImages?.[0]?.location} className={styles['content-product-img']} alt={item.title} />
+              <img src={item.images?.[0]?.location} className={styles['content-product-img']} alt={item.title} />
               <div className={styles['content-product-info']}>
                 <p className={styles['content-product-info-title']}>{item.title}</p>
                 <p className={`${styles['content-product-info-price']} mt-2`}>{item.price} kr</p>
@@ -87,7 +85,7 @@ const MyAnnonces = () => {
         </div>
       ) : (
         <div className={styles['myannonces-content']}>
-          <p>Du har ingen aktive annonser ennå. <a href="/nyannonse">Legg ut en annonse</a></p>
+          <p>Du har ingen aktive annonser ennå. <a href="/new-listing">Legg ut en annonse</a></p>
         </div>
       )}
 
@@ -100,7 +98,7 @@ const MyAnnonces = () => {
           <Form.Control value={selectedItem?.title || ''} disabled />
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="danger" onClick={deleteAnnonce} disabled={removeMutation.isPending}>
+          <Button variant="danger" onClick={deleteListing} disabled={removeMutation.isPending}>
             {removeMutation.isPending ? <Spinner size="sm" /> : 'Ja, Fjern Annonsen'}
           </Button>
         </Modal.Footer>
@@ -109,4 +107,4 @@ const MyAnnonces = () => {
   );
 };
 
-export default MyAnnonces;
+export default MyListings;

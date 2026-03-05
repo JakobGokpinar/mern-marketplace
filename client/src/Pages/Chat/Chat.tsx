@@ -136,14 +136,14 @@ const Chat = () => {
               </div>
               {currentProduct && (
                 <Link
-                  to={`/produkt/${currentProduct._id}`}
+                  to={`/listing/${currentProduct._id}`}
                   target="_blank"
                   className={styles['header-product']}
                 >
                   <span className={styles['header-product-title']}>{currentProduct.title}</span>
-                  {currentProduct.annonceImages?.[0]?.location && (
+                  {currentProduct.images?.[0]?.location && (
                     <img
-                      src={currentProduct.annonceImages[0].location}
+                      src={currentProduct.images[0].location}
                       alt={currentProduct.title}
                       className={styles['header-product-img']}
                     />

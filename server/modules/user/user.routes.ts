@@ -1,9 +1,10 @@
-const express = require('express');
+import express from 'express';
+import * as userController from './user.controller';
+import ensureAuth from '../../middleware/ensureAuth';
+import validate from '../../middleware/validate';
+import { findUserQuery, findSellerQuery, updateUserInfo, favoriteBody } from './user.schema';
+
 const router = express.Router();
-const userController = require('./user.controller');
-const ensureAuth = require('../../middleware/ensureAuth');
-const validate = require('../../middleware/validate');
-const { findUserQuery, findSellerQuery, updateUserInfo, favoriteBody } = require('./user.schema');
 
 // Fetch / find users
 router.get('/fetchuser', ensureAuth, userController.fetchUser);
@@ -12,7 +13,7 @@ router.get('/fetchuser/find/seller', validate(findSellerQuery, 'query'), userCon
 
 // Profile
 router.post('/profile/upload/picture', ensureAuth, userController.uploadImageToAws);
-router.post('/profile/update/userinfo', ensureAuth, validate(updateUserInfo), userController.updateUserInfo);
+router.post('/profile/update/userinfo', ensureAuth, validate(updateUserInfo), userController.updateUserInfoHandler);
 router.post('/profile/delete/picture', ensureAuth, userController.removeProfileImage);
 router.post('/profile/delete/account', ensureAuth, userController.deleteAccount);
 router.get('/profile/get/picture', ensureAuth, userController.getProfileImage);
@@ -22,4 +23,4 @@ router.post('/favorites/add', ensureAuth, validate(favoriteBody), userController
 router.post('/favorites/remove', ensureAuth, validate(favoriteBody), userController.removeFromFavorites);
 router.get('/favorites/get', ensureAuth, userController.getFavorites);
 
-module.exports = router;
+export default router;

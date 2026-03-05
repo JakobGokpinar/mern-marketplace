@@ -1,10 +1,8 @@
-const { z } = require('zod');
+import { z } from 'zod';
 
 const objectId = z.string().regex(/^[a-f\d]{24}$/i, 'Invalid ID');
 
-const verifyEmail = z.object({
+export const verifyEmail = z.object({
   userId: objectId,
   token: z.string().uuid(),
 });
-
-module.exports = { verifyEmail };

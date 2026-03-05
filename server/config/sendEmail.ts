@@ -1,23 +1,28 @@
-const nodemailer = require('nodemailer');
-const EmailVerifyToken = require('../models/EmailVerifyToken');
+import nodemailer from 'nodemailer';
+import EmailVerifyToken from '../models/EmailVerifyToken';
 
 const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: 587,
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_APP_PASS
-    }
+  host: process.env.EMAIL_HOST,
+  port: 587,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_APP_PASS,
+  },
 });
 
-const sendVerificationEmail = async (receiver_email, receiver_username, receiver_id, token) => {
-    await EmailVerifyToken.create({ userId: receiver_id, token });
+const sendVerificationEmail = async (
+  receiver_email: string,
+  receiver_username: string,
+  receiver_id: string,
+  token: string
+) => {
+  await EmailVerifyToken.create({ userId: receiver_id, token });
 
-    const options = {
-        from: process.env.EMAIL_USER,
-        to: receiver_email,
-        subject: 'Bekreft e-postadressen din på Rego',
-        html: `
+  const options = {
+    from: process.env.EMAIL_USER,
+    to: receiver_email,
+    subject: 'Bekreft e-postadressen din på Rego',
+    html: `
 <body style="background-color:#ffffff;color:#24292e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif">
   <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width:480px;margin:0 auto;padding:20px 0 48px">
     <tr>
@@ -47,10 +52,10 @@ const sendVerificationEmail = async (receiver_email, receiver_username, receiver
       </td>
     </tr>
   </table>
-</body>`
-    };
+</body>`,
+  };
 
-    await transporter.sendMail(options);
+  await transporter.sendMail(options);
 };
 
-module.exports = sendVerificationEmail;
+export default sendVerificationEmail;

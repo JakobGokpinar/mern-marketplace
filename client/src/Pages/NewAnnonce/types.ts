@@ -1,4 +1,4 @@
-export interface AnnonceImage {
+export interface ListingImage {
   name: string;
   data?: string;
   location?: string;
@@ -20,7 +20,7 @@ export interface CategoryItem {
   subcategories: SubCategoryItem[];
 }
 
-export interface AnnoncePropertyObject {
+export interface ListingPropertyObject {
   _id?: string;
   title: string;
   price: string;

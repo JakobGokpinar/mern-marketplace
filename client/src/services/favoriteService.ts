@@ -7,13 +7,13 @@ interface FavoriteResponse {
   user?: User;
 }
 
-export const addToFavoritesApi = async (annonceId: string): Promise<FavoriteResponse> => {
-  const res = await instanceAxs.post<FavoriteResponse>('/favorites/add', { id: annonceId });
+export const addToFavoritesApi = async (listingId: string): Promise<FavoriteResponse> => {
+  const res = await instanceAxs.post<FavoriteResponse>('/favorites/add', { id: listingId });
   return res.data;
 };
 
-export const removeFromFavoritesApi = async (annonceId: string): Promise<FavoriteResponse> => {
-  const res = await instanceAxs.post<FavoriteResponse>('/favorites/remove', { id: annonceId });
+export const removeFromFavoritesApi = async (listingId: string): Promise<FavoriteResponse> => {
+  const res = await instanceAxs.post<FavoriteResponse>('/favorites/remove', { id: listingId });
   return res.data;
 };
 
