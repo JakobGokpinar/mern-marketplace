@@ -58,13 +58,13 @@ const EmailVerify = () => {
   return (
     <div className={styles['email-verify-container']}>
       <div className={styles['email-verify-content']}>
-        <Alert variant={alertVarient} className={styles['content__alert']}>
+        <Alert variant={alertVarient} className={styles['email-verify-alert']}>
           <i className={`fa-solid ${isVerifySuccessful ? 'fa-circle-check' : 'fa-triangle-exclamation'} fa-lg mx-2`} />
           {alertMessage}
         </Alert>
-        <Form.Label className={styles['content__token-label']}>Token</Form.Label>
-        <Form.Control type='text' className={styles['content__token-input']} value={token} disabled />
-        <Button variant="success" className={styles['content__verify-button']} onClick={verify}>
+        <Form.Label className={styles['email-verify-token-label']}>Token</Form.Label>
+        <Form.Control type='text' className={styles['email-verify-token-input']} value={token} disabled />
+        <Button variant="success" className={styles['email-verify-button']} onClick={verify}>
           {isLoading && <Spinner className='mx-3' size='sm' />}
           Verify Email
         </Button>

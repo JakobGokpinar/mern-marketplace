@@ -6,10 +6,10 @@ import './App.css';
 import { Toaster } from 'react-hot-toast';
 import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
-import Login from './Pages/LoginAndRegister/Login';
-import Register from './Pages/LoginAndRegister/Register';
-import EmailVerify from './Pages/EmailVerification/EmailVerify';
-import NotFound from './Pages/NotFound';
+import Login from './pages/LoginAndRegister/Login';
+import Register from './pages/LoginAndRegister/Register';
+import EmailVerify from './pages/EmailVerification/EmailVerify';
+import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 
@@ -20,15 +20,15 @@ import toast from 'react-hot-toast';
 import { useSocket } from './hooks/useSocket';
 import type { User } from './types/user';
 
-const Menu = React.lazy(() => import('./Pages/HomePage/Menu'));
-const ProductPage = React.lazy(() => import('./Pages/ProductPage/ProductPage'));
-const Chat = React.lazy(() => import('./Pages/Chat/Chat'));
-const SearchResult = React.lazy(() => import('./Pages/SearchedResultPage/SearchResult'));
-const NewAnnonce = React.lazy(() => import('./Pages/NewAnnonce/NewAnnonce'));
-const Account = React.lazy(() => import('./Pages/Profile/Profile'));
-const Profile = React.lazy(() => import('./Pages/Profile/Profile/Profile'));
-const Favorites = React.lazy(() => import('./Pages/Profile/Favorites/Favorites'));
-const MyAnnonces = React.lazy(() => import('./Pages/Profile/MyAnnonces/MyAnnonces'));
+const Menu = React.lazy(() => import('./pages/HomePage/Menu'));
+const ProductPage = React.lazy(() => import('./pages/ProductPage/ProductPage'));
+const Chat = React.lazy(() => import('./pages/Chat/Chat'));
+const SearchResult = React.lazy(() => import('./pages/SearchedResultPage/SearchResult'));
+const NewAnnonce = React.lazy(() => import('./pages/NewAnnonce/NewAnnonce'));
+const Account = React.lazy(() => import('./pages/Profile/Profile'));
+const Profile = React.lazy(() => import('./pages/Profile/Profile/Profile'));
+const Favorites = React.lazy(() => import('./pages/Profile/Favorites/Favorites'));
+const MyAnnonces = React.lazy(() => import('./pages/Profile/MyAnnonces/MyAnnonces'));
 
 const AppContent = () => {
   const dispatch = useAppDispatch();

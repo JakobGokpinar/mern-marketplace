@@ -2,29 +2,112 @@
   width: 100%;
   margin-top: auto;
   background: var(--color-primary-darker);
+  padding: var(--space-2xl) 5%;
+}
+
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-xl);
+}
+
+/* ============================================
+   Brand section (left)
+   ============================================ */
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.footer-brand-mark {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xs);
+}
+
+.footer-brand-icon {
+  width: 28px;
+  height: 28px;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 7px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 18px 24px;
-  font-size: 0.85rem;
+  color: white;
+  font-size: 0.8rem;
 }
 
-.brand {
-  color: #fff;
+.footer-brand-name {
+  font-size: 1.1rem;
   font-weight: 700;
-  font-size: 1rem;
+  color: white;
   letter-spacing: -0.3px;
 }
 
-.tagline {
-  color: rgba(255, 255, 255, 0.7);
+.footer-tagline {
+  font-size: var(--fs-sm);
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
 }
 
-.sep {
-  color: rgba(255, 255, 255, 0.25);
+.footer-copy {
+  font-size: var(--fs-xs);
+  color: rgba(255, 255, 255, 0.35);
+  margin: var(--space-sm) 0 0;
 }
 
-.copy {
+/* ============================================
+   Links section (right)
+   ============================================ */
+
+.footer-links {
+  display: flex;
+  gap: var(--space-2xl);
+}
+
+.footer-links-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.footer-links-heading {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   color: rgba(255, 255, 255, 0.45);
+  margin: 0 0 var(--space-xs);
+}
+
+.footer-links-col a {
+  font-size: var(--fs-sm);
+  color: rgba(255, 255, 255, 0.65);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.footer-links-col a:hover {
+  color: white;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 640px) {
+  .footer-inner {
+    flex-direction: column;
+    gap: var(--space-xl);
+  }
+
+  .footer-links {
+    gap: var(--space-xl);
+  }
 }

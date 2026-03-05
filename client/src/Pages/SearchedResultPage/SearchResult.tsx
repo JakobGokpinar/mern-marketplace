@@ -3,21 +3,6 @@ import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import styles from "./SearchResult.module.css";
 
-interface SearchProduct {
-  _id: string;
-  title: string;
-  price: number;
-  location: string;
-  isFavorite?: boolean;
-  sellerId: string;
-  annonceImages?: Array<{ location: string }>;
-  date?: string;
-}
-
-interface SearchResultData {
-  productArray: SearchProduct[];
-}
-
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -28,16 +13,17 @@ import FilterBadge from "./FilterBadge";
 import Spinner from "react-bootstrap/Spinner";
 
 import ProductCard from "../../components/ProductCard/ProductCard";
-import { instanceAxs } from "../../lib/axios";
 import { queryKeys } from "../../lib/queryKeys";
+import { searchProductsApi } from "../../services/productService";
 import { useNorwayGeo } from "../../hooks/useNorwayGeo";
+import type { Product } from "../../types/product";
 
 const SearchResult = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: geoData } = useNorwayGeo();
   const counties = geoData?.districts || [];
 
-  const createQueryObject = (): Record<string, string | string[]> => {
+  const createQueryObject = () => {
     const queryObject: Record<string, string | string[]> = {};
     const kommuneArr: string[] = [];
     for (const [key, value] of searchParams.entries()) {
@@ -51,18 +37,12 @@ const SearchResult = () => {
     return queryObject;
   };
 
-  const { data, isPending } = useQuery<SearchResultData>({
+  const { data: productArray = [], isPending } = useQuery({
     queryKey: queryKeys.products.search(Object.fromEntries(searchParams.entries())),
-    queryFn: async () => {
-      const queryObject = createQueryObject();
-      const response = await instanceAxs.post('/searchproduct', queryObject);
-      return response.data as SearchResultData;
-    },
+    queryFn: () => searchProductsApi(createQueryObject()),
   });
 
-  const productArray: SearchProduct[] = data?.productArray || [];
-
-  const [sortedProducts, setSortedProducts] = useState<SearchProduct[] | null>(null);
+  const [sortedProducts, setSortedProducts] = useState<Product[] | null>(null);
   const displayProducts = sortedProducts || productArray;
 
   const handleFilterChange = (key: string, value: string) => {
@@ -111,10 +91,10 @@ const SearchResult = () => {
         products.sort((a, b) => b.price - a.price);
         break;
       case "published-first":
-        products.sort((a, b) => new Date(b.date ?? 0).getTime() - new Date(a.date ?? 0).getTime());
+        products.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         break;
       case "published-last":
-        products.sort((a, b) => new Date(a.date ?? 0).getTime() - new Date(b.date ?? 0).getTime());
+        products.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
         break;
       default:
         setSortedProducts(null);
@@ -124,7 +104,7 @@ const SearchResult = () => {
   };
 
   return (
-    <Container fluid className={styles['searchresult-container']}>
+    <Container fluid className={styles['search-result-container']}>
       <Row className={styles['result-row']}>
         <Col lg={3} className="filters-column">
           <Button variant="outline-danger" className="w-100 mb-4" onClick={resetFilters}>Reset Filters</Button>
@@ -158,9 +138,8 @@ const SearchResult = () => {
                 <Spinner animation="border" variant="secondary" />
               </div>
             ) : displayProducts.map((product, index) => (
-              <div key={index} style={{ marginBottom: 20 }}>
+              <div key={product._id || index} style={{ marginBottom: 20 }}>
                 <ProductCard
-                  key={product.title}
                   images={product.annonceImages}
                   title={product.title}
                   price={product.price}

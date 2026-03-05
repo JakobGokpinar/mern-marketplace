@@ -1,38 +1,81 @@
 /* ============================================
-   Homepage
+   Homepage Hero
    ============================================ */
 
 .homepage {
   min-height: 60vh;
 }
 
-.homepage-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 50vh;
-  color: var(--color-text-muted);
+.homepage-hero {
+  background-color: var(--color-primary-lightest);
+  border-bottom: 1px solid rgba(13, 148, 136, 0.12);
+  padding: var(--space-2xl) var(--space-xl);
+  text-align: center;
 }
 
-.homepage-empty i {
-  font-size: 48px;
-  margin-bottom: 16px;
+.homepage-hero-title {
+  font-size: var(--fs-h1);
+  font-weight: 700;
+  color: var(--color-primary-darker);
+  margin-bottom: var(--space-sm);
+  letter-spacing: -0.5px;
 }
 
-.homepage-empty p {
-  font-size: 1.1rem;
+.homepage-hero-subtitle {
+  font-size: var(--fs-body);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-xl);
 }
 
 /* ============================================
-   Homepage Grid Layout
+   Category chips
+   ============================================ */
+
+.homepage-categories {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-sm);
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.homepage-category-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: 50px;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--color-text);
+  text-decoration: none;
+  transition: border-color var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.homepage-category-chip i {
+  font-size: 13px;
+  color: var(--color-primary);
+}
+
+.homepage-category-chip:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-lightest);
+  color: var(--color-primary-darker);
+}
+
+/* ============================================
+   Product Grid
    ============================================ */
 
 .homepage-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-  gap: 24px;
-  padding: 32px 5%;
+  gap: var(--space-lg);
+  padding: var(--space-xl) 5%;
   justify-items: center;
 }
 
@@ -40,13 +83,43 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 60vh;
+  height: 40vh;
 }
 
+.homepage-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 40vh;
+  color: var(--color-text-muted);
+}
+
+.homepage-empty i {
+  font-size: 48px;
+  margin-bottom: var(--space-md);
+}
+
+.homepage-empty p {
+  font-size: 1.1rem;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
 @media (max-width: 768px) {
+  .homepage-hero {
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  .homepage-hero-title {
+    font-size: var(--fs-h2);
+  }
+
   .homepage-grid {
     grid-template-columns: 1fr;
-    padding: 16px;
-    gap: 16px;
+    padding: var(--space-md);
+    gap: var(--space-md);
   }
 }

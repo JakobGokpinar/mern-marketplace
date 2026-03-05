@@ -73,11 +73,11 @@ const MyAnnonces = () => {
         <div className={styles['myannonces-content']}>
           {annonceArray.map((item, index) => (
             <div key={index} className={`${styles['myannonces-content-product']} border`}>
-              <img src={item.annonceImages?.[0]?.location} className={styles['content-product__img']} alt={item.title} />
-              <div className={styles['content-product__info']}>
-                <p className={styles['content-product__info__title']}>{item.title}</p>
-                <p className={`${styles['content-product__info__price']} mt-2`}>{item.price} kr</p>
-                <div className={styles['content-product__info__buttons']}>
+              <img src={item.annonceImages?.[0]?.location} className={styles['content-product-img']} alt={item.title} />
+              <div className={styles['content-product-info']}>
+                <p className={styles['content-product-info-title']}>{item.title}</p>
+                <p className={`${styles['content-product-info-price']} mt-2`}>{item.price} kr</p>
+                <div className={styles['content-product-info-buttons']}>
                   <Button className={styles['content-product-control-button']} variant='outline-primary' size='sm' onClick={e => makeChangeModalVisible(e, item)}>Endre</Button>
                   <Button className={styles['content-product-control-button']} variant='outline-danger' size='sm' onClick={e => visibleRemoveModal(e, item)}>Fjern</Button>
                 </div>

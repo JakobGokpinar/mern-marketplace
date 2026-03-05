@@ -47,11 +47,11 @@
    Search Suggestions Dropdown
    ============================================ */
 
-.suggestion-component {
+.suggestion-group {
   margin-bottom: 30px;
 }
 
-.suggestion-component a {
+.suggestion-group a {
   text-decoration: none;
   color: inherit;
 }
@@ -71,13 +71,13 @@
   z-index: 1;
 }
 
-.suggestion-component__title {
+.suggestion-title {
   font-size: 14px;
   color: var(--color-text-muted);
   margin: 0%;
 }
 
-.suggestion-component__content {
+.suggestion-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -89,18 +89,18 @@
   margin-bottom: 5px;
 }
 
-.suggestion-component__img {
+.suggestion-img {
   width: 80px;
   height: 80px;
   object-fit: cover;
 }
 
-.suggestion-component__content:hover {
+.suggestion-content:hover {
   background-color: var(--color-primary-lightest);
   cursor: pointer;
 }
 
-.category-suggestion-component__content {
+.category-suggestion-content {
   display: flex;
   align-items: center;
   height: 50px;
@@ -110,7 +110,7 @@
   margin-bottom: 5px;
 }
 
-.category-suggestion-component__content:hover {
+.category-suggestion-content:hover {
   background-color: var(--color-primary-lightest);
   cursor: pointer;
 }

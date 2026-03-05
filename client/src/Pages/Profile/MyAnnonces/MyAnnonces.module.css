@@ -15,7 +15,7 @@
 .myannonces-content p {
     margin: 0%;
 }
-.content-product__info {
+.content-product-info {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -31,20 +31,20 @@
     
 }
 
-.content-product__img {
+.content-product-img {
     height: 125px; 
     width: 100%; 
     object-fit: cover;
 }
 
-.content-product__info__title {
+.content-product-info-title {
     font-weight: 450;
 }
-.content-product__info__price {
+.content-product-info-price {
     font-size: 14px;
     margin-top: 10px;
 }
-.content-product__info__buttons {
+.content-product-info-buttons {
     display: flex;
 
     margin-bottom: 10px;

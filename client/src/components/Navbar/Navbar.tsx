@@ -57,7 +57,14 @@ const Navigation = () => {
     <div>
       <Navbar expand="lg" fixed="top" className={styles['navigation'] + (isRender ? '' : ` ${styles['navbar-hidden']}`)}>
         <Container>
-          <Navbar.Brand href="/">Rego</Navbar.Brand>
+          <Navbar.Brand href="/">
+            <div className={styles['navbar-brand-mark']}>
+              <div className={styles['navbar-brand-icon']}>
+                <i className="fa-solid fa-tag" />
+              </div>
+              <span>Rego</span>
+            </div>
+          </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <div className={styles['navbar-center']}>

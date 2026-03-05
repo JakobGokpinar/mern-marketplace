@@ -17,22 +17,22 @@
     padding: 4%;
 }
 
-.content__alert {
+.email-verify-alert {
     width: 100%;
     margin-bottom: 30px;
 }
 
-.content__token-label {
+.email-verify-token-label {
     align-self: flex-start;
 }
-.content__token-input {
+.email-verify-token-input {
     height: 60px;
     font-size: 18px;
     margin-bottom: 40px;
 
 }
 
-.content__verify-button {
+.email-verify-button {
     width: 100%;
     height: 60px;
 }

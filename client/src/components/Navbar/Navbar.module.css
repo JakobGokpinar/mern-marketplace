@@ -11,10 +11,34 @@
 }
 
 .navigation :global(.navbar-brand) {
+    padding: 0;
+}
+
+.navbar-brand-mark {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.navbar-brand-mark span {
     font-weight: 700;
-    font-size: 1.5rem;
-    color: var(--color-primary-darker) !important;
+    font-size: 1.25rem;
+    color: var(--color-text);
     letter-spacing: -0.5px;
+}
+
+.navbar-brand-icon {
+    width: 30px;
+    height: 30px;
+    background-color: var(--color-primary);
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.85rem;
+    flex-shrink: 0;
 }
 
 .navigation.navbar-hidden {

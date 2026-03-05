@@ -164,8 +164,8 @@ const Profile = () => {
 
       <div className={styles['profile-content']}>
         <Row className={styles['profile-content-row']}>
-          <Col className={`${styles['profile-content-col']} ${styles['content-profileImage']}`} lg={3}>
-            <div className={styles['content-profileImage-div']}>
+          <Col className={`${styles['profile-content-col']} ${styles['content-profile-image']}`} lg={3}>
+            <div className={styles['content-profile-image-div']}>
               {avatarSrc ? (
                 <img src={avatarSrc} alt="avatar" className="profile-avatar" />
               ) : (

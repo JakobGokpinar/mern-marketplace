@@ -1,44 +1,91 @@
-.login__row {
+.auth-page {
+  min-height: calc(100vh - 62px);
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
-  padding: 20px;
+  justify-content: center;
+  background-color: var(--color-primary-lightest);
+  padding: var(--space-lg);
 }
 
-.login__bg {
-  background-image: url(https://images.unsplash.com/photo-1577563908411-5077b6dc7624?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80);
-  height: 500px;
-  width: 500px;
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  overflow-x: hidden;
+.auth-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-2xl) var(--space-xl);
+  width: 100%;
+  max-width: 420px;
 }
 
-.signup-link {
-  text-decoration: none;
-  color: var(--color-primary);
-}
-
-.login-div {
+.auth-brand {
   display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  width: 70%;
-  max-width: 450px;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
 }
 
-/* on phones */
-@media (max-width: 768px) {
-  .login__bg {
-    display: none;
-  }
+.auth-brand-icon {
+  width: 36px;
+  height: 36px;
+  background-color: var(--color-primary);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.1rem;
 }
 
-@media (max-width: 992px) {
-  .login__bg {
-    margin-top: 5%;
-  }
+.auth-brand-name {
+  font-size: var(--fs-h2);
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.5px;
 }
 
+.auth-title {
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  color: var(--color-text);
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
 
+.auth-form :global(.form-label) {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-xs);
+}
+
+.auth-form :global(.form-control) {
+  border-radius: var(--radius-md);
+  border-color: var(--color-border);
+  padding: 10px var(--space-md);
+  font-size: var(--fs-body);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.auth-form :global(.form-control:focus) {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
+}
+
+.auth-submit {
+  width: 100%;
+  padding: 11px;
+  font-size: var(--fs-body);
+  font-weight: 500;
+  margin-top: var(--space-sm);
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: var(--space-lg);
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
+}
+
+.auth-footer a {
+  font-weight: 500;
+}

@@ -5,9 +5,9 @@ const NotFound = () => {
   const location = useLocation();
 
   return (
-    <div className={styles['notFound-container']}>
-      <div className={styles['notFound-content']}>
-        <p className={styles['notFound-code']}>404</p>
+    <div className={styles['not-found-container']}>
+      <div className={styles['not-found-content']}>
+        <p className={styles['not-found-code']}>404</p>
         <h1>Side ikke funnet</h1>
         <p><strong>{location.pathname}</strong> eksisterer ikke</p>
         <a href="/">Gå tilbake til hovedsiden</a>

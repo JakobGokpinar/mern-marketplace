@@ -82,20 +82,20 @@ export default function Searchbar() {
       {isShow && (
         <div id="suggestionBox" className={`${styles['search-suggestion-box']} border`}>
           <div id='searchWord' className='mb-4'>
-            <p className={`${styles['suggestion-component__title']} mb-1`}>Søk</p>
+            <p className={`${styles['suggestion-title']} mb-1`}>Søk</p>
             <Link to={`/search?q=${searchInput}`} onClick={handleLinkClick}>
               Finn flere resultater for '{searchInput}'
             </Link>
           </div>
 
           {productObjects.length > 0 && (
-            <div id='searchProduct' className={styles['suggestion-component']}>
-              <p className={styles['suggestion-component__title']}>Produkter</p>
+            <div id='searchProduct' className={styles['suggestion-group']}>
+              <p className={styles['suggestion-title']}>Produkter</p>
               {productObjects.map((item, index) => (
                 <Link to={`/produkt/${item.id}`} key={index} onClick={handleLinkClick}>
-                  <div className={styles['suggestion-component__content']} key={item.title}>
+                  <div className={styles['suggestion-content']} key={item.title}>
                     <p style={{ margin: 0 }}>{item.title}</p>
-                    <img className={styles['suggestion-component__img']} src={item.img?.location} alt="annonce" />
+                    <img className={styles['suggestion-img']} src={item.img?.location} alt="annonce" />
                   </div>
                 </Link>
               ))}
@@ -103,11 +103,11 @@ export default function Searchbar() {
           )}
 
           {suggestedCategories.length > 0 && (
-            <div id='searchCategories' className={styles['suggestion-component']}>
-              <p className={styles['suggestion-component__title']}>Kategorier</p>
+            <div id='searchCategories' className={styles['suggestion-group']}>
+              <p className={styles['suggestion-title']}>Kategorier</p>
               {suggestedCategories.filter(item => item != null).map((item, index) => (
                 <Link to={`search?category=${item}`} key={index} onClick={handleLinkClick}>
-                  <div className={styles['category-suggestion-component__content']}>
+                  <div className={styles['category-suggestion-content']}>
                     {item}
                   </div>
                 </Link>
