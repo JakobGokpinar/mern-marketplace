@@ -53,6 +53,29 @@
 - Fix FeedbackBanner `setInterval` → `setTimeout` (memory leak)
 - Fix Navbar scroll/socket listener leaks
 
+### Best-Practices Audit (medium-level)
+
+- Remove inline styles — ProductCard spinner → CSS class, SearchResult marginBottom → CSS Module gap
+- Split `useChat` hook — extracted socket logic to `useChatSocket` hook
+- Use axios params object instead of template string interpolation in services
+- Confirmed `profile-avatar` CSS in design.css is not dead (used in Profile.tsx)
+- Confirmed `!important` flags are necessary for Bootstrap overrides in Navbar/Searchbar
+- Extract reusable `ensureAuth` middleware — DRY `req.isAuthenticated()` checks across all route files
+- Extract S3 operations from controllers into shared `services/s3.js`
+- Replace `console.log`/`console.error` with Pino structured logger
+- Add env var validation at startup (`config/validateEnv.js`)
+- Add per-file size limits (5 MB) + MIME filter + filename sanitization to multer (`middleware/upload.js`)
+- Add lazy loading for product images (`loading="lazy"`)
+- Add `/api` prefix architecture (single Vite proxy rule, clean route namespace)
+- Add Helmet security headers + rate limiting on auth endpoints
+- Replace `User | Record<string, never>` with `User | null` in userSlice
+- Fix array `.map()` keys — replaced `key={index}` with stable IDs throughout
+- Safe regex match in `dataURltoFile.ts`
+- Auth thunks extract backend error messages from axios error responses
+- Axios 401 interceptor skips auth paths (`/login`, `/signup`)
+- Add database indexes (unique email, sellerId, category, buyer/seller/productId)
+- Optimize favorites query — `$in` instead of fetch-all + JS filter
+
 ### Features
 
 - Delete account — full cascading cleanup (S3 images, annonces, conversations, favorites, user document)
@@ -74,20 +97,8 @@
 
 ### Code Quality (from best-practices audit)
 
-- Remove inline styles in ProductCard (Spinner) and SearchResult (marginBottom)
-- Split useChat hook (185 lines, 6 useEffects) — extract socket logic to separate hook
-- Use axios params object instead of template string interpolation in services
-- Clean up dead CSS in design.css (profile-avatar styles)
-- Reduce !important usage in Navbar/Searchbar CSS Modules
-- Extract reusable `ensureAuth` middleware (DRY the `req.isAuthenticated()` checks)
-- Extract S3 operations from controllers into a shared service module
 - Add CSRF protection for state-changing endpoints
-- Replace console.log/console.error with structured logger (pino or winston)
-- Add env var validation at startup (fail fast if required vars missing)
-- Add per-file size limits to multer config
 - Validate file magic bytes, not just MIME type, for uploads
-- Sanitize `file.originalname` to prevent path traversal in S3 keys
-- Add lazy loading for product images (loading="lazy" or Intersection Observer)
 
 ### UI Polish
 

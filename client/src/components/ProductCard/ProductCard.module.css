@@ -67,6 +67,11 @@
   color: var(--color-danger);
 }
 
+.product-card__favorite-spinner {
+  width: 14px;
+  height: 14px;
+}
+
 .product-card__favorite--active {
   background: var(--color-danger);
 }

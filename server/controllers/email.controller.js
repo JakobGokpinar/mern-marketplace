@@ -3,9 +3,9 @@ const EmailVerifyToken = require('../models/EmailVerifyToken');
 const UserModel = require('../models/UserModel');
 const sendEmail = require('../config/sendEmail');
 const { randomUUID } = require('crypto');
+const logger = require('../config/logger');
 
 const verifyEmail = async (req, res) => {
-    if (!req.isAuthenticated()) return res.status(401).json({ status: false, message: 'Please login for verifying' });
     try {
         const userId = req.body.userId;
         if (userId !== req.user.id) {
@@ -35,14 +35,12 @@ const verifyEmail = async (req, res) => {
         await EmailVerifyToken.deleteMany({ userId });
         return res.status(200).json({ success: true, user: data, message: 'Your email has been verified' });
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         return res.status(500).json({ success: false, message: 'A problem occured while verifying the email' });
     }
 }
 
 const sendVerificationEmail = async (req, res) => {
-    if (!req.isAuthenticated()) return res.status(401).json({ success: false, message: 'Not authenticated' });
-
     try {
         // Use authenticated user's data — never trust client-supplied email/id
         const receiver_email = req.user.email;
@@ -52,7 +50,7 @@ const sendVerificationEmail = async (req, res) => {
         await sendEmail(receiver_email, receiver_username, receiver_id, email_verify_token);
         return res.status(200).json({ success: true, message: 'A new verification email has been sent. Please check your Input or Spam folder.' });
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         return res.status(500).json({ success: false, message: 'Verification email could not be sent', err: error.message });
     }
 }

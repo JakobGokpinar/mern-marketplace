@@ -2,10 +2,9 @@ const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const AnnonceModel = require('../models/AnnonceModel.js');
 const UserModel = require('../models/UserModel.js');
+const logger = require('../config/logger');
 
 const addToFavorites = async (req, res) => {
-    if (!req.isAuthenticated()) return res.status(401).json({ message: 'Please login to access this data' });
-
     const userId = req.user.id;
     const annonceId = req.body.id;
 
@@ -35,14 +34,12 @@ const addToFavorites = async (req, res) => {
         );
         return res.status(200).json({ user: result, message: 'Annonce saved to Favorites' });
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         return res.status(500).json({ message: 'Annonce could not be saved to Favorites' });
     }
 };
 
 const removeFromFavorites = async (req, res) => {
-    if (!req.isAuthenticated()) return res.status(401).json({ message: 'Please login to access this data' });
-
     const userId = req.user.id;
     const annonceId = req.body.id;
     if (!annonceId) {
@@ -57,14 +54,12 @@ const removeFromFavorites = async (req, res) => {
         );
         return res.json({ user: result, message: 'Annonce removed from favorites' });
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         return res.status(500).json({ message: 'Error removing favorite' });
     }
 };
 
 const getFavorites = async (req, res) => {
-    if (!req.isAuthenticated()) return res.status(401).json({ message: 'Please login to access this data' });
-
     const userId = req.user.id;
 
     try {
@@ -80,7 +75,7 @@ const getFavorites = async (req, res) => {
         }
         return res.json({ productArray, message: 'Items fetched' });
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         return res.status(500).json({ message: 'Error occurred while fetching favorites' });
     }
 };

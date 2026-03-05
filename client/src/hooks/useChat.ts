@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useLocation } from 'react-router-dom';
 import { timeago } from '../utils/timeago';
-import socket from '../lib/socket';
 import {
   getChatRoomsApi,
   getChatRoomApi,
@@ -15,6 +14,7 @@ import { fetchProductApi } from '../services/productService';
 import { queryKeys } from '../lib/queryKeys';
 import toast from 'react-hot-toast';
 import { useAppSelector } from '../store/hooks';
+import { useChatSocket } from './useChatSocket';
 import type { ChatRoom, Message } from '../types/chat';
 import type { User } from '../types/user';
 import type { Product } from '../types/product';
@@ -35,9 +35,13 @@ export const useChat = () => {
   const [friend, setFriend] = useState<User | null>(null);
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
   const [currentFriendStatus, setCurrentFriendStatus] = useState<string | null>(null);
-  const [isFriendTyping, setIsFriendTyping] = useState(false);
   const [messageInput, setMessageInput] = useState('');
-  const [arrivalMessage, setArrivalMessage] = useState<Message | null>(null);
+
+  const { arrivalMessage, isFriendTyping, emitSendMessage } = useChatSocket({
+    friendId: friend?._id,
+    userId,
+    messageInput,
+  });
 
   const { data: conversations = [], refetch: refetchConversations } = useQuery({
     queryKey: queryKeys.chat.rooms(userId),
@@ -102,16 +106,6 @@ export const useChat = () => {
       .catch(() => { toast.error('Kunne ikke laste produkt'); });
   }, [currentChat]);
 
-  // Socket — incoming message
-  useEffect(() => {
-    const handler = ({ sender, msg, sentAt }: Message) => {
-      setArrivalMessage({ sender, msg, sentAt });
-      setIsFriendTyping(false);
-    };
-    socket.on('getMessage', handler);
-    return () => { socket.off('getMessage', handler); };
-  }, []);
-
   // Apply arrival message
   useEffect(() => {
     if (!arrivalMessage || arrivalMessage.sender !== friend?._id) return;
@@ -119,42 +113,11 @@ export const useChat = () => {
     if (currentChat?._id) void resetUnreadApi(currentChat._id);
   }, [arrivalMessage, friend, currentChat]);
 
-  // Socket — typing indicators
-  useEffect(() => {
-    const handleTyping = (data: { typer: string }) => {
-      if (data.typer === friend?._id) setIsFriendTyping(true);
-    };
-    const handleStopTyping = (data: { typer: string }) => {
-      if (data.typer === friend?._id) setIsFriendTyping(false);
-    };
-    socket.on('getTyping', handleTyping);
-    socket.on('getStoppedTyping', handleStopTyping);
-    return () => {
-      socket.off('getTyping', handleTyping);
-      socket.off('getStoppedTyping', handleStopTyping);
-    };
-  }, [friend]);
-
-  // Emit typing status
-  useEffect(() => {
-    if (!friend?._id || !userId) return;
-    if (messageInput !== '') {
-      socket.emit('userTyping', { typer: userId, receiver: friend._id });
-    } else {
-      socket.emit('stoppedTyping', { typer: userId, receiver: friend._id });
-    }
-  }, [messageInput, friend, userId]);
-
   const sendMutation = useMutation({
     mutationFn: () => sendMessageApi(userId, messageInput, currentChat!._id),
     onSuccess: () => {
       setMessagesArray((prev) => [...prev, { sender: userId, msg: messageInput, sentAt: new Date() }]);
-      socket.emit('sendMessage', {
-        msg: messageInput,
-        sentAt: new Date(),
-        sender: userId,
-        receiver: friend!._id,
-      });
+      emitSendMessage(messageInput, new Date(), userId, friend!._id);
       setMessageInput('');
     },
     onError: () => {

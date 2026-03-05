@@ -9,7 +9,7 @@ export const fetchProductsApi = async (): Promise<Product[]> => {
 };
 
 export const fetchProductApi = async (id: string): Promise<Product> => {
-  const res = await instanceAxs.get<Product>(`/product?id=${id}`);
+  const res = await instanceAxs.get<Product>('/product', { params: { id } });
   return res.data;
 };
 

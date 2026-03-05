@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const AnnonceModel = require('../models/AnnonceModel.js');
 const UserModel = require('../models/UserModel.js');
+const logger = require('../config/logger');
 
 // --- Browse all items ---
 // FIX: Original had race condition — UserModel.findOne was fire-and-forget (.then without await),
@@ -30,14 +31,13 @@ const getItems = async (req, res) => {
 
         return res.json({ productArray, message: 'Items found' });
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         return res.status(500).json({ message: 'Error occurred while fetching annonces' });
     }
 };
 
 // --- Get current user's annonces ---
 const getUserAnnonces = async (req, res) => {
-    if (!req.isAuthenticated()) return res.status(401).json({ message: 'Please login' });
     try {
         const userId = req.user._id;
         const result = await AnnonceModel.find({ sellerId: new ObjectId(userId) });
@@ -115,7 +115,7 @@ const findProducts = async (req, res) => {
                 favoriteProducts = result.favorites;
             }
         } catch (error) {
-            console.error(error);
+            logger.error(error);
         }
     }
 
@@ -142,7 +142,7 @@ const findProducts = async (req, res) => {
             message: 'Products successfully found',
         });
     } catch (err) {
-        console.error(err);
+        logger.error(err);
         res.status(500).json({
             message: 'Error occurred while searching products',
         });

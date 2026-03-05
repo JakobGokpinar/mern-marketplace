@@ -1,12 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const searchController = require('../controllers/search.controller');
+const ensureAuth = require('../middleware/ensureAuth');
 
-// Browse endpoints (mounted at /search)
 router.get('/', searchController.getItems);
-router.get('/mine', searchController.getUserAnnonces);
-
-// Search/filter endpoint (also mounted at /searchproduct for frontend compatibility)
+router.get('/mine', ensureAuth, searchController.getUserAnnonces);
 router.post('/', searchController.findProducts);
 
 module.exports = router;

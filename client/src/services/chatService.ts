@@ -7,9 +7,9 @@ export const getChatRoomsApi = async (userId: string): Promise<ChatRoom[]> => {
 };
 
 export const getChatRoomApi = async (buyer: string, seller: string, productId: string): Promise<ChatRoom | null> => {
-  const res = await instanceAxs.get<ChatRoom | null>(
-    `/chat/get/room?buyer=${buyer}&seller=${seller}&productId=${productId}`
-  );
+  const res = await instanceAxs.get<ChatRoom | null>('/chat/get/room', {
+    params: { buyer, seller, productId },
+  });
   return res.data;
 };
 

@@ -4,7 +4,7 @@ import { emitUnauthorized } from './authEvents';
 const serverURL = import.meta.env.VITE_API_URL || 'http://localhost:3080';
 
 const instanceAxs = axios.create({
-  baseURL: serverURL,
+  baseURL: serverURL + '/api',
   withCredentials: true,
 });
 

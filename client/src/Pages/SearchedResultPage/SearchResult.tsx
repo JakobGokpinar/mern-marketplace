@@ -138,7 +138,7 @@ const SearchResult = () => {
                 <Spinner animation="border" variant="secondary" />
               </div>
             ) : displayProducts.map((product) => (
-              <div key={product._id} style={{ marginBottom: 20 }}>
+              <div key={product._id}>
                 <ProductCard
                   images={product.annonceImages}
                   title={product.title}

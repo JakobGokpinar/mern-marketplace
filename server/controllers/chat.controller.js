@@ -3,8 +3,6 @@ const ObjectId = mongoose.Types.ObjectId;
 const ConversationModel = require('../models/ConversationModel');
 
 const createRoom = async (req, res) => {
-    if (!req.isAuthenticated()) return res.status(401).json({ message: 'Not authenticated' });
-
     // Buyer must be the authenticated user — prevent creating rooms on behalf of others
     if (req.body.buyer !== req.user.id) {
         return res.status(403).json({ message: 'Forbidden' });
@@ -24,8 +22,6 @@ const createRoom = async (req, res) => {
 }
 
 const getRooms = async (req, res) => {
-    if (!req.isAuthenticated()) return res.status(401).json({ message: 'Not authenticated' });
-
     // Use authenticated user's ID — never trust the client to send the right user ID
     const userId = req.user._id;
     try {
@@ -42,8 +38,6 @@ const getRooms = async (req, res) => {
 }
 
 const getRoomByCredentials = async (req, res) => {
-    if (!req.isAuthenticated()) return res.status(401).json({ message: 'Not authenticated' });
-
     let buyer = req.query.buyer;
     let seller = req.query.seller;
     let productId = req.query.productId;
@@ -60,8 +54,6 @@ const getRoomByCredentials = async (req, res) => {
 }
 
 const newMessage = async (req, res) => {
-    if (!req.isAuthenticated()) return res.status(401).json({ message: 'Not authenticated' });
-
     const roomId = new ObjectId(req.body.roomId);
 
     // Verify caller is a member of this room before allowing them to post
@@ -90,8 +82,6 @@ const newMessage = async (req, res) => {
 }
 
 const resetUnread = async (req, res) => {
-    if (!req.isAuthenticated()) return res.status(401).json({ message: 'Not authenticated' });
-
     const roomId = req.body.roomId;
 
     // Verify caller is a member of this room

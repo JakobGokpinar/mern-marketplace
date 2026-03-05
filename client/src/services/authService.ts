@@ -26,6 +26,6 @@ export const fetchUserApi = async (): Promise<User> => {
 };
 
 export const fetchUserByIdApi = async (userId: string): Promise<User> => {
-  const res = await instanceAxs.get<{ user: User }>(`/fetchuser?userId=${userId}`);
+  const res = await instanceAxs.get<{ user: User }>('/fetchuser', { params: { userId } });
   return res.data.user;
 };

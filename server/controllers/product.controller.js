@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const UserModel = require('../models/UserModel');
 const AnnonceModel = require('../models/AnnonceModel');
+const logger = require('../config/logger');
 
 const findProduct = async (req, res) => {
     const productId = req.query.id;
@@ -12,7 +13,7 @@ const findProduct = async (req, res) => {
             const user = await UserModel.findOne({ _id: new ObjectId(req.user._id) });
             favoritesArray = user.favorites;
         } catch (error) {
-            console.error(error);
+            logger.error(error);
         }
     }
 
@@ -27,7 +28,7 @@ const findProduct = async (req, res) => {
 
         return res.status(200).json({ product: result, seller, message: 'Product is found' });
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         return res.status(500).json({ message: 'Error occured while getting the annonce' });
     }
 }

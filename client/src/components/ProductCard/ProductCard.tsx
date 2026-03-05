@@ -76,7 +76,7 @@ function ProductCard({
           {images.map((img, index) => (
             <Carousel.Item key={index}>
               <Link to={`/produkt/${id}`}>
-                <img src={img.location} alt={title} />
+                <img src={img.location} alt={title} loading="lazy" />
               </Link>
             </Carousel.Item>
           ))}
@@ -89,7 +89,7 @@ function ProductCard({
             disabled={isLoading}
           >
             {isLoading ? (
-              <Spinner size="sm" animation="border" style={{ width: 14, height: 14 }} />
+              <Spinner size="sm" animation="border" className={styles['product-card__favorite-spinner']} />
             ) : (
               <i className={`fa-${isFavorite ? "solid" : "regular"} fa-heart`} />
             )}

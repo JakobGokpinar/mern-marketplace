@@ -56,7 +56,6 @@ passport.use('local-signup', new Strategy({ usernameField: 'email', passReqToCal
         });
         return done(null, user, { message: 'user created' });
     } catch (err) {
-        console.error(err);
         return done(err);
     }
 }));

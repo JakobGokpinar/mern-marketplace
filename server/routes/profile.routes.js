@@ -1,13 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const profileController = require('../controllers/profile.controller');
-
-const ensureAuth = (req, res, next) => {
-    if (!req.isAuthenticated()) {
-        return res.status(401).json({ message: 'You have to login to upload files' });
-    }
-    next();
-};
+const ensureAuth = require('../middleware/ensureAuth');
 
 router.post('/upload/picture', ensureAuth, profileController.uploadImageToAws);
 router.post('/update/userinfo', ensureAuth, profileController.updateUserInfo);
