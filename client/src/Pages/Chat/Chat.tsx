@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect, useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Chat.module.css';
 
@@ -7,6 +7,7 @@ import { useChat } from '../../hooks/useChat';
 import Conversations from './ChatParts/Conversations';
 import Messages from './ChatParts/Messages';
 import type { Message } from '../../types/chat';
+import type { ChatRoom } from '../../types/chat';
 
 const groupMessagesBySender = (messages: Message[]): Message[][] =>
   messages.reduce<Message[][]>((groups, msg) => {
@@ -25,6 +26,8 @@ interface LoggedUser {
 const Chat = () => {
   const user = useAppSelector(state => state.user.user);
   const messageListRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [mobilePanelOpen, setMobilePanelOpen] = useState(false);
 
   const {
     conversations,
@@ -49,12 +52,25 @@ const Chat = () => {
 
   const groupedMessages = groupMessagesBySender(messagesArray ?? []);
 
-  // Scroll to bottom when messages change
+  // Auto-grow textarea
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
+  }, [messageInput]);
+
+  // Scroll to bottom on new messages
   useEffect(() => {
     if (messageListRef.current) {
       messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
     }
   }, [messagesArray]);
+
+  const handleSelectConversation = useCallback((conv: ChatRoom) => {
+    setCurrentChat(conv);
+    setMobilePanelOpen(true);
+  }, [setCurrentChat]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -70,11 +86,11 @@ const Chat = () => {
   return (
     <div className={styles['container']}>
       {/* Sidebar */}
-      <div className={styles['sidebar']}>
+      <div className={`${styles['sidebar']} ${!mobilePanelOpen ? styles['sidebar--visible'] : ''}`}>
         <div className={styles['sidebar-header']}>Meldinger</div>
         <div className={styles['sidebar-list']}>
           {conversations.map((conv, i) => (
-            <div key={conv._id ?? i} onClick={() => setCurrentChat(conv)}>
+            <div key={conv._id ?? i} onClick={() => handleSelectConversation(conv)}>
               <Conversations
                 productId={conv.productId}
                 conversation={conv}
@@ -88,13 +104,20 @@ const Chat = () => {
       </div>
 
       {/* Main panel */}
-      <div className={styles['panel']}>
+      <div className={`${styles['panel']} ${!mobilePanelOpen ? styles['panel--hidden'] : ''}`}>
         {!currentChat ? (
           <div className={styles['empty-state']}>Velg en samtale</div>
         ) : (
           <>
             {/* Header */}
             <div className={styles['header']}>
+              <button
+                className={styles['header-back']}
+                onClick={() => setMobilePanelOpen(false)}
+                aria-label="Tilbake"
+              >
+                <i className="fa-solid fa-arrow-left" />
+              </button>
               {friend?.profilePicture ? (
                 <img src={friend.profilePicture} alt={friend.username} className={styles['header-avatar']} />
               ) : (
@@ -151,6 +174,7 @@ const Chat = () => {
             {/* Input */}
             <div className={styles['input-area']}>
               <textarea
+                ref={textareaRef}
                 className={styles['input-textarea']}
                 placeholder="Skriv en melding... (Enter for å sende)"
                 value={messageInput}

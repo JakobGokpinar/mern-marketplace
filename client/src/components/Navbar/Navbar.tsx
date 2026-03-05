@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import styles from "./Navbar.module.css";
@@ -10,38 +10,15 @@ import Dropdown from 'react-bootstrap/Dropdown';
 
 import Searchbar from "./Searchbar";
 import { logoutRequest } from "../../store/authThunks";
-import { instanceAxs } from "../../lib/axios";
-import socket from "../../lib/socket";
 
 const Navigation = () => {
   const lastScrollY = useRef<number>(0);
   const [isRender, setIsRender] = useState<boolean>(true);
-  const [isUnreadMsg, setIsUnreadMsg] = useState<boolean>(false);
 
   const isLoggedIn = useAppSelector(state => state.user.isLoggedIn);
   const user = useAppSelector(state => state.user.user);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
-  const checkUnreadMessages = useCallback(() => {
-    if (!user?._id) return;
-    instanceAxs.post('/chat/get/rooms', { user: user._id })
-      .then(response => {
-        const hasUnread = response.data.some((room: { unreadMessages: number }) => room.unreadMessages > 0);
-        setIsUnreadMsg(hasUnread);
-      })
-      .catch(() => {});
-  }, [user]);
-
-  useEffect(() => {
-    checkUnreadMessages();
-  }, [checkUnreadMessages]);
-
-  useEffect(() => {
-    const handleNewMessage = () => checkUnreadMessages();
-    socket.on('getMessage', handleNewMessage);
-    return () => { socket.off('getMessage', handleNewMessage); };
-  }, [checkUnreadMessages]);
 
   useEffect(() => {
     const SCROLL_THRESHOLD = 80;
@@ -94,7 +71,6 @@ const Navigation = () => {
                 </Nav.Link>
                 <Nav.Link href="/chat" className={styles['navbar-icon-link']}>
                   <i className="fa-regular fa-message" />
-                  {isUnreadMsg && <span className={styles['navbar-unread-dot']} />}
                 </Nav.Link>
                 <Nav.Link href="/favoritter" className={styles['navbar-icon-link']}>
                   <i className="fa-regular fa-heart" />

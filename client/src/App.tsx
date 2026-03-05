@@ -11,6 +11,7 @@ import Register from './Pages/LoginAndRegister/Register';
 import EmailVerify from './Pages/EmailVerification/EmailVerify';
 import NotFound from './Pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 
 import { userActions } from './store/userSlice';
 import { logoutRequest } from './store/authThunks';
@@ -66,6 +67,7 @@ const AppContent = () => {
       </div>
       <div className='app-div'>
         <div className='app-div__content'>
+          <ErrorBoundary>
           <Suspense fallback={<div className="page-loading" />}>
             <Routes>
               <Route path='/login' element={<Login />} />
@@ -85,6 +87,7 @@ const AppContent = () => {
               <Route path='*' element={<NotFound />} />
             </Routes>
           </Suspense>
+          </ErrorBoundary>
         </div>
         <Footer />
       </div>
