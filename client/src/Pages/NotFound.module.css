@@ -1,35 +1,41 @@
 .notFound-container {
-    width: 100%;
-    margin-bottom: 5%;
-    height: 70vh;
-}
-.notFound-container * {
-    margin: 0%;
-    padding: 0%;
-}
-.notFound-container .row {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-}
-.notFound-container .row * {
-    padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
 }
 
-.notFound-gif {
-    width: 100%;
-}
 .notFound-content {
-    text-align: center  ;
+  text-align: center;
 }
-.notFound-content h1 {
-    font-size: 52px;
-}
-.notFound-content p {
-    font-size: 18px;
-}
+
 .notFound-content * {
-    margin-bottom: 50px;
+  margin-bottom: 16px;
+}
+
+.notFound-code {
+  font-size: 96px;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.notFound-content h1 {
+  font-size: var(--fs-h2);
+  font-weight: 600;
+}
+
+.notFound-content p {
+  color: var(--color-text-secondary);
+  font-size: var(--fs-body);
+}
+
+.notFound-content a {
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.notFound-content a:hover {
+  color: var(--color-primary-hover);
 }

@@ -13,8 +13,8 @@ import {
 import { fetchUserByIdApi } from '../services/authService';
 import { fetchProductApi } from '../services/productService';
 import { queryKeys } from '../lib/queryKeys';
-import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { uiSliceActions } from '../store/uiSlice';
+import toast from 'react-hot-toast';
+import { useAppSelector } from '../store/hooks';
 import type { ChatRoom, Message } from '../types/chat';
 import type { User } from '../types/user';
 import type { Product } from '../types/product';
@@ -26,7 +26,6 @@ const findFriendId = (buyer: string, seller: string, userId: string): string | n
 };
 
 export const useChat = () => {
-  const dispatch = useAppDispatch();
   const location = useLocation();
   const user = useAppSelector((state) => state.user.user) as User | Record<string, never>;
   const userId = '_id' in user ? user._id : '';
@@ -64,7 +63,7 @@ export const useChat = () => {
           void refetchConversations();
         }
       } catch {
-        dispatch(uiSliceActions.setFeedbackBanner({ severity: 'error', msg: 'Kunne ikke åpne chat' }));
+        toast.error('Kunne ikke åpne chat');
       }
     };
     void openOrCreateRoom();
@@ -159,7 +158,7 @@ export const useChat = () => {
       setMessageInput('');
     },
     onError: () => {
-      dispatch(uiSliceActions.setFeedbackBanner({ severity: 'error', msg: 'Feil mens sender en melding' }));
+      toast.error('Feil mens sender en melding');
     },
   });
 

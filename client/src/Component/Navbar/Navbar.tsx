@@ -126,7 +126,7 @@ const Navigation = () => {
                       <i className="fa-solid fa-scroll me-2" /> Mine Annonser
                     </Dropdown.Item>
                     <Dropdown.Divider />
-                    <Dropdown.Item onClick={logout} className={styles['navbar-logout-item']}>
+                    <Dropdown.Item as="button" onClick={logout} className={styles['navbar-logout-item']}>
                       <i className="fa-solid fa-arrow-right-from-bracket me-2" /> Logg Ut
                     </Dropdown.Item>
                   </Dropdown.Menu>

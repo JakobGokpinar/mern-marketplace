@@ -1,40 +1,63 @@
 {
-    "categories": [
-        {
-            "maincategory": "Bil",
-            "subcategories": ["Bobil", "Elbil", "Vanlig bil", "Campingvogner", "Varebil", "Leiebil", "Bildel", "Andre"]
-        },
-        {
-            "maincategory": "Eindom",
-            "subcategories": ["Rekkehus", "Leilighet", "Hytta", "Enebolig", "Tomter", "Feriehus", "Tomannsbolig", "Gårdsbruk", "Andre"]           
-        },
-        {
-            "maincategory": "Båt",
-            "subcategories": ["Bowrider", "Cabincruser", "Gummibåt", "RIB","Seilbåt", "Daycruiser", "Yacht", "Båtplass", "Speedbåt", "Trebåt", "Vannscooter", "Yrkesbåt", "Andre"]     
-        },
-        {
-            "maincategory": "Motorsykkel",
-            "subcategories": ["Scooter", "Moped", "Snøscooter", "ATV", "Chopper","MC deler", "Classic", "Cross", "Cruiser", "Custom", "Offroad", "Sport", "Touring", "Andre"]     
-        },
-        {
-            "maincategory": "Klær og Sko",
-            "subcategories": ["Barneklær", "Herreklær", "Dameklær", "Barnesko", "Briller og Linser", "Sko", "Smykker", "Vesker og bager", "Kroppspleie", "Klokker og ur", "Annet"]
-        },
-        {
-            "maincategory": "Møbler",
-            "subcategories": ["Antikke møbler", "Bord og stol", "Dekorasjon", "Garderobe", "Hyller og Kommoder", "Senger", "Belysning", "Sofa", "Tepper", "Annet"]
-        },
-        {
-            "maincategory": "Elektronikk",
-            "subcategories": ["Data", "Hvitevarer", "Lyd og Bilde", "Mobil og tilbehør", "Spill og Konsoll", "Foto og video", "Annet"]
-        },
-        {
-            "maincategory": "Torget",
-            "subcategories":["Porselen og keramikk", "Kunst", "Sølvtøy", "Dyr og utstyr", "Håndarbeid", "Musikk og Film", "Bøker", "Brettspill", "Musikkinstrument","Hage og Utstyr","Ventilasjon", "Sykler", "Annet"]
-        },
-        {
-            "maincategory": "Annet",
-            "subcategories": ["Annet"]
-        }
-    ]
+  "categories": [
+    {
+      "maincategory": "Torget",
+      "subcategories": [
+        { "name": "Elektronikk", "subsubcategories": ["Mobiltelefoner", "Nettbrett", "Datamaskiner", "Skjermer", "TV og lyd", "Hodetelefoner", "Spillkonsoller", "Kameraer", "Smarthjem", "Hvitevarer", "Annet"] },
+        { "name": "Møbler og interiør", "subsubcategories": ["Sofaer og stoler", "Bord og spisegrupper", "Senger og madrasser", "Skap og kommoder", "Belysning", "Tepper og gardiner", "Dekorasjon", "Annet"] },
+        { "name": "Klær og mote", "subsubcategories": ["Herreklær", "Dameklær", "Barneklær", "Sko", "Vesker og accessories", "Smykker og klokker", "Annet"] },
+        { "name": "Sport og friluftsliv", "subsubcategories": ["Sykler", "Ski og snowboard", "Treningsutstyr", "Fotball og lagsport", "Kampsport", "Camping og friluftsliv", "Vannsport", "Annet"] },
+        { "name": "Hobby og fritid", "subsubcategories": ["Musikkinstrumenter", "Bøker og blader", "Kunst og håndverk", "Brettspill og puslespill", "Leker", "Samlerartikler", "Musikk og film", "Annet"] },
+        { "name": "Hage og utemiljø", "subsubcategories": ["Hagemøbler", "Hageredskaper", "Trampoliner og uteleiker", "Planter og frø", "Annet"] },
+        { "name": "Barneartikler", "subsubcategories": ["Barnevogner og trillevogner", "Bilseter", "Leker og spill", "Barnemøbler", "Annet"] },
+        { "name": "Dyr og utstyr", "subsubcategories": ["Hundeutstyr", "Kattutstyr", "Fugl og småkryp", "Fiskeakvarium", "Annet"] },
+        { "name": "Verktøy og maskiner", "subsubcategories": ["Håndverktøy", "Elektroverktøy", "Byggematerialer", "Hage og skogsmaskiner", "Annet"] },
+        { "name": "Annet", "subsubcategories": ["Annet"] }
+      ]
+    },
+    {
+      "maincategory": "Bil og kjøretøy",
+      "subcategories": [
+        { "name": "Personbil", "subsubcategories": ["Sedan", "SUV", "Stasjonsvogn", "Kombi", "Cabriolet", "Coupé", "Minivan", "Andre"] },
+        { "name": "Elbil", "subsubcategories": ["SUV", "Sedan", "Stasjonsvogn", "Kombi", "Andre"] },
+        { "name": "Varebil og lastebil", "subsubcategories": ["Liten varebil", "Stor varebil", "Lastebil", "Andre"] },
+        { "name": "Bobil og campingvogn", "subsubcategories": ["Integrert", "Halvintegrert", "Busstil", "Campingvogn", "Andre"] },
+        { "name": "Bildeler og tilbehør", "subsubcategories": ["Motor og drivverk", "Karosseri og eksteriør", "Interiør", "Hjul og dekk", "Elektronikk og lys", "Annet"] },
+        { "name": "Annet", "subsubcategories": ["Annet"] }
+      ]
+    },
+    {
+      "maincategory": "Eiendom",
+      "subcategories": [
+        { "name": "Bolig til salgs", "subsubcategories": ["Enebolig", "Rekkehus", "Leilighet", "Tomannsbolig", "Andel", "Andre"] },
+        { "name": "Bolig til leie", "subsubcategories": ["Enebolig", "Rekkehus", "Leilighet", "Hybel og rom", "Andre"] },
+        { "name": "Fritidseiendom", "subsubcategories": ["Hytte", "Feriehus", "Fritidstomt", "Andre"] },
+        { "name": "Tomt og næring", "subsubcategories": ["Boligtomt", "Næringstomt", "Næringslokale", "Andre"] }
+      ]
+    },
+    {
+      "maincategory": "Båt",
+      "subcategories": [
+        { "name": "Motorbåt", "subsubcategories": ["Bowrider", "Daycruiser", "Cabin cruiser", "RIB", "Speedbåt", "Andre"] },
+        { "name": "Seilbåt", "subsubcategories": ["Jolle", "Krysser", "Yacht", "Andre"] },
+        { "name": "Annen båt", "subsubcategories": ["Gummibåt", "Trebåt", "Yrkesbåt", "Kano og kajakk", "Annet"] },
+        { "name": "Båtplass og utstyr", "subsubcategories": ["Båtplass", "Motor og tilbehør", "Navigasjon og elektronikk", "Sikkerhetsutstyr", "Annet"] }
+      ]
+    },
+    {
+      "maincategory": "MC og scooter",
+      "subcategories": [
+        { "name": "Motorsykkel", "subsubcategories": ["Sport", "Cruiser", "Touring", "Naked", "Offroad og enduro", "Classic", "Andre"] },
+        { "name": "Scooter og moped", "subsubcategories": ["Scooter", "Moped", "El-scooter", "Andre"] },
+        { "name": "ATV og snøscooter", "subsubcategories": ["ATV", "Snøscooter", "Side-by-side", "Andre"] },
+        { "name": "Deler og tilbehør", "subsubcategories": ["Motor og drivverk", "Karosseri", "Hjul og dekk", "Utstyr og klær", "Annet"] }
+      ]
+    },
+    {
+      "maincategory": "Annet",
+      "subcategories": [
+        { "name": "Annet", "subsubcategories": ["Annet"] }
+      ]
+    }
+  ]
 }

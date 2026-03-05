@@ -1,7 +1,7 @@
 import styles from "./Profile.module.css";
-import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { useAppSelector } from "../../../store/hooks";
+import { useEffect, useRef, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
+import type { User } from "../../../types/user";
 import { useMutation } from "@tanstack/react-query";
 
 import Breadcrumb from "react-bootstrap/Breadcrumb";
@@ -22,14 +22,13 @@ import {
   deleteAccountApi,
 } from "../../../services/profileService";
 import { resendVerificationEmailApi } from "../../../services/emailService";
+import toast from 'react-hot-toast';
 import { userActions } from "../../../store/userSlice";
-import { uiSliceActions } from "../../../store/uiSlice";
 
 const Profile = () => {
-  const userState = useAppSelector(state => state.user.user);
-  const user = userState as import('../../../types/user').User;
-  const dispatch = useDispatch();
-  const hiddenFileInput = React.useRef<HTMLInputElement>(null);
+  const user = useAppSelector(state => state.user.user) as User;
+  const dispatch = useAppDispatch();
+  const hiddenFileInput = useRef<HTMLInputElement>(null);
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [formData, setFormData] = useState<FormData | null>(null);
@@ -107,10 +106,10 @@ const Profile = () => {
       return infoRes;
     },
     onSuccess: (data) => {
-      dispatch(uiSliceActions.setFeedbackBanner({ severity: 'success', msg: data.message }));
+      toast.success(data.message);
     },
     onError: () => {
-      dispatch(uiSliceActions.setFeedbackBanner({ severity: 'error', msg: 'Kunne ikke oppdatere profil' }));
+      toast.error('Kunne ikke oppdatere profil');
     },
   });
 
@@ -118,7 +117,7 @@ const Profile = () => {
     mutationFn: removeProfilePictureApi,
     onSuccess: (data) => {
       if (data.user) dispatch(userActions.setUser(data.user));
-      dispatch(uiSliceActions.setFeedbackBanner({ severity: 'info', msg: data.message }));
+      toast(data.message);
     },
   });
 
@@ -126,22 +125,18 @@ const Profile = () => {
     mutationFn: deleteAccountApi,
     onSuccess: () => {
       dispatch(userActions.logout());
-      dispatch(uiSliceActions.setFeedbackBanner({ severity: 'success', msg: 'Kontoen din er slettet' }));
+      toast.success('Kontoen din er slettet');
       window.location.href = '/';
     },
     onError: () => {
-      dispatch(uiSliceActions.setFeedbackBanner({ severity: 'error', msg: 'Kunne ikke slette kontoen' }));
+      toast.error('Kunne ikke slette kontoen');
     },
   });
 
   const sendVerificationEmail = () => {
     resendVerificationEmailApi(user.email, user.username ?? '', user._id)
-      .then(response => {
-        dispatch(uiSliceActions.setFeedbackBanner({ severity: 'success', msg: response.message }));
-      })
-      .catch(() => {
-        dispatch(uiSliceActions.setFeedbackBanner({ severity: 'error', msg: 'Kunne ikke sende e-post' }));
-      });
+      .then(response => { toast.success(response.message); })
+      .catch(() => { toast.error('Kunne ikke sende e-post'); });
   };
 
   const avatarSrc = readerResult || (profilePicture !== "" ? profilePicture : null);

@@ -50,7 +50,7 @@ const Filters = ({ handleFilterChange, removeSelectedFilter, searchParams, count
             return categoryObject.categories.find(item => item.maincategory === selectedCategoryParam) ?? '';
         }
         if (selectedSubcategory) {
-            return categoryObject.categories.find(item => item.subcategories.includes(selectedSubcategory)) ?? '';
+            return categoryObject.categories.find(item => item.subcategories.some(s => s.name === selectedSubcategory)) ?? '';
         }
         return '';
     })();
@@ -163,7 +163,7 @@ const Filters = ({ handleFilterChange, removeSelectedFilter, searchParams, count
               >
                 <option value="">Velg en under kategori</option>
                 {mainCategory.subcategories.map(item => (
-                  <option value={item} key={item}>{item}</option>
+                  <option value={item.name} key={item.name}>{item.name}</option>
                 ))}
               </Form.Select>
             }

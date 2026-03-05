@@ -3,19 +3,19 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useAppDispatch } from './store/hooks';
 import './App.css';
 
-import FeedbackBanner from './components/FeedbackBanner/FeedbackBanner';
+import { Toaster } from 'react-hot-toast';
 import Navbar from './Component/Navbar/Navbar';
 import Footer from './Component/Footer/Footer';
 import Login from './Pages/LoginAndRegister/Login';
 import Register from './Pages/LoginAndRegister/Register';
 import EmailVerify from './Pages/EmailVerification/EmailVerify';
-import PrivacyPolicy from './Pages/PrivacyAndAbout/PrivacyPolicy';
-import AboutUs from './Pages/PrivacyAndAbout/AboutUs';
 import NotFound from './Pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 
 import { userActions } from './store/userSlice';
 import { logoutRequest } from './store/authThunks';
+import { onUnauthorized } from './lib/authEvents';
+import toast from 'react-hot-toast';
 import { useSocket } from './hooks/useSocket';
 import type { User } from './types/user';
 
@@ -34,6 +34,13 @@ const AppContent = () => {
   const user: User | null = JSON.parse(window.localStorage.getItem('user') ?? 'null') as User | null;
 
   useSocket();
+
+  useEffect(() => {
+    return onUnauthorized(() => {
+      dispatch(userActions.logout());
+      toast.error('Sesjonen din har utløpt. Logg inn på nytt.');
+    });
+  }, [dispatch]);
 
   useEffect(() => {
     const isLoggedIn: boolean | null = JSON.parse(window.localStorage.getItem('isLoggedIn') ?? 'null');
@@ -67,8 +74,6 @@ const AppContent = () => {
               <Route path='/search' element={<SearchResult />} />
               <Route path='/produkt/:annonceId' element={<ProductPage />} />
               <Route path='/emailverify' element={<EmailVerify />} />
-              <Route path='/privacy-policy' element={<PrivacyPolicy />} />
-              <Route path='/about-us' element={<AboutUs />} />
 
               <Route path='/nyannonse' element={<ProtectedRoute><NewAnnonce /></ProtectedRoute>} />
               <Route path='/chat' element={<ProtectedRoute><Chat /></ProtectedRoute>} />
@@ -83,14 +88,14 @@ const AppContent = () => {
         </div>
         <Footer />
       </div>
-      <FeedbackBanner />
+      <Toaster position="bottom-center" toastOptions={{ duration: 5000 }} />
     </>
   );
 };
 
 const App = () => {
   return (
-    <Router>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <AppContent />
     </Router>
   );

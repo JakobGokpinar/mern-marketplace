@@ -1,0 +1,132 @@
+/* ── List ─────────────────────────────────────── */
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* ── Item card ────────────────────────────────── */
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm);
+  cursor: grab;
+  transition: box-shadow var(--transition-fast), border-color var(--transition-fast);
+}
+
+.item:active {
+  cursor: grabbing;
+}
+
+.item:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── Drag handle ──────────────────────────────── */
+
+.handle {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  padding: 0 2px;
+  font-size: 0.85rem;
+  user-select: none;
+}
+
+/* ── Thumbnail ────────────────────────────────── */
+
+.thumb-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.thumb {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  display: block;
+}
+
+.cover-badge {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 1px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* ── Caption ──────────────────────────────────── */
+
+.caption-wrap {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.caption-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.caption-input {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font-size: var(--fs-sm);
+  color: var(--color-text);
+  background: var(--color-bg-subtle);
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.caption-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.caption-input:focus {
+  border-color: var(--color-primary);
+  background: var(--color-surface);
+}
+
+/* ── Delete button ────────────────────────────── */
+
+.delete-btn {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.delete-btn:hover {
+  color: var(--color-danger);
+  background: var(--color-danger-light);
+}

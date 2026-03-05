@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router";
-import { useAppSelector, useAppDispatch } from "../../store/hooks";
+import toast from 'react-hot-toast';
+import { useAppSelector } from "../../store/hooks";
 import { useQuery } from "@tanstack/react-query";
 import TextareaAutosize from 'react-textarea-autosize';
 
@@ -15,11 +16,11 @@ import Carousel from 'react-bootstrap/Carousel';
 import Breadcrumb from "react-bootstrap/Breadcrumb";
 import Spinner from "react-bootstrap/Spinner";
 
-import { uiSliceActions } from "../../store/uiSlice";
 import { useFavorites } from "../../hooks/useFavorites";
 import { instanceAxs } from "../../lib/axios";
 import { queryKeys } from "../../lib/queryKeys";
 import { format } from "timeago.js";
+import { formatPrice } from "../../utils/formatPrice";
 import type { Product } from "../../types/product";
 import type { User } from "../../types/user";
 
@@ -28,18 +29,12 @@ interface ProductPageData {
   seller: User & { lastActiveAt?: string; userCreatedAt?: string; _id: string };
 }
 
-const formatPrice = (price: number | string | undefined) => {
-  if (!price && price !== 0) return "0 kr";
-  return Number(price).toLocaleString("nb-NO") + " kr";
-};
-
 function ProductPage() {
   const { annonceId } = useParams();
   const navigate = useNavigate();
   const siteLink = import.meta.env.VITE_SITE_URL || window.location.origin;
 
   const user = useAppSelector(state => state.user.user);
-  const dispatch = useAppDispatch();
   const [showShareModal, setShowShareModal] = useState(false);
   const { toggleFavorite, isLoading: isFavLoading } = useFavorites();
 
@@ -70,7 +65,7 @@ function ProductPage() {
   const copyAnnonceLink = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     navigator.clipboard.writeText(`${siteLink}/produkt/${annonceId}`);
-    dispatch(uiSliceActions.setFeedbackBanner({ severity: 'success', msg: 'Lenken ble kopiert' }));
+    toast.success('Lenken ble kopiert');
     setShowShareModal(false);
   };
 

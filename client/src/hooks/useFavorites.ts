@@ -1,8 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 import { addToFavoritesApi, removeFromFavoritesApi } from '../services/favoriteService';
+import toast from 'react-hot-toast';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { userActions } from '../store/userSlice';
-import { uiSliceActions } from '../store/uiSlice';
 import type { User } from '../types/user';
 
 export const useFavorites = () => {
@@ -13,10 +13,10 @@ export const useFavorites = () => {
     mutationFn: addToFavoritesApi,
     onSuccess: (data) => {
       if (data.user) dispatch(userActions.setUser(data.user));
-      dispatch(uiSliceActions.setFeedbackBanner({ severity: 'success', msg: data.message }));
+      toast.success(data.message);
     },
     onError: () => {
-      dispatch(uiSliceActions.setFeedbackBanner({ severity: 'error', msg: 'Kunne ikke lagre favoritt' }));
+      toast.error('Kunne ikke lagre favoritt');
     },
   });
 
@@ -24,10 +24,10 @@ export const useFavorites = () => {
     mutationFn: removeFromFavoritesApi,
     onSuccess: (data) => {
       if (data.user) dispatch(userActions.setUser(data.user));
-      dispatch(uiSliceActions.setFeedbackBanner({ severity: 'info', msg: data.message }));
+      toast(data.message);
     },
     onError: () => {
-      dispatch(uiSliceActions.setFeedbackBanner({ severity: 'error', msg: 'Kunne ikke fjerne favoritt' }));
+      toast.error('Kunne ikke fjerne favoritt');
     },
   });
 

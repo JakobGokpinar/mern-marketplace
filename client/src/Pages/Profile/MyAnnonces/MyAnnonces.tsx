@@ -11,15 +11,13 @@ import Spinner from 'react-bootstrap/Spinner';
 import { removeAnnonceApi } from '../../../services/profileService';
 import { fetchMyProductsApi } from '../../../services/productService';
 import { queryKeys } from '../../../lib/queryKeys';
-import { uiSliceActions } from '../../../store/uiSlice';
-import { useDispatch } from 'react-redux';
+import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import type { Product } from '../../../types/product';
 
 type AnnonceItem = Product;
 
 const MyAnnonces = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const queryClientHook = useQueryClient();
   const [showRemoveModal, setShowRemoveModal] = useState<boolean>(false);
@@ -36,12 +34,12 @@ const MyAnnonces = () => {
   const removeMutation = useMutation({
     mutationFn: (id: string) => removeAnnonceApi(id),
     onSuccess: (data) => {
-      dispatch(uiSliceActions.setFeedbackBanner({ severity: 'success', msg: data.message }));
+      toast.success(data.message);
       void queryClientHook.invalidateQueries({ queryKey: queryKeys.products.mine() });
       setShowRemoveModal(false);
     },
     onError: () => {
-      dispatch(uiSliceActions.setFeedbackBanner({ severity: 'error', msg: 'Kunne ikke slette annonsen' }));
+      toast.error('Kunne ikke slette annonsen');
     },
   });
 
@@ -89,7 +87,7 @@ const MyAnnonces = () => {
         </div>
       ) : (
         <div className={styles['myannonces-content']}>
-          <p>Du har ingen aktive annonser nå. Prøv å logge inn og legge ut annonser</p>
+          <p>Du har ingen aktive annonser ennå. <a href="/nyannonse">Legg ut en annonse</a></p>
         </div>
       )}
 

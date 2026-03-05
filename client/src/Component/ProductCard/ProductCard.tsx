@@ -9,9 +9,9 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
 import { useFavorites } from "../../hooks/useFavorites";
-import { uiSliceActions } from "../../store/uiSlice";
-import { useDispatch } from "react-redux";
+import toast from 'react-hot-toast';
 import { useAppSelector } from "../../store/hooks";
+import { formatPrice } from "../../utils/formatPrice";
 
 interface ProductCardProps {
   images?: Array<{ location: string }>;
@@ -23,11 +23,6 @@ interface ProductCardProps {
   isFavorite?: boolean;
   sellerId?: string;
 }
-
-const formatPrice = (price: number | string | undefined) => {
-  if (!price && price !== 0) return "0 kr";
-  return Number(price).toLocaleString("nb-NO") + " kr";
-};
 
 function ProductCard({
   images = [],
@@ -41,7 +36,6 @@ function ProductCard({
 
   const siteLink = import.meta.env.VITE_SITE_URL || window.location.origin;
   const user = useAppSelector(state => state.user.user);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { toggleFavorite, isLoading } = useFavorites();
@@ -67,7 +61,7 @@ function ProductCard({
   const handleCopyLink = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     navigator.clipboard.writeText(`${siteLink}/produkt/${id}`);
-    dispatch(uiSliceActions.setFeedbackBanner({ severity: "success", msg: "Lenken ble kopiert" }));
+    toast.success('Lenken ble kopiert');
     setShowModal(false);
   };
 

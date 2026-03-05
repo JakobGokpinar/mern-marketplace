@@ -1,6 +1,0 @@
-
-server:
-    #OLD EMAILS (UPDATE THESE VALUES):
-        -old mongo_url
-        -old email_user
-        -old aws_bucket_name

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import styles from "./SearchResult.module.css";
 
 interface SearchProduct {
   _id: string;
@@ -12,7 +13,10 @@ interface SearchProduct {
   annonceImages?: Array<{ location: string }>;
   date?: string;
 }
-import styles from "./SearchResult.module.css";
+
+interface SearchResultData {
+  productArray: SearchProduct[];
+}
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -47,12 +51,6 @@ const SearchResult = () => {
     return queryObject;
   };
 
-  interface SearchResultData {
-    productArray: SearchProduct[];
-    categories?: string[];
-    subCategories?: string[];
-  }
-
   const { data, isPending } = useQuery<SearchResultData>({
     queryKey: queryKeys.products.search(Object.fromEntries(searchParams.entries())),
     queryFn: async () => {
@@ -63,7 +61,6 @@ const SearchResult = () => {
   });
 
   const productArray: SearchProduct[] = data?.productArray || [];
-  const categories = data ? { categories: data.categories ?? [], subCategories: data.subCategories ?? [] } : '';
 
   const [sortedProducts, setSortedProducts] = useState<SearchProduct[] | null>(null);
   const displayProducts = sortedProducts || productArray;
@@ -136,7 +133,6 @@ const SearchResult = () => {
             removeSelectedFilter={removeSelectedFilter}
             searchParams={searchParams}
             counties={counties.length > 0 && counties}
-            categories={categories !== '' && categories}
           />
         </Col>
 

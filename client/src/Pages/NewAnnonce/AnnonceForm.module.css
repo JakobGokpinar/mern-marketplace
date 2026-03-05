@@ -1,0 +1,206 @@
+/* ── Form container ────────────────────────────── */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+/* ── Section card ──────────────────────────────── */
+
+.section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.section-label {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-secondary);
+  margin: 0 0 4px;
+}
+
+/* ── Field labels ──────────────────────────────── */
+
+.field-label {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--color-text);
+  margin-bottom: 6px;
+}
+
+.optional-tag {
+  font-weight: 400;
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+  text-transform: none;
+  letter-spacing: 0;
+  margin-left: 6px;
+}
+
+/* ── Form groups ───────────────────────────────── */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Status toggle ─────────────────────────────── */
+
+.status-toggle {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.status-btn {
+  flex: 1;
+  padding: 10px var(--space-md);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all var(--transition-fast);
+}
+
+.status-btn:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-lightest);
+}
+
+.status-btn--active {
+  border-color: var(--color-primary);
+  background: var(--color-primary-lightest);
+  color: var(--color-primary);
+}
+
+.status-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── File upload ───────────────────────────────── */
+
+.upload-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 12px var(--space-md);
+  border: 1.5px dashed var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  width: fit-content;
+}
+
+.upload-label:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-lightest);
+}
+
+.upload-label i {
+  font-size: 1rem;
+}
+
+.upload-input {
+  display: none !important;
+}
+
+.upload-hint {
+  margin: var(--space-sm) 0 0;
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+}
+
+/* ── Price row ─────────────────────────────────── */
+
+.price-row {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+.price-input-wrapper {
+  position: relative;
+  flex: 1;
+  max-width: 160px;
+}
+
+.price-input-wrapper input {
+  padding-right: 36px;
+}
+
+.price-currency {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
+  pointer-events: none;
+}
+
+.price-period {
+  flex: 1;
+}
+
+/* ── Postnumber row ────────────────────────────── */
+
+.postnumber-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.postnumber-input {
+  max-width: 120px;
+}
+
+.postnumber-place {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-sm);
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.postnumber-place i {
+  font-size: 0.85rem;
+}
+
+/* ── Submit row ────────────────────────────────── */
+
+.submit-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding-bottom: var(--space-lg);
+}
+
+.submit-btn {
+  width: 100%;
+  font-weight: 600;
+}
+
+.cancel-btn {
+  width: 100%;
+}

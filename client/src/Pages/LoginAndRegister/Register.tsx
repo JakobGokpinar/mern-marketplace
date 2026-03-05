@@ -5,9 +5,9 @@ import validator from 'validator';
 
 import { useNavigate } from "react-router-dom";
 import { Button, Form, Row, Col, Container, Spinner } from "react-bootstrap";
+import toast from 'react-hot-toast';
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { sendSignUpRequest } from "../../store/authThunks";
-import { uiSliceActions } from '../../store/uiSlice';
 
 function Register() {
   const dispatch = useAppDispatch();
@@ -30,10 +30,7 @@ function Register() {
     event.preventDefault();
 
     if (!validator.isEmail(email)) {
-      dispatch(uiSliceActions.setFeedbackBanner({
-        severity: 'error',
-        msg: 'Please provide a valid email address',
-      }));
+      toast.error('Please provide a valid email address');
       return;
     }
 

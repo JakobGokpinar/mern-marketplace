@@ -19,6 +19,17 @@ import { useAppSelector } from "../../store/hooks";
 import { useChat } from "../../hooks/useChat";
 import type { Message } from "../../types/chat";
 
+const groupMessagesBySender = (messages: Message[]): Message[][] =>
+  messages.reduce<Message[][]>((groups, msg) => {
+    const last = groups[groups.length - 1];
+    if (last?.[0]?.sender === msg.sender) {
+      last.push(msg);
+    } else {
+      groups.push([msg]);
+    }
+    return groups;
+  }, []);
+
 interface LoggedUser {
   _id: string;
   username?: string;
@@ -47,8 +58,7 @@ const Chat = () => {
     return loggedUser ? findFriendId(buyer, seller, loggedUser._id) : null;
   };
 
-  var currentSender = '';
-  var senderMessages: Message[] = [];
+  const groupedMessages = groupMessagesBySender(messagesArray ?? []);
 
   return (
     <div className={styles['chat-div-container']}>
@@ -108,37 +118,15 @@ const Chat = () => {
             </ConversationHeader>
             <MessageList typingIndicator={isFriendTyping ? <TypingIndicator content={`${friend?.username} skriver`} /> : ''}>
               <MessageSeparator>{new Date(messagesArray?.[0]?.sentAt).toDateString()}</MessageSeparator>
-              {messagesArray?.map((item, index) => {
-                if (item.sender !== currentSender) {
-                  if (index === 0) {
-                    currentSender = item.sender;
-                    senderMessages.push(item);
-                  } else {
-                    let copyArr = senderMessages;
-                    senderMessages = [];
-                    senderMessages.push(item);
-                    currentSender = item.sender;
-                    return (
-                      <div key={index}>
-                        <Messages
-                          messageArr={copyArr}
-                          sender={currentSender}
-                          direction={currentSender !== user._id ? 'outgoing' : 'incoming'}
-                        />
-                      </div>
-                    );
-                  }
-                } else {
-                  senderMessages.push(item);
-                }
-              })}
-              <div>
-                <Messages
-                  messageArr={senderMessages}
-                  sender={currentSender}
-                  direction={currentSender === user?._id ? 'outgoing' : 'incoming'}
-                />
-              </div>
+              {groupedMessages.map((group, index) => (
+                <div key={index}>
+                  <Messages
+                    messageArr={group}
+                    sender={group[0].sender}
+                    direction={group[0].sender === user._id ? 'outgoing' : 'incoming'}
+                  />
+                </div>
+              ))}
             </MessageList>
             <MessageInput
               placeholder='Skriv en melding her...'

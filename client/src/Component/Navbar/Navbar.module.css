@@ -205,6 +205,13 @@
 
 .navbar-logout-item {
     color: var(--color-danger) !important;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.navbar-logout-item:hover {
+    background: var(--color-danger-light) !important;
 }
 
 .navbar-logout-item i {

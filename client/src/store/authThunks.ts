@@ -1,6 +1,6 @@
+import toast from 'react-hot-toast';
 import type { AppDispatch } from './index';
 import { userActions } from './userSlice';
-import { uiSliceActions } from './uiSlice';
 import { loginApi, signupApi, logoutApi, fetchUserApi } from '../services/authService';
 
 export const fetchUser = () => async (dispatch: AppDispatch) => {
@@ -17,15 +17,12 @@ export const sendSignUpRequest = (userData: { name: string; lastname: string; em
     const { message, user } = await signupApi(userData);
     if (message === 'user created' && user) {
       dispatch(userActions.login(user));
-      dispatch(uiSliceActions.setFeedbackBanner({
-        severity: 'success',
-        msg: `Velkommen, ${user.name}. Vennligst sjekk epost adressen for å verifisere kontoen.`,
-      }));
+      toast.success(`Velkommen, ${user.name}. Vennligst sjekk epost adressen for å verifisere kontoen.`);
     } else {
-      dispatch(uiSliceActions.setFeedbackBanner({ severity: 'error', msg: message }));
+      toast.error(message);
     }
   } catch {
-    dispatch(uiSliceActions.setFeedbackBanner({ severity: 'error', msg: 'Noe gikk galt. Prøv igjen.' }));
+    toast.error('Noe gikk galt. Prøv igjen.');
   }
 };
 
@@ -34,21 +31,19 @@ export const sendLoginRequest = (credentials: { email: string; password: string 
     const { message, user } = await loginApi(credentials);
     if (message === 'user logged in' && user) {
       dispatch(userActions.login(user));
-      dispatch(uiSliceActions.setFeedbackBanner({ severity: 'success', msg: `Velkommen tilbake, ${user.name}` }));
+      toast.success(`Velkommen tilbake, ${user.name}`);
     } else {
-      dispatch(uiSliceActions.setFeedbackBanner({ severity: 'error', msg: message }));
+      toast.error(message);
     }
   } catch {
-    dispatch(uiSliceActions.setFeedbackBanner({ severity: 'error', msg: 'Noe gikk galt. Prøv igjen.' }));
+    toast.error('Noe gikk galt. Prøv igjen.');
   }
 };
 
 export const logoutRequest = () => async (dispatch: AppDispatch) => {
-  try {
-    await logoutApi();
-    dispatch(userActions.logout());
-    dispatch(uiSliceActions.setFeedbackBanner({ severity: 'info', msg: 'Du har logget ut' }));
-  } catch {
-    dispatch(uiSliceActions.setFeedbackBanner({ severity: 'error', msg: 'Det oppsto et feil. Prøve igjen senere' }));
-  }
+  // Clear frontend state immediately — never block the user on a server response
+  dispatch(userActions.logout());
+  toast('Du har logget ut');
+  // Best-effort server-side session invalidation
+  logoutApi().catch(() => {});
 };

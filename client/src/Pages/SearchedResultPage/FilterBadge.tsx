@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styles from "./FilterBadge.module.css";
 
 interface FilterParam {
@@ -18,35 +18,25 @@ interface FilterBadgeProps {
 }
 
 const FilterBadge = ({ searchParams, removeSelectedFilter, counties }: FilterBadgeProps) => {
-  const [params, setParams] = useState<FilterParam[]>([]);
+  const params: FilterParam[] = [];
+  for (const [key, value] of searchParams.entries()) {
+    if (key === 'q') continue;
+    if (key === 'fylke' && counties !== false) {
+      const county = counties.find(item => item.fylkesnummer === value);
+      params.push({ key, value: county?.fylkesnavn || value });
+    } else {
+      params.push({ key, value });
+    }
+  }
 
   const handleOnClick = (e: React.MouseEvent<HTMLButtonElement>, item: FilterParam) => {
     e.preventDefault();
-    if (item.key === "kommune") {
-      removeSelectedFilter(item.key, item.value);
-      return;
-    }
-    removeSelectedFilter(item.key);
+    removeSelectedFilter(item.key, item.key === 'kommune' ? item.value : undefined);
   };
-
-  useEffect(() => {
-    const paramsArray = [];
-    for (const [key, value] of searchParams.entries()) {
-      if (key !== "q") {
-        if (key === "fylke" && counties !== false) {
-          const county = counties.find((item) => item.fylkesnummer === value);
-          paramsArray.push({ key, value: county?.fylkesnavn || value });
-        } else {
-          paramsArray.push({ key, value });
-        }
-      }
-    }
-    setParams(paramsArray);
-  }, [searchParams, counties]);
 
   return (
     <div className={styles['badge-container']}>
-      {params.length > 0 && params.map((item, index) => (
+      {params.map((item, index) => (
         <span key={index} className={styles['filter-badge']}>
           {item.key}: {item.value}
           <button className={styles['filter-badge__close']} onClick={(e) => handleOnClick(e, item)}>
