@@ -6,6 +6,7 @@ import { queryKeys } from '../../lib/queryKeys';
 import { fetchProductsApi } from '../../services/productService';
 import Spinner from 'react-bootstrap/Spinner';
 import Button from 'react-bootstrap/Button';
+import { ProductGridSkeleton } from '../../components/Skeleton/ProductCardSkeleton';
 import type { Product } from '../../types/product';
 
 const Menu = () => {
@@ -25,11 +26,7 @@ const Menu = () => {
   const hasMore = page < totalPages;
 
   if (isPending && page === 1) {
-    return (
-      <div className={styles['homepage-loading']}>
-        <Spinner animation="border" variant="secondary" />
-      </div>
-    );
+    return <ProductGridSkeleton />;
   }
 
   return (

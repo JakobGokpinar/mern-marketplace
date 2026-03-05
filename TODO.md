@@ -17,6 +17,10 @@
 - Zod input validation on all route endpoints (middleware + schemas)
 - Pagination on homepage feed and search results (page/limit, "Last inn flere" button)
 - Test infrastructure: Vitest + Supertest (23 tests: validate middleware, Zod schemas, ensureAuth)
+- CSRF protection: double-submit cookie pattern (csrf-csrf), auto-attached via axios interceptor
+- Chat message pagination: backend returns last 50 messages, "Load older" button in UI
+- Loading skeletons: shimmer placeholders replace Spinners on homepage + search results
+- Frontend form validation: Zod schemas + useFormValidation hook on Login/Register forms
 
 ### Frontend Architecture
 
@@ -102,7 +106,6 @@
 
 ### Code Quality (from best-practices audit)
 
-- Add CSRF protection for state-changing endpoints
 - Validate file magic bytes, not just MIME type, for uploads
 
 ### UI Polish
@@ -125,8 +128,6 @@
 
 ### Performance
 
-- Chat: load messages paginated (currently loads all at once)
-- Loading skeletons for product feeds during data fetching
 
 ### Image Handling
 

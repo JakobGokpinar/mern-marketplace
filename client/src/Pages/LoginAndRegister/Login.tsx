@@ -4,6 +4,8 @@ import { Button, Form, Spinner } from "react-bootstrap";
 import styles from "./Login.module.css";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { sendLoginRequest } from "../../store/authThunks";
+import { useFormValidation } from "../../hooks/useFormValidation";
+import { loginSchema } from "../../schemas/auth.schema";
 
 const Login = () => {
   const dispatch = useAppDispatch();
@@ -11,6 +13,7 @@ const Login = () => {
   const location = useLocation();
   const isLoggedIn = useAppSelector((state) => state.user.isLoggedIn);
   const [isLoading, setIsLoading] = useState(false);
+  const { errors, validate } = useFormValidation(loginSchema);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -22,10 +25,13 @@ const Login = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsLoading(true);
     const form = event.currentTarget;
-    const email = (form.elements[0] as HTMLInputElement).value;
-    const password = (form.elements[1] as HTMLInputElement).value;
+    const email = (form.elements.namedItem('email') as HTMLInputElement).value;
+    const password = (form.elements.namedItem('password') as HTMLInputElement).value;
+
+    if (!validate({ email, password })) return;
+
+    setIsLoading(true);
     await dispatch(sendLoginRequest({ email, password }));
     setIsLoading(false);
   };
@@ -42,15 +48,29 @@ const Login = () => {
 
         <p className={styles['auth-title']}>Logg inn på kontoen din</p>
 
-        <Form onSubmit={handleSubmit} className={styles['auth-form']}>
+        <Form onSubmit={handleSubmit} noValidate className={styles['auth-form']}>
           <Form.Group className="mb-3" controlId="loginEmail">
             <Form.Label>E-post</Form.Label>
-            <Form.Control type="email" name="email" placeholder="deg@eksempel.no" disabled={isLoading} required />
+            <Form.Control
+              type="email"
+              name="email"
+              placeholder="deg@eksempel.no"
+              disabled={isLoading}
+              isInvalid={!!errors.email}
+            />
+            <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-4" controlId="loginPassword">
             <Form.Label>Passord</Form.Label>
-            <Form.Control type="password" name="password" placeholder="••••••••" disabled={isLoading} required />
+            <Form.Control
+              type="password"
+              name="password"
+              placeholder="••••••••"
+              disabled={isLoading}
+              isInvalid={!!errors.password}
+            />
+            <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
           </Form.Group>
 
           <Button variant="primary" type="submit" className={styles['auth-submit']} disabled={isLoading}>

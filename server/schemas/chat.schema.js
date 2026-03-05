@@ -23,4 +23,10 @@ const resetUnread = z.object({
   roomId: objectId,
 });
 
-module.exports = { createRoom, getRoomByCredentials, newMessage, resetUnread };
+const getMessages = z.object({
+  roomId: objectId,
+  before: z.string().datetime().optional(),
+  limit: z.string().regex(/^\d+$/).optional(),
+});
+
+module.exports = { createRoom, getRoomByCredentials, getMessages, newMessage, resetUnread };

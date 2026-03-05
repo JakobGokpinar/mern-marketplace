@@ -6,6 +6,7 @@ import {
   getChatRoomsApi,
   getChatRoomApi,
   createChatRoomApi,
+  getMessagesApi,
   sendMessageApi,
   resetUnreadApi,
 } from '../services/chatService';
@@ -32,6 +33,8 @@ export const useChat = () => {
 
   const [currentChat, setCurrentChat] = useState<ChatRoom | null>(null);
   const [messagesArray, setMessagesArray] = useState<Message[]>([]);
+  const [hasMoreMessages, setHasMoreMessages] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [friend, setFriend] = useState<User | null>(null);
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
   const [currentFriendStatus, setCurrentFriendStatus] = useState<string | null>(null);
@@ -80,11 +83,15 @@ export const useChat = () => {
     const friendId = findFriendId(currentChat.buyer, currentChat.seller, userId);
     if (!friendId) return;
 
-    const loadFriend = async () => {
+    const loadChatData = async () => {
       try {
-        const friendData = await fetchUserByIdApi(friendId);
+        const [friendData, messageData] = await Promise.all([
+          fetchUserByIdApi(friendId),
+          getMessagesApi(currentChat._id),
+        ]);
         setFriend(friendData);
-        setMessagesArray(currentChat.messages);
+        setMessagesArray(messageData.messages);
+        setHasMoreMessages(messageData.hasMore);
         setCurrentFriendStatus(
           (friendData as User & { lastActiveAt?: string }).lastActiveAt
             ? timeago((friendData as User & { lastActiveAt?: string }).lastActiveAt!)
@@ -95,7 +102,7 @@ export const useChat = () => {
         toast.error('Kunne ikke laste chat');
       }
     };
-    void loadFriend();
+    void loadChatData();
   }, [currentChat, userId]);
 
   // Load product for current chat
@@ -112,6 +119,22 @@ export const useChat = () => {
     setMessagesArray((prev) => [...prev, arrivalMessage]);
     if (currentChat?._id) void resetUnreadApi(currentChat._id);
   }, [arrivalMessage, friend, currentChat]);
+
+  const loadOlderMessages = useCallback(async () => {
+    if (!currentChat || !hasMoreMessages || isLoadingMore) return;
+    setIsLoadingMore(true);
+    try {
+      const oldest = messagesArray[0];
+      const before = oldest?.sentAt ? new Date(oldest.sentAt).toISOString() : undefined;
+      const data = await getMessagesApi(currentChat._id, before);
+      setMessagesArray(prev => [...data.messages, ...prev]);
+      setHasMoreMessages(data.hasMore);
+    } catch {
+      toast.error('Kunne ikke laste eldre meldinger');
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [currentChat, hasMoreMessages, isLoadingMore, messagesArray]);
 
   const sendMutation = useMutation({
     mutationFn: () => sendMessageApi(userId, messageInput, currentChat!._id),
@@ -135,6 +158,9 @@ export const useChat = () => {
     currentChat,
     setCurrentChat,
     messagesArray,
+    hasMoreMessages,
+    isLoadingMore,
+    loadOlderMessages,
     friend,
     currentProduct,
     currentFriendStatus,

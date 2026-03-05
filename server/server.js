@@ -107,10 +107,24 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+// CSRF protection
+const { doubleCsrfProtection, generateToken } = require('./middleware/csrf');
+
 // Routes
 app.get("/", (req, res) => res.send("Rego API is running"));
+app.get("/api/csrf-token", (req, res) => {
+    const token = generateToken(req, res);
+    res.json({ csrfToken: token });
+});
 
 const api = express.Router();
+// CSRF protection on all state-changing requests (POST, PUT, PATCH, DELETE)
+api.use((req, res, next) => {
+    if (req.method === 'GET' || req.method === 'HEAD' || req.method === 'OPTIONS') {
+        return next();
+    }
+    doubleCsrfProtection(req, res, next);
+});
 api.use('/', authRouter);
 api.use('/fetchuser', userRouter);
 api.use('/newannonce', annonceRouter);

@@ -27,6 +27,13 @@ export const sendMessageApi = async (sender: string, msg: string, roomId: string
   return res.data;
 };
 
+export const getMessagesApi = async (roomId: string, before?: string): Promise<{ messages: Message[]; hasMore: boolean }> => {
+  const params: Record<string, string> = { roomId };
+  if (before) params.before = before;
+  const res = await instanceAxs.get<{ messages: Message[]; hasMore: boolean }>('/chat/get/messages', { params });
+  return res.data;
+};
+
 export const resetUnreadApi = async (roomId: string): Promise<void> => {
   await instanceAxs.post('/chat/resetunread', { roomId });
 };

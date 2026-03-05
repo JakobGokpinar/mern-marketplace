@@ -13,6 +13,7 @@ import FilterBadge from "./FilterBadge";
 import Spinner from "react-bootstrap/Spinner";
 
 import ProductCard from "../../components/ProductCard/ProductCard";
+import { ProductGridSkeleton } from "../../components/Skeleton/ProductCardSkeleton";
 import { queryKeys } from "../../lib/queryKeys";
 import { searchProductsApi } from "../../services/productService";
 import { useNorwayGeo } from "../../hooks/useNorwayGeo";
@@ -158,9 +159,7 @@ const SearchResult = () => {
 
           <div className={styles['bottom-row']}>
             {isPending && page === 1 ? (
-              <div className="d-flex justify-content-center py-5">
-                <Spinner animation="border" variant="secondary" />
-              </div>
+              <ProductGridSkeleton count={6} />
             ) : displayProducts.map((product) => (
               <div key={product._id}>
                 <ProductCard

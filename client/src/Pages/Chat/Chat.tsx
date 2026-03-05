@@ -34,6 +34,9 @@ const Chat = () => {
     currentChat,
     setCurrentChat,
     messagesArray,
+    hasMoreMessages,
+    isLoadingMore,
+    loadOlderMessages,
     friend,
     currentProduct,
     currentFriendStatus,
@@ -151,6 +154,15 @@ const Chat = () => {
 
             {/* Messages */}
             <div className={styles['message-list']} ref={messageListRef}>
+              {hasMoreMessages && (
+                <button
+                  className={styles['load-older']}
+                  onClick={loadOlderMessages}
+                  disabled={isLoadingMore}
+                >
+                  {isLoadingMore ? 'Laster...' : 'Last inn eldre meldinger'}
+                </button>
+              )}
               {firstMsgDate && (
                 <div className={styles['date-separator']}>{firstMsgDate}</div>
               )}

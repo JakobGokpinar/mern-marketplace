@@ -150,6 +150,27 @@
   gap: 16px;
 }
 
+.load-older {
+  display: block;
+  margin: 8px auto;
+  padding: 6px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.load-older:hover {
+  background: var(--color-bg-hover, #f5f5f5);
+}
+
+.load-older:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 .date-separator {
   text-align: center;
   font-size: 0.7rem;
