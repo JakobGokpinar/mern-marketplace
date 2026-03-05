@@ -3,11 +3,9 @@ import { addToFavoritesApi, removeFromFavoritesApi } from '../services/favoriteS
 import toast from 'react-hot-toast';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { userActions } from '../store/userSlice';
-import type { User } from '../types/user';
-
 export const useFavorites = () => {
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.user.user) as User | Record<string, never>;
+  const user = useAppSelector((state) => state.user.user);
 
   const addMutation = useMutation({
     mutationFn: addToFavoritesApi,
@@ -40,8 +38,7 @@ export const useFavorites = () => {
   };
 
   const isInFavorites = (id: string): boolean => {
-    const favorites = ('favorites' in user) ? (user as User).favorites : [];
-    return favorites.includes(id);
+    return user?.favorites?.includes(id) ?? false;
   };
 
   const isLoading = addMutation.isPending || removeMutation.isPending;

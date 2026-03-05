@@ -65,8 +65,8 @@ const AnnoncePreview = ({
           {imageArray.length > 0 && (
             <div className={styles['carousel-wrapper']}>
               <Carousel className={styles['carousel']} interval={null} variant="dark">
-                {imageArray.map((item, index) => (
-                  <Carousel.Item key={index}>
+                {imageArray.map((item) => (
+                  <Carousel.Item key={item.name}>
                     <img
                       src={item.data ?? item.location}
                       alt="preview"
@@ -120,9 +120,9 @@ const AnnoncePreview = ({
         <div className={styles['section']}>
           <p className={styles['section-label']}>Nøkkelinfo</p>
           <div className={styles['spec-grid']}>
-            {specPropArray.map((item, index) => (
+            {specPropArray.map((item) => (
               <div
-                key={index}
+                key={item.title}
                 className={styles['spec-card']}
                 onClick={() => onRemoveSpecProp(item.title)}
                 title="Klikk for å fjerne"

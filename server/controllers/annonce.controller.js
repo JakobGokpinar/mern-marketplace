@@ -74,7 +74,7 @@ const saveAnnonceToDatabase = (req, res) => {
 
     newAnnonce.save()
         .then(() => res.json({ message: 'annonce created' }))
-        .catch(error => res.json(error));
+        .catch(() => res.status(500).json({ message: 'Could not save annonce' }));
 };
 
 const removeAnnonce = async (req, res) => {
@@ -107,7 +107,7 @@ const removeAnnonce = async (req, res) => {
         return res.status(200).json({ message: 'Annonce deleted from database' });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error, message: 'Error occured' });
+        return res.status(500).json({ message: 'Error occured while deleting annonce' });
     }
 };
 
@@ -129,7 +129,7 @@ const removeAnnonceImagesFromAWS = async (req, res) => {
         return res.status(200).json({ message: 'annonce images deleted successfully' });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error, message: 'Error occurred while deleting s3 objects' });
+        return res.status(500).json({ message: 'Error occurred while deleting s3 objects' });
     }
 };
 
@@ -158,7 +158,7 @@ const updateAnnonce = async (req, res) => {
         return res.status(200).json({ message: 'mission successful' });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error, message: 'Error occurred while updating annonce' });
+        return res.status(500).json({ message: 'Error occurred while updating annonce' });
     }
 };
 

@@ -149,8 +149,8 @@ const Filters = ({ handleFilterChange, removeSelectedFilter, searchParams, count
               value={mainCategory !== '' ? JSON.stringify(mainCategory) : JSON.stringify('')}
             >
               <option value={JSON.stringify('')}>Velg en hovedkategori</option>
-              {categoryObject.categories.map((item, index) => (
-                <option value={JSON.stringify(item)} key={index}>
+              {categoryObject.categories.map((item) => (
+                <option value={JSON.stringify(item)} key={item.maincategory}>
                   {item.maincategory}
                 </option>
               ))}

@@ -8,11 +8,16 @@ const instanceAxs = axios.create({
   withCredentials: true,
 });
 
+const AUTH_PATHS = ['/login', '/signup'];
+
 instanceAxs.interceptors.response.use(
   (response) => response,
   (error: unknown) => {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
-      emitUnauthorized();
+      const url = error.config?.url ?? '';
+      if (!AUTH_PATHS.some((p) => url.startsWith(p))) {
+        emitUnauthorized();
+      }
     }
     return Promise.reject(error);
   }

@@ -238,7 +238,7 @@ const NewAnnonce = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!user.isEmailVerified) {
+  if (!user?.isEmailVerified) {
     return (
       <Modal show>
         <Modal.Header>

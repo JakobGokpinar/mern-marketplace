@@ -16,7 +16,7 @@ const getItems = async (req, res) => {
             }
         }
 
-        const result = await AnnonceModel.find();
+        const result = await AnnonceModel.find().lean();
 
         if (favoritesArray.length <= 0) {
             return res.json({ productArray: result });
@@ -37,13 +37,13 @@ const getItems = async (req, res) => {
 
 // --- Get current user's annonces ---
 const getUserAnnonces = async (req, res) => {
-    if (!req.isAuthenticated()) return res.json({ message: 'Please login' });
+    if (!req.isAuthenticated()) return res.status(401).json({ message: 'Please login' });
     try {
         const userId = req.user._id;
         const result = await AnnonceModel.find({ sellerId: new ObjectId(userId) });
         return res.status(200).json({ productArray: result });
     } catch (err) {
-        return res.status(500).json({ error: err });
+        return res.status(500).json({ message: 'Could not fetch annonces' });
     }
 };
 
@@ -120,7 +120,7 @@ const findProducts = async (req, res) => {
     }
 
     try {
-        const result = await AnnonceModel.find(queryObject);
+        const result = await AnnonceModel.find(queryObject).lean();
 
         const catArr = [];
         const subArr = [];
@@ -144,7 +144,6 @@ const findProducts = async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({
-            error: err,
             message: 'Error occurred while searching products',
         });
     }

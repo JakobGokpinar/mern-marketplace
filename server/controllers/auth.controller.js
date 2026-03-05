@@ -5,10 +5,10 @@ const sendVerificationEmail = require('../config/sendEmail.js');
 const signin = async (req, res, next) => {
     passport.authenticate('local-signin', function (err, user, info) {
         if (err) return next(err);
-        if (!user) return res.json(info);
+        if (!user) return res.status(401).json(info);
         req.logIn(user, function (err) {
             if (err) return next(err);
-            return res.json({ user, message: 'user logged in' });
+            return res.status(200).json({ user, message: 'user logged in' });
         });
     })(req, res, next);
 };
@@ -18,7 +18,7 @@ const signin = async (req, res, next) => {
 const signup = async (req, res, next) => {
     passport.authenticate('local-signup', async function (err, user, info) {
         if (err) return next(err);
-        if (!user) return res.json(info);
+        if (!user) return res.status(400).json(info);
 
         try {
             const email_verify_token = randomUUID();

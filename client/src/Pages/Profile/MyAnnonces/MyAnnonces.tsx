@@ -71,8 +71,8 @@ const MyAnnonces = () => {
         </div>
       ) : annonceArray.length > 0 ? (
         <div className={styles['myannonces-content']}>
-          {annonceArray.map((item, index) => (
-            <div key={index} className={`${styles['myannonces-content-product']} border`}>
+          {annonceArray.map((item) => (
+            <div key={item._id} className={`${styles['myannonces-content-product']} border`}>
               <img src={item.annonceImages?.[0]?.location} className={styles['content-product-img']} alt={item.title} />
               <div className={styles['content-product-info']}>
                 <p className={styles['content-product-info-title']}>{item.title}</p>

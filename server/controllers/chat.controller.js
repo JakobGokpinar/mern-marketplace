@@ -19,7 +19,7 @@ const createRoom = async (req, res) => {
         const response = await conversation.save();
         return res.status(200).json({ message: 'Room created', response });
     } catch (error) {
-        return res.status(500).json({ error });
+        return res.status(500).json({ message: 'Could not create room' });
     }
 }
 
@@ -37,7 +37,7 @@ const getRooms = async (req, res) => {
         });
         return res.status(200).json(response);
     } catch (error) {
-        return res.status(500).json(error);
+        return res.status(500).json({ message: 'Could not fetch rooms' });
     }
 }
 
@@ -55,7 +55,7 @@ const getRoomByCredentials = async (req, res) => {
         });
         return res.status(200).json(response);
     } catch (error) {
-        return res.status(500).json(error);
+        return res.status(500).json({ message: 'Could not fetch room' });
     }
 }
 
@@ -85,7 +85,7 @@ const newMessage = async (req, res) => {
         });
         return res.status(200).json({ message: 'Message sent' });
     } catch (error) {
-        return res.status(500).json({ message: 'Error occured while sending the message', error });
+        return res.status(500).json({ message: 'Error occured while sending the message' });
     }
 }
 
@@ -108,7 +108,7 @@ const resetUnread = async (req, res) => {
         });
         res.status(200).json({ message: 'Unread messages reset' });
     } catch (error) {
-        return res.status(500).json({ message: 'Error occured', error });
+        return res.status(500).json({ message: 'Error occured' });
     }
 }
 

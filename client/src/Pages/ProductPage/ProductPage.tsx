@@ -88,8 +88,8 @@ function ProductPage() {
         <Col lg={8} className={styles['pp__main']}>
           <div className={styles['pp__carousel-wrapper']}>
             <Carousel variant="dark" className={styles['pp__carousel']}>
-              {(annonce.annonceImages || []).map((item, index) => (
-                <Carousel.Item key={index}>
+              {(annonce.annonceImages || []).map((item) => (
+                <Carousel.Item key={item.location}>
                   <img src={item.location} alt={annonce.title} className={styles['pp__carousel-img']} />
                   {item.description && (
                     <Carousel.Caption className={styles['pp__carousel-caption']}>
@@ -151,8 +151,8 @@ function ProductPage() {
                   <span className={styles['pp__info-value']}>{annonce.status}</span>
                 </div>
               )}
-              {(annonce.specialProperties || []).map((item, index) => (
-                <div key={index} className={styles['pp__info-card']}>
+              {(annonce.specialProperties || []).map((item) => (
+                <div key={item.title} className={styles['pp__info-card']}>
                   <span className={styles['pp__info-label']}>{item.title}</span>
                   <span className={styles['pp__info-value']}>{item.value}</span>
                 </div>

@@ -37,7 +37,7 @@ const ImageManager = ({ imageArray, onDelete, onDescriptionChange, onReorder }: 
     <ul className={styles['list']}>
       {imageArray.map((item, index) => (
         <li
-          key={index}
+          key={item.name}
           className={styles['item']}
           draggable
           onDragStart={e => handleDragStart(e, index)}

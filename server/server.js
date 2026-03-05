@@ -2,6 +2,8 @@ const express = require("express");
 const session = require('express-session');
 const passport = require('passport');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const MongoDbStore = require('connect-mongo');
 const { Server } = require('socket.io'); 
 const http = require('http');
@@ -60,14 +62,26 @@ const io = new Server(server, {
 const mongoUrl = process.env.MONGO_URL;
 connectToDatabase(mongoUrl);
 
-app.use(express.json({limit: '50mb'}));
-app.use(express.urlencoded({ extended: false, limit: '50mb'}));
+app.use(helmet());
+app.enable('trust proxy');
 
 app.use(cors({
-    origin: allowedOrigins, 
+    origin: allowedOrigins,
     credentials: true
 }));
-app.enable('trust proxy');
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: false, limit: '10mb' }));
+
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 20,
+    message: { message: 'For mange forsøk. Prøv igjen om 15 minutter.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+app.use('/login', authLimiter);
+app.use('/signup', authLimiter);
 
 app.use(
     session({

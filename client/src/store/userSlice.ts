@@ -3,12 +3,12 @@ import type { User } from '../types/user';
 import socket from '../lib/socket';
 
 interface UserState {
-  user: User | Record<string, never>;
+  user: User | null;
   isLoggedIn: boolean;
 }
 
 const initialState: UserState = {
-  user: {},
+  user: null,
   isLoggedIn: false,
 };
 
@@ -28,7 +28,7 @@ const userSlice = createSlice({
       window.localStorage.setItem('isLoggedIn', 'true');
     },
     logout(state) {
-      state.user = {};
+      state.user = null;
       state.isLoggedIn = false;
       socket.emit('logout');
       window.localStorage.removeItem('user');
@@ -41,9 +41,9 @@ const userSlice = createSlice({
       window.localStorage.setItem('user', JSON.stringify(action.payload));
     },
     setUserFavorites(state, action: PayloadAction<string[]>) {
-      const user = state.user as User;
-      user.favorites = action.payload;
-      window.localStorage.setItem('user', JSON.stringify(user));
+      if (!state.user) return;
+      state.user.favorites = action.payload;
+      window.localStorage.setItem('user', JSON.stringify(state.user));
     },
   },
 });

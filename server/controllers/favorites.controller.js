@@ -4,7 +4,7 @@ const AnnonceModel = require('../models/AnnonceModel.js');
 const UserModel = require('../models/UserModel.js');
 
 const addToFavorites = async (req, res) => {
-    if (!req.isAuthenticated()) return res.json({ message: 'Please login to access this data' });
+    if (!req.isAuthenticated()) return res.status(401).json({ message: 'Please login to access this data' });
 
     const userId = req.user.id;
     const annonceId = req.body.id;
@@ -36,12 +36,12 @@ const addToFavorites = async (req, res) => {
         return res.status(200).json({ user: result, message: 'Annonce saved to Favorites' });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error, message: 'Annonce could not be saved to Favorites' });
+        return res.status(500).json({ message: 'Annonce could not be saved to Favorites' });
     }
 };
 
 const removeFromFavorites = async (req, res) => {
-    if (!req.isAuthenticated()) return res.json({ message: 'Please login to access this data' });
+    if (!req.isAuthenticated()) return res.status(401).json({ message: 'Please login to access this data' });
 
     const userId = req.user.id;
     const annonceId = req.body.id;
@@ -63,7 +63,7 @@ const removeFromFavorites = async (req, res) => {
 };
 
 const getFavorites = async (req, res) => {
-    if (!req.isAuthenticated()) return res.json({ message: 'Please login to access this data' });
+    if (!req.isAuthenticated()) return res.status(401).json({ message: 'Please login to access this data' });
 
     const userId = req.user.id;
 
@@ -74,17 +74,11 @@ const getFavorites = async (req, res) => {
             return res.json({ productArray: [] });
         }
 
-        const allAnnonces = await AnnonceModel.find();
-
-        // FIX: Original used favoritesArray.includes(element._id) which compared ObjectId
-        // references with ===. Never matched, so favorites page was always empty.
-        const intersection = allAnnonces.filter((element) =>
-            favoritesArray.some(fav => fav.toString() === element._id.toString())
-        );
-        for (const value of intersection) {
-            value['isFavorite'] = true;
+        const productArray = await AnnonceModel.find({ _id: { $in: favoritesArray } }).lean();
+        for (const item of productArray) {
+            item.isFavorite = true;
         }
-        return res.json({ productArray: intersection, message: 'Items fetched' });
+        return res.json({ productArray, message: 'Items fetched' });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Error occurred while fetching favorites' });

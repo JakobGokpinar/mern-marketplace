@@ -45,7 +45,7 @@ const Chat = () => {
     findFriendId,
   } = useChat();
 
-  const loggedUser = '_id' in user ? (user as LoggedUser) : null;
+  const loggedUser = user ? (user as LoggedUser) : null;
 
   const findFriendWrapper = (buyer: string, seller: string, lu: LoggedUser | null) =>
     lu ? findFriendId(buyer, seller, lu._id) : null;

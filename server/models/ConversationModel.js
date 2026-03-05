@@ -4,15 +4,18 @@ const { ObjectId } = mongoose.Types;
 const ConversationSchema = mongoose.Schema({
     buyer: {
         type: ObjectId,
-        required: true
+        required: true,
+        index: true
     },
     seller: {
         type: ObjectId,
-        required: true
+        required: true,
+        index: true
     },
     productId: {
         type: ObjectId,
-        required: true
+        required: true,
+        index: true
     },
     messages: {
         type: Array

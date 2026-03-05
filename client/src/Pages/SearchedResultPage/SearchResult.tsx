@@ -137,8 +137,8 @@ const SearchResult = () => {
               <div className="d-flex justify-content-center py-5">
                 <Spinner animation="border" variant="secondary" />
               </div>
-            ) : displayProducts.map((product, index) => (
-              <div key={product._id || index} style={{ marginBottom: 20 }}>
+            ) : displayProducts.map((product) => (
+              <div key={product._id} style={{ marginBottom: 20 }}>
                 <ProductCard
                   images={product.annonceImages}
                   title={product.title}

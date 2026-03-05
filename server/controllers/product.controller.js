@@ -17,8 +17,10 @@ const findProduct = async (req, res) => {
     }
 
     try {
-        const result = await AnnonceModel.findOne({ _id: new ObjectId(productId) });
-        const seller = await UserModel.findOne({ _id: new ObjectId(result.sellerId) });
+        const result = await AnnonceModel.findOne({ _id: new ObjectId(productId) }).lean();
+        const seller = await UserModel.findOne({ _id: new ObjectId(result.sellerId) })
+            .select('username profilePicture lastActiveAt userCreatedAt')
+            .lean();
 
         const isFavorite = favoritesArray.some(favId => favId.toString() === result._id.toString());
         if (isFavorite) result['isFavorite'] = true;
@@ -26,7 +28,7 @@ const findProduct = async (req, res) => {
         return res.status(200).json({ product: result, seller, message: 'Product is found' });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error, message: 'Error occured while getting the annonce' });
+        return res.status(500).json({ message: 'Error occured while getting the annonce' });
     }
 }
 

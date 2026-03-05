@@ -15,7 +15,8 @@ const AnnonceSchema = mongoose.Schema({
     type: String,
   },
   category: {
-    type: String
+    type: String,
+    index: true
   },
   subCategory: {
     type: String
@@ -45,7 +46,8 @@ const AnnonceSchema = mongoose.Schema({
     type: String
   },
   sellerId: {
-    type: ObjectId
+    type: ObjectId,
+    index: true
   },
   date: {
     type: Date,

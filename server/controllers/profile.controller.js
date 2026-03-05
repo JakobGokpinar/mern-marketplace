@@ -183,7 +183,7 @@ const deleteAccount = async (req, res) => {
             return res.status(200).json({ message: 'Account deleted' });
         });
     } catch (error) {
-        return res.status(500).json({ error, message: 'Kunne ikke slette kontoen' });
+        return res.status(500).json({ message: 'Kunne ikke slette kontoen' });
     }
 };
 

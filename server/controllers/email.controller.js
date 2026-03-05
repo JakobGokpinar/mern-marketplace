@@ -5,7 +5,7 @@ const sendEmail = require('../config/sendEmail');
 const { randomUUID } = require('crypto');
 
 const verifyEmail = async (req, res) => {
-    if (!req.isAuthenticated()) return res.json({ status: false, message: 'Please login for verifying' });
+    if (!req.isAuthenticated()) return res.status(401).json({ status: false, message: 'Please login for verifying' });
     try {
         const userId = req.body.userId;
         if (userId !== req.user.id) {
@@ -36,7 +36,7 @@ const verifyEmail = async (req, res) => {
         return res.status(200).json({ success: true, user: data, message: 'Your email has been verified' });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ success: false, error, message: 'A problem occured while verifying the email' });
+        return res.status(500).json({ success: false, message: 'A problem occured while verifying the email' });
     }
 }
 

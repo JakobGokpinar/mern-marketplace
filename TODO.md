@@ -72,6 +72,23 @@
 
 ## Improvements
 
+### Code Quality (from best-practices audit)
+
+- Remove inline styles in ProductCard (Spinner) and SearchResult (marginBottom)
+- Split useChat hook (185 lines, 6 useEffects) — extract socket logic to separate hook
+- Use axios params object instead of template string interpolation in services
+- Clean up dead CSS in design.css (profile-avatar styles)
+- Reduce !important usage in Navbar/Searchbar CSS Modules
+- Extract reusable `ensureAuth` middleware (DRY the `req.isAuthenticated()` checks)
+- Extract S3 operations from controllers into a shared service module
+- Add CSRF protection for state-changing endpoints
+- Replace console.log/console.error with structured logger (pino or winston)
+- Add env var validation at startup (fail fast if required vars missing)
+- Add per-file size limits to multer config
+- Validate file magic bytes, not just MIME type, for uploads
+- Sanitize `file.originalname` to prevent path traversal in S3 keys
+- Add lazy loading for product images (loading="lazy" or Intersection Observer)
+
 ### UI Polish
 
 - Login / Register pages (apply teal design system)

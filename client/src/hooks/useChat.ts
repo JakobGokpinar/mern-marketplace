@@ -27,8 +27,8 @@ const findFriendId = (buyer: string, seller: string, userId: string): string | n
 
 export const useChat = () => {
   const location = useLocation();
-  const user = useAppSelector((state) => state.user.user) as User | Record<string, never>;
-  const userId = '_id' in user ? user._id : '';
+  const user = useAppSelector((state) => state.user.user);
+  const userId = user?._id ?? '';
 
   const [currentChat, setCurrentChat] = useState<ChatRoom | null>(null);
   const [messagesArray, setMessagesArray] = useState<Message[]>([]);
@@ -88,7 +88,7 @@ export const useChat = () => {
         );
         await resetUnreadApi(currentChat._id);
       } catch {
-        // ignore
+        toast.error('Kunne ikke laste chat');
       }
     };
     void loadFriend();
@@ -99,7 +99,7 @@ export const useChat = () => {
     if (!currentChat?.productId) return;
     fetchProductApi(currentChat.productId)
       .then(setCurrentProduct)
-      .catch(() => {});
+      .catch(() => { toast.error('Kunne ikke laste produkt'); });
   }, [currentChat]);
 
   // Socket — incoming message

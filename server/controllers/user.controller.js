@@ -3,7 +3,7 @@ const ObjectId = mongoose.Types.ObjectId;
 const UserModel = require('../models/UserModel');
 
 const fetchUser = async (req, res) => {
-    if (!req.isAuthenticated()) return res.json({ message: 'Du må logge inn' });
+    if (!req.isAuthenticated()) return res.status(401).json({ message: 'Du må logge inn' });
     try {
         const response = await UserModel.findOne({ _id: new ObjectId(req.user.id) });
         return res.status(200).json({ user: response });
