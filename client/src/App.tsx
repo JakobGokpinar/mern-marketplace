@@ -4,8 +4,8 @@ import { useAppDispatch } from './store/hooks';
 import './App.css';
 
 import { Toaster } from 'react-hot-toast';
-import Navbar from './Component/Navbar/Navbar';
-import Footer from './Component/Footer/Footer';
+import Navbar from './components/Navbar/Navbar';
+import Footer from './components/Footer/Footer';
 import Login from './Pages/LoginAndRegister/Login';
 import Register from './Pages/LoginAndRegister/Register';
 import EmailVerify from './Pages/EmailVerification/EmailVerify';

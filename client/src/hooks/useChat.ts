@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useLocation } from 'react-router-dom';
-import { format } from 'timeago.js';
+import { timeago } from '../utils/timeago';
 import socket from '../lib/socket';
 import {
   getChatRoomsApi,
@@ -83,7 +83,7 @@ export const useChat = () => {
         setMessagesArray(currentChat.messages);
         setCurrentFriendStatus(
           (friendData as User & { lastActiveAt?: string }).lastActiveAt
-            ? format((friendData as User & { lastActiveAt?: string }).lastActiveAt!)
+            ? timeago((friendData as User & { lastActiveAt?: string }).lastActiveAt!)
             : null
         );
         await resetUnreadApi(currentChat._id);

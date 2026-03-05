@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import ProductCard from '../../Component/ProductCard/ProductCard';
+import ProductCard from '../../components/ProductCard/ProductCard';
 import styles from "./Menu.module.css";
 import { instanceAxs } from '../../lib/axios';
 import { queryKeys } from '../../lib/queryKeys';

@@ -27,7 +27,7 @@ import Button from "react-bootstrap/Button";
 import FilterBadge from "./FilterBadge";
 import Spinner from "react-bootstrap/Spinner";
 
-import ProductCard from "../../Component/ProductCard/ProductCard";
+import ProductCard from "../../components/ProductCard/ProductCard";
 import { instanceAxs } from "../../lib/axios";
 import { queryKeys } from "../../lib/queryKeys";
 import { useNorwayGeo } from "../../hooks/useNorwayGeo";

@@ -19,7 +19,7 @@ import Spinner from "react-bootstrap/Spinner";
 import { useFavorites } from "../../hooks/useFavorites";
 import { instanceAxs } from "../../lib/axios";
 import { queryKeys } from "../../lib/queryKeys";
-import { format } from "timeago.js";
+import { timeago } from "../../utils/timeago";
 import { formatPrice } from "../../utils/formatPrice";
 import type { Product } from "../../types/product";
 import type { User } from "../../types/user";
@@ -189,7 +189,7 @@ function ProductPage() {
             {seller?.lastActiveAt && (
               <div className={styles['pp__seller-status']}>
                 <span className={styles['pp__seller-status--away']}>
-                  Sist aktiv {format(seller.lastActiveAt)}
+                  Sist aktiv {timeago(seller.lastActiveAt)}
                 </span>
               </div>
             )}

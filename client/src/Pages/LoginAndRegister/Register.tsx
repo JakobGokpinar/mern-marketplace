@@ -1,11 +1,9 @@
 import styles from './Register.module.css';
 
 import { useEffect, useState } from "react";
-import validator from 'validator';
 
 import { useNavigate } from "react-router-dom";
 import { Button, Form, Row, Col, Container, Spinner } from "react-bootstrap";
-import toast from 'react-hot-toast';
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { sendSignUpRequest } from "../../store/authThunks";
 
@@ -28,11 +26,6 @@ function Register() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    if (!validator.isEmail(email)) {
-      toast.error('Please provide a valid email address');
-      return;
-    }
 
     setIsloading(true);
     await dispatch(sendSignUpRequest({ name, lastname, email, password }));

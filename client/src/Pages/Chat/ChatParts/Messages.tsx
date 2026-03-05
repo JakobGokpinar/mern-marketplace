@@ -1,5 +1,5 @@
-import { MessageGroup, Message } from '@chatscope/chat-ui-kit-react'
-import { format } from 'timeago.js';
+import styles from './Messages.module.css';
+import { timeago } from '../../../utils/timeago';
 
 interface ChatMessage {
   _id?: string;
@@ -10,26 +10,18 @@ interface ChatMessage {
 
 interface MessagesProps {
   messageArr: ChatMessage[];
-  sender: string;
   direction: 'incoming' | 'outgoing';
 }
 
-const Messages = ({ messageArr, sender, direction }: MessagesProps) => {
-  return (
-    <MessageGroup direction={direction} sender={sender} sentTime={format(messageArr[0]?.sentAt)}>
-           <MessageGroup.Messages>
-              {messageArr?.map((msg, index) => {
-                  return(
-                    <Message
-                        key={index}
-                        model={{ message: msg.msg, direction: direction, position: 'normal' }}
-                    />
-                  )
-              })}
-          </MessageGroup.Messages>
-          <MessageGroup.Footer>{format(messageArr[messageArr.length - 1]?.sentAt)}</MessageGroup.Footer>
-    </MessageGroup>
-  )
-}
+const Messages = ({ messageArr, direction }: MessagesProps) => (
+  <div className={`${styles['group']} ${styles[`group--${direction}`]}`}>
+    {messageArr.map((msg, i) => (
+      <div key={msg._id ?? i} className={styles['bubble']}>{msg.msg}</div>
+    ))}
+    <span className={styles['timestamp']}>
+      {timeago(messageArr[messageArr.length - 1]?.sentAt)}
+    </span>
+  </div>
+);
 
 export default Messages;

@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 import styles from './Conversation.module.css';
-import { Conversation } from '@chatscope/chat-ui-kit-react'
 import { instanceAxs } from '../../../lib/axios';
-import type { ChatRoom, Message } from '../../../types/chat';
+import type { ChatRoom } from '../../../types/chat';
 
 interface LoggedUser {
   _id: string;
@@ -17,10 +16,7 @@ interface FriendData {
 }
 
 interface ProductData {
-  _id: string;
   title?: string;
-  location?: string;
-  price?: number;
   annonceImages?: Array<{ location: string }>;
 }
 
@@ -33,80 +29,69 @@ interface ConversationsProps {
 }
 
 const Conversations = ({ productId, conversation, loggedUser, isActive, findFriend }: ConversationsProps) => {
+  const [friend, setFriend] = useState<FriendData | null>(null);
+  const [product, setProduct] = useState<ProductData | null>(null);
 
-    const [friend, setFriend] = useState<FriendData | null>(null)
-    const [lastMessage, setLastMessage] = useState<Message | null>(null);
-    const [product, setProduct] = useState<ProductData | null>(null);
-    const [unreadCount, setUnreadCount] = useState<number>(0);
+  useEffect(() => {
+    const friendId = findFriend(conversation.buyer, conversation.seller, loggedUser);
+    if (!friendId) return;
+    instanceAxs.get(`/fetchuser?userId=${friendId}`)
+      .then(r => setFriend(r.data.user))
+      .catch(() => {});
+  }, [conversation, loggedUser]);
 
-    useEffect(() => {
-        const friendId = findFriend(conversation.buyer, conversation.seller, loggedUser);
-        if(!friendId) return;
-        const fetchUser = () => {
-            instanceAxs.get(`/fetchuser?userId=${friendId}`).then(response => {
-                let fetchedUser = response.data.user;
-                setFriend(fetchedUser);
-                setLastMessage(
-                conversation.messages?.length > 0
-                    ? conversation.messages[conversation.messages.length - 1]
-                    : null
-                );
-            })
-            .catch(() => {})
-        }
-        fetchUser();
-    }, [conversation, loggedUser])
+  useEffect(() => {
+    if (!productId) return;
+    instanceAxs.get(`/product?id=${productId}`)
+      .then(r => setProduct(r.data.product))
+      .catch(() => {});
+  }, [productId]);
 
-    useEffect(() => {
-        const fetchProduct = async () => {
-            if(!productId) return;
-            await instanceAxs.get(`/product?id=${productId}`).then(response => {
-                setProduct(response.data.product)
-            })
-            .catch(() => {})
-        }
-        fetchProduct();
-    }, [productId])
+  const lastMsg = conversation.messages?.length > 0
+    ? conversation.messages[conversation.messages.length - 1]
+    : null;
 
-    useEffect(() => {
-        const getUnreadMsg = async() => {
-            if(!conversation || !conversation.unreadMessages || conversation.messages.length === 0) return;
-            let last_msg = conversation.messages[conversation.messages.length - 1]
-            if(last_msg.sender !== loggedUser?._id) {
-                setUnreadCount(conversation.unreadMessages ?? 0)
-            }
-        }
-        getUnreadMsg()
-    }, [conversation])
+  const unreadCount = (() => {
+    if (!lastMsg || lastMsg.sender === loggedUser?._id) return 0;
+    return (conversation as ChatRoom & { unreadMessages?: number }).unreadMessages ?? 0;
+  })();
 
   return (
-            <Conversation className={styles['conversation-div']}
-                name={friend?.username}
-                lastSenderName={lastMessage?.sender === loggedUser?._id ? 'Du' : friend?.username}
-                info={lastMessage?.msg}
-                active={isActive}
-                lastActivityTime={conversation.lastActivity}
-                unreadCnt={unreadCount}
-            >
-                <span>
-                    {friend?.profilePicture ? (
-                        <img className={styles['conversation-avatar']} src={friend?.profilePicture} alt={friend?.username} />
-                    ) : (
-                        <div className={styles['conversation-avatar-placeholder']}>
-                        {friend?.username?.charAt(0)?.toUpperCase()}
-                        </div>
-                    )}
-                </span>
-                <div className={styles['conversation-operations']}>
-                        <div className={styles['conversation-operations-info']}>
-                            <p className="conversation-product-name" style={{fontSize: '14px'}}>{product?.title}</p>
-                            <p>{product?.location}</p>
-                            <p>{product?.price}</p>
-                        </div>
-                        <img className={styles['conversation-product-img']} src={product?.annonceImages?.[0]?.location}/>
-                </div>
-            </Conversation>
-  )
-}
+    <div className={`${styles['item']} ${isActive ? styles['item--active'] : ''}`}>
+      {friend?.profilePicture ? (
+        <img src={friend.profilePicture} alt={friend.username} className={styles['avatar']} />
+      ) : (
+        <div className={styles['avatar-placeholder']}>
+          {friend?.username?.charAt(0)?.toUpperCase() ?? '?'}
+        </div>
+      )}
+
+      <div className={styles['body']}>
+        <div className={styles['name']}>{friend?.username ?? '...'}</div>
+        {lastMsg && (
+          <div className={styles['preview']}>
+            {lastMsg.sender === loggedUser?._id ? 'Du: ' : ''}{lastMsg.msg}
+          </div>
+        )}
+        {product?.title && (
+          <div className={styles['product-title']}>{product.title}</div>
+        )}
+      </div>
+
+      <div className={styles['meta']}>
+        {product?.annonceImages?.[0]?.location && (
+          <img
+            src={product.annonceImages[0].location}
+            alt={product.title}
+            className={styles['product-img']}
+          />
+        )}
+        {unreadCount > 0 && (
+          <span className={styles['unread-badge']}>{unreadCount}</span>
+        )}
+      </div>
+    </div>
+  );
+};
 
 export default Conversations;

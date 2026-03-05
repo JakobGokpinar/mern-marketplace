@@ -1,5 +1,5 @@
 import styles from "./Favorites.module.css";
-import ProductCard from "../../../Component/ProductCard/ProductCard";
+import ProductCard from "../../../components/ProductCard/ProductCard";
 import { useQuery } from "@tanstack/react-query";
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import Spinner from 'react-bootstrap/Spinner';
