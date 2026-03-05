@@ -1,10 +1,6 @@
-const pino = require('pino');
-
-const logger = pino({
-  level: process.env.LOG_LEVEL || (process.env.NODE_ENV === 'production' ? 'info' : 'debug'),
-  transport: process.env.NODE_ENV !== 'production'
-    ? { target: 'pino/file', options: { destination: 1 } }
-    : undefined,
-});
-
-module.exports = logger;
+module.exports = {
+  info: (...args) => console.log(...args),
+  error: (...args) => console.error(...args),
+  warn: (...args) => console.warn(...args),
+  fatal: (...args) => console.error(...args),
+};

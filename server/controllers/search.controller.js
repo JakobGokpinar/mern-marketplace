@@ -4,32 +4,52 @@ const AnnonceModel = require('../models/AnnonceModel.js');
 const UserModel = require('../models/UserModel.js');
 const logger = require('../config/logger');
 
+const DEFAULT_LIMIT = 20;
+
+function parsePagination(query) {
+    const page = Math.max(1, parseInt(query.page) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(query.limit) || DEFAULT_LIMIT));
+    return { page, limit, skip: (page - 1) * limit };
+}
+
+async function getFavoritesArray(req) {
+    if (!req.isAuthenticated()) return [];
+    try {
+        const user = await UserModel.findOne({ _id: new ObjectId(req.user._id) }).select('favorites');
+        return user?.favorites || [];
+    } catch (error) {
+        logger.error(error);
+        return [];
+    }
+}
+
+function markFavorites(items, favoritesArray) {
+    if (favoritesArray.length === 0) return items;
+    return items.map(item => {
+        if (favoritesArray.some(fav => fav.toString() === item._id.toString())) {
+            item.isFavorite = true;
+        }
+        return item;
+    });
+}
+
 // --- Browse all items ---
-// FIX: Original had race condition — UserModel.findOne was fire-and-forget (.then without await),
-// so favoritesArray was always empty when AnnonceModel.find resolved.
 const getItems = async (req, res) => {
     try {
-        let favoritesArray = [];
-        if (req.isAuthenticated()) {
-            const user = await UserModel.findOne({ _id: new ObjectId(req.user._id) });
-            if (user && user.favorites) {
-                favoritesArray = user.favorites;
-            }
-        }
+        const { page, limit, skip } = parsePagination(req.query);
+        const favoritesArray = await getFavoritesArray(req);
 
-        const result = await AnnonceModel.find().lean();
+        const [productArray, totalCount] = await Promise.all([
+            AnnonceModel.find().sort({ date: -1 }).skip(skip).limit(limit).lean(),
+            AnnonceModel.countDocuments(),
+        ]);
 
-        if (favoritesArray.length <= 0) {
-            return res.json({ productArray: result });
-        }
-
-        const productArray = result.map((item) => {
-            const isFav = favoritesArray.some(fav => fav.toString() === item._id.toString());
-            if (isFav) item['isFavorite'] = true;
-            return item;
+        return res.json({
+            productArray: markFavorites(productArray, favoritesArray),
+            totalCount,
+            page,
+            totalPages: Math.ceil(totalCount / limit),
         });
-
-        return res.json({ productArray, message: 'Items found' });
     } catch (error) {
         logger.error(error);
         return res.status(500).json({ message: 'Error occurred while fetching annonces' });
@@ -93,7 +113,6 @@ function getStatus(value) {
 const findProducts = async (req, res) => {
     const queryObject = {};
     const queryParams = req.body;
-    const userId = req.user ? req.user.id : null;
 
     for (const param in queryParams) {
         if (param === 'q') Object.assign(queryObject, getTitle(queryParams[param]));
@@ -106,21 +125,14 @@ const findProducts = async (req, res) => {
     Object.assign(queryObject, getStatus(queryParams['status']));
     Object.assign(queryObject, getLocation(queryParams['kommune']));
 
-    let favoriteProducts = [];
-
-    if (userId) {
-        try {
-            const result = await UserModel.findOne({ _id: new ObjectId(userId) });
-            if (result && result.favorites) {
-                favoriteProducts = result.favorites;
-            }
-        } catch (error) {
-            logger.error(error);
-        }
-    }
+    const { page, limit, skip } = parsePagination(req.body);
+    const favoritesArray = await getFavoritesArray(req);
 
     try {
-        const result = await AnnonceModel.find(queryObject).lean();
+        const [result, totalCount] = await Promise.all([
+            AnnonceModel.find(queryObject).sort({ date: -1 }).skip(skip).limit(limit).lean(),
+            AnnonceModel.countDocuments(queryObject),
+        ]);
 
         const catArr = [];
         const subArr = [];
@@ -129,23 +141,17 @@ const findProducts = async (req, res) => {
             if (subArr.indexOf(item.subCategory) === -1) subArr.push(item.subCategory);
         });
 
-        const productArray = result.map((item) => {
-            const isFav = favoriteProducts.some(fav => fav.toString() === item._id.toString());
-            if (isFav) item['isFavorite'] = true;
-            return item;
-        });
-
         res.status(200).json({
-            productArray,
+            productArray: markFavorites(result, favoritesArray),
             categories: catArr,
             subCategories: subArr,
-            message: 'Products successfully found',
+            totalCount,
+            page,
+            totalPages: Math.ceil(totalCount / limit),
         });
     } catch (err) {
         logger.error(err);
-        res.status(500).json({
-            message: 'Error occurred while searching products',
-        });
+        res.status(500).json({ message: 'Error occurred while searching products' });
     }
 };
 

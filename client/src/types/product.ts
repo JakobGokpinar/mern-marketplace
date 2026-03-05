@@ -8,6 +8,13 @@ export interface SpecialProp {
   value: string;
 }
 
+export interface PaginatedResponse {
+  productArray: Product[];
+  totalCount: number;
+  page: number;
+  totalPages: number;
+}
+
 export interface Product {
   _id: string;
   title: string;

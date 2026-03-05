@@ -29,7 +29,7 @@ const verifyEmail = async (req, res) => {
         const data = await UserModel.findOneAndUpdate(
             { _id: new ObjectId(userId) },
             { isEmailVerified: true },
-            { new: true, useFindAndModify: false }
+            { new: true }
         );
         // Clean up all verify tokens for this user now that verification is complete
         await EmailVerifyToken.deleteMany({ userId });

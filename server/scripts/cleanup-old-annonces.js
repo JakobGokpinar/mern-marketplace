@@ -53,7 +53,7 @@ async function run() {
     console.error('MONGO_URL_PROD not set in .env');
     process.exit(1);
   }
-  await mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+  await mongoose.connect(mongoUrl);
   console.log('Connected to production database.\n');
 
   // Find old annonces

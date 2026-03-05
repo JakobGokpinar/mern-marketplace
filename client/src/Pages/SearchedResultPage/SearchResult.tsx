@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import styles from "./SearchResult.module.css";
@@ -23,6 +23,9 @@ const SearchResult = () => {
   const { data: geoData } = useNorwayGeo();
   const counties = geoData?.districts || [];
 
+  const [page, setPage] = useState(1);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+
   const createQueryObject = () => {
     const queryObject: Record<string, string | string[]> = {};
     const kommuneArr: string[] = [];
@@ -37,13 +40,34 @@ const SearchResult = () => {
     return queryObject;
   };
 
-  const { data: productArray = [], isPending } = useQuery({
-    queryKey: queryKeys.products.search(Object.fromEntries(searchParams.entries())),
-    queryFn: () => searchProductsApi(createQueryObject()),
+  const paramsKey = Object.fromEntries(searchParams.entries());
+
+  const { data, isPending, isFetching } = useQuery({
+    queryKey: queryKeys.products.search(paramsKey, page),
+    queryFn: async () => {
+      const res = await searchProductsApi(createQueryObject(), page);
+      setAllProducts(prev => page === 1 ? res.productArray : [...prev, ...res.productArray]);
+      return res;
+    },
   });
 
+  // Reset to page 1 when search params change
+  useEffect(() => {
+    setPage(1);
+    setAllProducts([]);
+  }, [searchParams]);
+
+  const totalPages = data?.totalPages ?? 1;
+  const totalCount = data?.totalCount ?? 0;
+  const hasMore = page < totalPages;
+
   const [sortedProducts, setSortedProducts] = useState<Product[] | null>(null);
-  const displayProducts = sortedProducts || productArray;
+  const displayProducts = sortedProducts || allProducts;
+
+  // Reset sorting when products change
+  useEffect(() => {
+    setSortedProducts(null);
+  }, [allProducts]);
 
   const handleFilterChange = (key: string, value: string) => {
     const params = searchParams;
@@ -82,7 +106,7 @@ const SearchResult = () => {
   const handleSorting = (e: React.ChangeEvent<HTMLSelectElement>) => {
     e.preventDefault();
     const value = e.target.value;
-    const products = [...productArray];
+    const products = [...allProducts];
     switch (value) {
       case "price_asc":
         products.sort((a, b) => a.price - b.price);
@@ -118,7 +142,7 @@ const SearchResult = () => {
 
         <Col className="products-column" lg={8}>
           <div className={styles['top-row']}>
-            <p>{displayProducts.length} treff</p>
+            <p>{totalCount} treff</p>
             <Form.Select style={{ maxWidth: 200 }} onChange={handleSorting}>
               <option value="mest-relevant">Mest Relevant</option>
               <option value="published-first">Eldste først</option>
@@ -133,7 +157,7 @@ const SearchResult = () => {
           </div>
 
           <div className={styles['bottom-row']}>
-            {isPending ? (
+            {isPending && page === 1 ? (
               <div className="d-flex justify-content-center py-5">
                 <Spinner animation="border" variant="secondary" />
               </div>
@@ -151,6 +175,18 @@ const SearchResult = () => {
               </div>
             ))}
           </div>
+
+          {hasMore && (
+            <div className={styles['search-load-more']}>
+              <Button
+                variant="outline-primary"
+                onClick={() => setPage(p => p + 1)}
+                disabled={isFetching}
+              >
+                {isFetching ? <Spinner animation="border" size="sm" /> : 'Last inn flere'}
+              </Button>
+            </div>
+          )}
         </Col>
       </Row>
     </Container>

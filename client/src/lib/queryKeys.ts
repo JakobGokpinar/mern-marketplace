@@ -1,8 +1,8 @@
 export const queryKeys = {
   products: {
-    list: () => ['products', 'list'] as const,
+    list: (page = 1) => ['products', 'list', page] as const,
     mine: () => ['products', 'mine'] as const,
-    search: (params: Record<string, string>) => ['products', 'search', params] as const,
+    search: (params: Record<string, string>, page = 1) => ['products', 'search', params, page] as const,
     detail: (id: string) => ['products', 'detail', id] as const,
   },
   favorites: {

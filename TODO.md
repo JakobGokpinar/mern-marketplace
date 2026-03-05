@@ -11,7 +11,12 @@
 - Migrate CRA → Vite + React 18 (createRoot, Suspense, React.lazy code splitting)
 - Add TypeScript — all frontend files migrated to `.ts` / `.tsx`
 - Migrate aws-sdk v2 → `@aws-sdk/client-s3` v3
-- Upgrade Mongoose 5 → 8
+- Upgrade Mongoose 5 → 8, connect-mongo 4 → 6, Node engine → ≥22
+- Remove direct `mongodb` driver dep (Mongoose bundles it), remove Pino (simple console logger)
+- Upgrade Passport `0.4` → `0.7`
+- Zod input validation on all route endpoints (middleware + schemas)
+- Pagination on homepage feed and search results (page/limit, "Last inn flere" button)
+- Test infrastructure: Vitest + Supertest (23 tests: validate middleware, Zod schemas, ensureAuth)
 
 ### Frontend Architecture
 
@@ -62,7 +67,7 @@
 - Confirmed `!important` flags are necessary for Bootstrap overrides in Navbar/Searchbar
 - Extract reusable `ensureAuth` middleware — DRY `req.isAuthenticated()` checks across all route files
 - Extract S3 operations from controllers into shared `services/s3.js`
-- Replace `console.log`/`console.error` with Pino structured logger
+- Replace scattered `console.log`/`console.error` with centralized logger module
 - Add env var validation at startup (`config/validateEnv.js`)
 - Add per-file size limits (5 MB) + MIME filter + filename sanitization to multer (`middleware/upload.js`)
 - Add lazy loading for product images (`loading="lazy"`)
@@ -120,7 +125,6 @@
 
 ### Performance
 
-- Pagination or infinite scroll for home feed, search results, and profile sub-pages
 - Chat: load messages paginated (currently loads all at once)
 - Loading skeletons for product feeds during data fetching
 
@@ -152,9 +156,8 @@
 - **Dev/prod environment separation** — Backend should never connect to the production DB during local dev. Add `.env.development` / `.env.production` split or `NODE_ENV` guards.
 - **Email verification dev bypass** — Fake emails can't receive 2FA codes, requiring manual DB edits to flip `isEmailVerified`. Add a dev-mode bypass (e.g. fixed OTP `000000` when `NODE_ENV=development`).
 - **AWS IAM** — App currently uses root account credentials for S3. Create an IAM user with least-privilege S3 permissions and rotate credentials.
-- **Form validation** — Add Zod on backend (replace manual checks). Consider React Hook Form + Zod on frontend.
-- **Tests** — API integration tests (backend routes) + component tests (auth, favorites, annonce creation).
-- **Upgrade Passport** — `^0.4.1` → `^0.6.0` to formally match the async `req.logout(cb)` API the code already uses.
+- **Frontend form validation** — Consider React Hook Form + Zod on frontend (backend already has Zod).
+- **More tests** — Expand test coverage: API integration tests with DB, component tests (auth, favorites, annonce creation).
 
 ---
 

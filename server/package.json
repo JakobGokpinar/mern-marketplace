@@ -5,15 +5,17 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js start",
-    "dev": "nodemon server.js dev"
+    "dev": "nodemon server.js dev",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "engines": {
-    "node": "18"
+    "node": ">=22"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.0.0",
     "bcrypt": "^5.1.0",
-    "connect-mongo": "^4.4.1",
+    "connect-mongo": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.17.1",
@@ -21,19 +23,21 @@
     "express-session": "^1.17.2",
     "file-type": "^16.5.4",
     "helmet": "^8.1.0",
-    "mongodb": "^5.3.0",
-    "mongoose": "^5.13.3",
+    "mongodb": "^7.1.0",
+    "mongoose": "^8.23.0",
     "multer": "^1.4.3",
     "multer-s3": "^3.0.0",
     "nodemailer": "^6.9.4",
-    "passport": "^0.4.1",
+    "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "password-validator": "^5.3.0",
-    "pino": "^10.3.1",
     "socket.io": "^4.6.2",
-    "validator": "^13.9.0"
+    "validator": "^13.9.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
-    "nodemon": "^2.0.12"
+    "nodemon": "^3.1.14",
+    "supertest": "^7.2.2",
+    "vitest": "^3.2.4"
   }
 }

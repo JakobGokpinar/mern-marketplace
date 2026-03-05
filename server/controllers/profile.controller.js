@@ -20,7 +20,7 @@ const uploadImageToAws = (req, res) => {
             const result = await UserModel.findByIdAndUpdate(
                 { _id: new ObjectId(userId) },
                 { profilePicture: req.file.location },
-                { useFindAndModify: false, returnDocument: 'after' }
+                { new: true }
             );
             res.json({ user: result, message: 'profile picture uploaded' });
         } catch (error) {
@@ -43,7 +43,7 @@ const removeProfileImage = async (req, res) => {
     try {
         const result = await UserModel.findByIdAndUpdate({ _id: new ObjectId(userId) }, {
             $unset: { profilePicture: '' }
-        }, { useFindAndModify: false, returnDocument: 'after' });
+        }, { new: true });
         return res.json({ user: result, message: 'User updated' });
     } catch (error) {
         logger.error(error);
@@ -59,7 +59,7 @@ const updateUserInfo = async (req, res) => {
     try {
         const result = await UserModel.findByIdAndUpdate({ _id: new ObjectId(userId) }, {
             $set: { name, lastname, username }
-        }, { useFindAndModify: false, returnDocument: 'after' });
+        }, { new: true });
         return res.json({ user: result, message: 'User updated' });
     } catch (error) {
         logger.error(error);

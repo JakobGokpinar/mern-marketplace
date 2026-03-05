@@ -1,17 +1,30 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import styles from "./Menu.module.css";
 import { queryKeys } from '../../lib/queryKeys';
 import { fetchProductsApi } from '../../services/productService';
 import Spinner from 'react-bootstrap/Spinner';
+import Button from 'react-bootstrap/Button';
+import type { Product } from '../../types/product';
 
 const Menu = () => {
-  const { data: productArray = [], isPending } = useQuery({
-    queryKey: queryKeys.products.list(),
-    queryFn: fetchProductsApi,
+  const [page, setPage] = useState(1);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+
+  const { data, isPending, isFetching } = useQuery({
+    queryKey: queryKeys.products.list(page),
+    queryFn: async () => {
+      const res = await fetchProductsApi(page);
+      setAllProducts(prev => page === 1 ? res.productArray : [...prev, ...res.productArray]);
+      return res;
+    },
   });
 
-  if (isPending) {
+  const totalPages = data?.totalPages ?? 1;
+  const hasMore = page < totalPages;
+
+  if (isPending && page === 1) {
     return (
       <div className={styles['homepage-loading']}>
         <Spinner animation="border" variant="secondary" />
@@ -21,10 +34,10 @@ const Menu = () => {
 
   return (
     <div className={styles['homepage']}>
-      {productArray.length > 0 ? (
+      {allProducts.length > 0 ? (
         <>
           <div className={styles['homepage-grid']}>
-            {productArray.map((product) => (
+            {allProducts.map((product) => (
               <ProductCard
                 key={product._id}
                 images={product.annonceImages}
@@ -38,6 +51,17 @@ const Menu = () => {
               />
             ))}
           </div>
+          {hasMore && (
+            <div className={styles['homepage-load-more']}>
+              <Button
+                variant="outline-primary"
+                onClick={() => setPage(p => p + 1)}
+                disabled={isFetching}
+              >
+                {isFetching ? <Spinner animation="border" size="sm" /> : 'Last inn flere'}
+              </Button>
+            </div>
+          )}
         </>
       ) : (
         <div className={styles['homepage-empty']}>

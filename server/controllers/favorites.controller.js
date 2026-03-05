@@ -30,7 +30,7 @@ const addToFavorites = async (req, res) => {
         const result = await UserModel.findByIdAndUpdate(
             { _id: userId },
             { $push: { favorites: annonce._id } },
-            { useFindAndModify: false, returnDocument: 'after' }
+            { new: true }
         );
         return res.status(200).json({ user: result, message: 'Annonce saved to Favorites' });
     } catch (error) {
@@ -50,7 +50,7 @@ const removeFromFavorites = async (req, res) => {
         const result = await UserModel.findByIdAndUpdate(
             { _id: new ObjectId(userId) },
             { $pull: { favorites: new ObjectId(annonceId) } },
-            { useFindAndModify: false, returnDocument: 'after' }
+            { new: true }
         );
         return res.json({ user: result, message: 'Annonce removed from favorites' });
     } catch (error) {
