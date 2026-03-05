@@ -1,0 +1,52 @@
+/* ============================================
+   Homepage
+   ============================================ */
+
+.homepage {
+  min-height: 60vh;
+}
+
+.homepage-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+  color: var(--color-text-muted);
+}
+
+.homepage-empty i {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.homepage-empty p {
+  font-size: 1.1rem;
+}
+
+/* ============================================
+   Homepage Grid Layout
+   ============================================ */
+
+.homepage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 24px;
+  padding: 32px 5%;
+  justify-items: center;
+}
+
+.homepage-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+}
+
+@media (max-width: 768px) {
+  .homepage-grid {
+    grid-template-columns: 1fr;
+    padding: 16px;
+    gap: 16px;
+  }
+}
