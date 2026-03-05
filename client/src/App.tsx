@@ -62,9 +62,7 @@ const AppContent = () => {
 
   return (
     <>
-      <div style={{ marginBottom: 100 }}>
-        <Navbar />
-      </div>
+      <Navbar />
       <div className='app-div'>
         <div className='app-div__content'>
           <ErrorBoundary>

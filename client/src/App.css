@@ -2,6 +2,7 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    padding-top: 62px;
 }
 .app-div__content {
     margin-bottom: 5%;
