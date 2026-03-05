@@ -1,7 +1,8 @@
 const { doubleCsrf } = require('csrf-csrf');
 
-const { doubleCsrfProtection, generateToken } = doubleCsrf({
+const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
   getSecret: () => process.env.CSRF_SECRET || process.env.SESSION_SECRET,
+  getSessionIdentifier: (req) => req.session?.id || '',
   cookieName: '__csrf',
   cookieOptions: {
     httpOnly: true,
@@ -12,4 +13,4 @@ const { doubleCsrfProtection, generateToken } = doubleCsrf({
   getTokenFromRequest: (req) => req.headers['x-csrf-token'],
 });
 
-module.exports = { doubleCsrfProtection, generateToken };
+module.exports = { doubleCsrfProtection, generateToken: generateCsrfToken };

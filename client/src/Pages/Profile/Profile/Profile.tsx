@@ -24,6 +24,8 @@ import {
 import { resendVerificationEmailApi } from "../../../services/emailService";
 import toast from 'react-hot-toast';
 import { userActions } from "../../../store/userSlice";
+import { useFormValidation } from '../../../hooks/useFormValidation';
+import { profileSchema } from '../../../schemas/profile.schema';
 
 const Profile = () => {
   const user = useAppSelector(state => state.user.user) as User;
@@ -37,6 +39,7 @@ const Profile = () => {
   const [lastName, setLastName] = useState<string>("");
   const [profilePicture, setProfilePicture] = useState<string>("");
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+  const { errors: formErrors, validate } = useFormValidation(profileSchema);
 
   const convertImagesToFormData = async (data: string): Promise<FormData> => {
     const fd = new FormData();
@@ -201,13 +204,15 @@ const Profile = () => {
                 <Col>
                   <Form.Group>
                     <Form.Label>Navn</Form.Label>
-                    <Form.Control type="text" value={name || ""} onChange={(e) => setName(e.target.value)} />
+                    <Form.Control type="text" value={name || ""} onChange={(e) => setName(e.target.value)} isInvalid={!!formErrors.name} />
+                    <Form.Control.Feedback type="invalid">{formErrors.name}</Form.Control.Feedback>
                   </Form.Group>
                 </Col>
                 <Col>
                   <Form.Group>
                     <Form.Label>Etternavn</Form.Label>
-                    <Form.Control type="text" value={lastName || ""} onChange={(e) => setLastName(e.target.value)} />
+                    <Form.Control type="text" value={lastName || ""} onChange={(e) => setLastName(e.target.value)} isInvalid={!!formErrors.lastname} />
+                    <Form.Control.Feedback type="invalid">{formErrors.lastname}</Form.Control.Feedback>
                   </Form.Group>
                 </Col>
               </Row>
@@ -222,7 +227,10 @@ const Profile = () => {
                   Lagrer...
                 </Button>
               ) : (
-                <Button className={styles['control-button']} variant="primary" onClick={() => updateMutation.mutate()}>
+                <Button className={styles['control-button']} variant="primary" onClick={() => {
+                  if (!validate({ name, lastname: lastName })) return;
+                  updateMutation.mutate();
+                }}>
                   Lagre
                 </Button>
               )}

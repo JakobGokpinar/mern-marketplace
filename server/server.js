@@ -3,6 +3,7 @@ const session = require('express-session');
 const passport = require('passport');
 const cors = require('cors');
 const helmet = require('helmet');
+const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
 const MongoDbStore = require('connect-mongo').default;
 const { Server } = require('socket.io'); 
@@ -64,6 +65,7 @@ const mongoUrl = process.env.MONGO_URL;
 connectToDatabase(mongoUrl);
 
 app.use(helmet());
+app.use(cookieParser());
 app.enable('trust proxy');
 
 app.use(cors({

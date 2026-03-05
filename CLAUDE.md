@@ -11,31 +11,40 @@ MERN (MongoDB, Express, React 18, Node.js). Vite + TypeScript frontend.
 ## Frontend Structure
 - `src/main.tsx` — entry point (createRoot, Provider, QueryClientProvider)
 - `src/App.tsx` — routing (BrowserRouter, lazy imports, useSocket, onUnauthorized effect)
-- `src/Component/` — legacy-named shared components (Navbar, Footer, ProductCard) — capital C, not yet renamed
-- `src/components/` — newer shared components (FeedbackBanner, ProtectedRoute, ErrorBoundary)
-- `src/Pages/` — page-level components
-- `src/hooks/` — custom hooks (useAuth, useFavorites, useSocket, useNorwayGeo, useChat, useDebounce)
+- `src/components/` — shared components (Navbar, Footer, ProductCard, ProtectedRoute, ErrorBoundary, Skeleton)
+- `src/pages/` — page-level components
+- `src/hooks/` — custom hooks (useAuth, useFavorites, useSocket, useNorwayGeo, useChat, useChatSocket, useDebounce, useFormValidation)
 - `src/services/` — pure API functions using instanceAxs (no Redux)
-- `src/store/` — Redux (auth + UI only: userSlice, uiSlice, authThunks, hooks)
+- `src/store/` — Redux (auth only: userSlice, authThunks, hooks)
 - `src/lib/` — axios.ts, authEvents.ts, socket.ts, queryClient.ts, queryKeys.ts
 - `src/types/` — shared TypeScript interfaces (user.ts, product.ts, chat.ts, geo.ts)
-- `src/utils/` — cropImage.ts, dataURltoFile.ts, formatPrice.ts
+- `src/schemas/` — Zod validation schemas (auth.schema.ts, annonce.schema.ts, profile.schema.ts)
+- `src/utils/` — cropImage.ts, dataURltoFile.ts, formatPrice.ts, timeago.ts
+
+## Backend Structure
+- `server/routes/` — Express route definitions (9 files)
+- `server/controllers/` — Request handlers (9 files)
+- `server/models/` — Mongoose models (6 files)
+- `server/services/` — Shared logic (s3.js)
+- `server/middleware/` — ensureAuth, validate (Zod), csrf, upload (multer)
+- `server/schemas/` — Zod validation schemas for all endpoints
+- `server/config/` — db, passport, logger, validateEnv
 
 ## State Management
 - **Server state**: TanStack Query v5 (useQuery / useMutation)
-- **Auth + UI state**: Redux Toolkit (userSlice, uiSlice only)
+- **Auth state**: Redux Toolkit (userSlice only)
 - **Norway geo data**: `useNorwayGeo` hook with `staleTime: Infinity` — no Redux slice
 - **Typed dispatch/selector**: always use `useAppDispatch` / `useAppSelector` from `src/store/hooks`
 
 ## Auth / 401 Handling
 - `src/lib/authEvents.ts` — tiny EventTarget emitter (no store imports, no circular dep)
-- `axios.ts` interceptor calls `emitUnauthorized()` on 401
-- `App.tsx` subscribes via `onUnauthorized()` → dispatches logout + feedback banner
+- `axios.ts` interceptor calls `emitUnauthorized()` on 401 (skips `/login`, `/signup`)
+- `App.tsx` subscribes via `onUnauthorized()` → dispatches logout + toast
 
 ## Design System
 - All styles use CSS variables defined in `client/src/design.css`
 - Primary: `#0D9488` (teal). See `design.css` for full palette.
-- Bootstrap 5 + custom CSS Modules. NO MUI (fully removed).
+- Bootstrap 5 + custom CSS Modules. NO MUI.
 - System font stack, no external fonts.
 - Norwegian language UI — don't translate existing Norwegian text.
 
@@ -52,7 +61,7 @@ MERN (MongoDB, Express, React 18, Node.js). Vite + TypeScript frontend.
 - TypeScript is the standard — all new files must be `.ts` or `.tsx`
 - No inline styles unless absolutely necessary
 - Keep `console.log` out of committed code
-- Install packages with `npm install --legacy-peer-deps` (chatscope requires React 17 peer dep)
+- Install packages with `npm install`
 
 ## Env Vars (client/.env)
 ```

@@ -14,6 +14,7 @@ interface AnnonceFormProps {
   imageArray: AnnonceImage[];
   isModifyAnnonce: boolean;
   isPublishing: boolean;
+  errors: Record<string, string>;
   onPropertyChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
   onStatusChange: (value: 'nytt' | 'brukt') => void;
   onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -33,6 +34,7 @@ const AnnonceForm = ({
   imageArray,
   isModifyAnnonce,
   isPublishing,
+  errors,
   onPropertyChange,
   onStatusChange,
   onImageChange,
@@ -44,7 +46,7 @@ const AnnonceForm = ({
   onCancel,
   postAddress,
 }: AnnonceFormProps) => (
-  <Form onSubmit={onSubmit} className={styles['form']}>
+  <Form onSubmit={onSubmit} noValidate className={styles['form']}>
 
     {/* ── KATEGORI ──────────────────────────────── */}
     <section className={styles['section']}>
@@ -54,16 +56,17 @@ const AnnonceForm = ({
         <Form.Label className={styles['field-label']}>Hoved kategori</Form.Label>
         <Form.Select
           id="category"
-          required
           value={JSON.stringify(selectedMainCat)}
           onChange={onPropertyChange}
           disabled={isPublishing}
+          isInvalid={!!errors.category}
         >
           <option value={JSON.stringify('')}>Velg kategori</option>
           {categoryData.categories.map((item) => (
             <option value={JSON.stringify(item)} key={item.maincategory}>{item.maincategory}</option>
           ))}
         </Form.Select>
+        <Form.Control.Feedback type="invalid">{errors.category}</Form.Control.Feedback>
       </Form.Group>
 
       {selectedMainCat !== '' && (
@@ -71,16 +74,17 @@ const AnnonceForm = ({
           <Form.Label className={styles['field-label']}>Underkategori</Form.Label>
           <Form.Select
             id="subCategory"
-            required
             value={JSON.stringify(selectedSubCat)}
             onChange={onPropertyChange}
             disabled={isPublishing}
+            isInvalid={!!errors.subCategory}
           >
             <option value={JSON.stringify('')}>Velg underkategori</option>
             {selectedMainCat.subcategories.map((item) => (
               <option value={JSON.stringify(item)} key={item.name}>{item.name}</option>
             ))}
           </Form.Select>
+          <Form.Control.Feedback type="invalid">{errors.subCategory}</Form.Control.Feedback>
         </Form.Group>
       )}
 
@@ -142,11 +146,12 @@ const AnnonceForm = ({
           type="text"
           id="title"
           value={annonce.title}
-          required
           placeholder="F.eks. iPhone 14 Pro 256GB"
           onChange={onPropertyChange}
           disabled={isPublishing}
+          isInvalid={!!errors.title}
         />
+        <Form.Control.Feedback type="invalid">{errors.title}</Form.Control.Feedback>
       </Form.Group>
 
       <Form.Group className={styles['form-group']}>
@@ -159,8 +164,10 @@ const AnnonceForm = ({
           placeholder="Beskriv produktet ditt — stand, brukstid, hva som følger med..."
           onChange={onPropertyChange}
           disabled={isPublishing}
+          isInvalid={!!errors.description}
           required
         />
+        <Form.Control.Feedback type="invalid">{errors.description}</Form.Control.Feedback>
       </Form.Group>
 
       <Form.Group className={styles['form-group']}>
@@ -204,7 +211,9 @@ const AnnonceForm = ({
               min={0}
               onChange={onPropertyChange}
               disabled={isPublishing}
+              isInvalid={!!errors.price}
             />
+            <Form.Control.Feedback type="invalid">{errors.price}</Form.Control.Feedback>
             <span className={styles['price-currency']}>kr</span>
           </div>
           <Form.Select
@@ -213,6 +222,7 @@ const AnnonceForm = ({
             onChange={onPropertyChange}
             required
             disabled={isPublishing}
+            isInvalid={!!errors.pricePeriod}
             className={styles['price-period']}
           >
             <option value="">Velg periode</option>
@@ -221,6 +231,7 @@ const AnnonceForm = ({
             <option value="per uke">Per uke</option>
             <option value="per måned">Per måned</option>
           </Form.Select>
+          <Form.Control.Feedback type="invalid">{errors.pricePeriod}</Form.Control.Feedback>
         </div>
       </Form.Group>
     </section>
@@ -247,8 +258,10 @@ const AnnonceForm = ({
             maxLength={4}
             onChange={onPropertyChange}
             disabled={isPublishing}
+            isInvalid={!!errors.postnumber}
             className={styles['postnumber-input']}
           />
+          <Form.Control.Feedback type="invalid">{errors.postnumber}</Form.Control.Feedback>
           {postAddress && (
             <span className={styles['postnumber-place']}>
               <i className="fa-solid fa-location-dot" />

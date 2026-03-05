@@ -17,6 +17,8 @@ import categoryData from '../../categories.json';
 import toast from 'react-hot-toast';
 import AnnonceForm from './AnnonceForm';
 import AnnoncePreview from './AnnoncePreview';
+import { useFormValidation } from '../../hooks/useFormValidation';
+import { annonceSchema } from '../../schemas/annonce.schema';
 import type { AnnonceImage, SpecProp, AnnoncePropertyObject, CategoryItem, SubCategoryItem } from './types';
 
 interface EditAnnonceState {
@@ -48,6 +50,7 @@ const NewAnnonce = () => {
   const [specPropArray, setSpecPropArray] = useState<SpecProp[]>([]);
   const [postAddress, setPostAddress] = useState('');
 
+  const { errors: formErrors, validate } = useFormValidation(annonceSchema);
   const debouncedPostnumber = useDebounce(annonce.postnumber, 400);
 
   const buildFormData = async (): Promise<FormData> => {
@@ -198,6 +201,11 @@ const NewAnnonce = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!validate(annonce)) return;
+    if (imageArray.length === 0) {
+      toast.error('Legg til minst ett bilde');
+      return;
+    }
     submitMutation.mutate();
   };
 
@@ -274,6 +282,7 @@ const NewAnnonce = () => {
             imageArray={imageArray}
             isModifyAnnonce={isModifyAnnonce}
             isPublishing={submitMutation.isPending}
+            errors={formErrors}
             onPropertyChange={handlePropertyChange}
             onStatusChange={handleStatusChange}
             onImageChange={handleImageChange}
