@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router";
 import toast from 'react-hot-toast';
 import { useAppSelector } from "../../store/hooks";
 import { useQuery } from "@tanstack/react-query";
-import TextareaAutosize from 'react-textarea-autosize';
 
 import styles from './ProductPage.module.css';
 import Container from 'react-bootstrap/Container';
@@ -140,7 +139,7 @@ function ProductPage() {
 
           <div className={styles['pp__section']}>
             <h3 className={styles['pp__section-title']}>Beskrivelse</h3>
-            <TextareaAutosize className={styles['pp__description']} value={annonce.description} disabled />
+            <textarea className={styles['pp__description']} value={annonce.description} disabled readOnly />
           </div>
 
           <div className={styles['pp__section']}>

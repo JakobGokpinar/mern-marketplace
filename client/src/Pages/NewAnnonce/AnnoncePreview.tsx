@@ -1,6 +1,5 @@
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import Carousel from 'react-bootstrap/Carousel';
-import TextareaAutosize from 'react-textarea-autosize';
 import styles from './AnnoncePreview.module.css';
 import type { AnnonceImage, SpecProp, AnnoncePropertyObject, CategoryItem } from './types';
 
@@ -107,10 +106,11 @@ const AnnoncePreview = ({
       {annonce.description && (
         <div className={styles['section']}>
           <p className={styles['section-label']}>Beskrivelse</p>
-          <TextareaAutosize
+          <textarea
             className={styles['description']}
             value={annonce.description}
             disabled
+            readOnly
           />
         </div>
       )}

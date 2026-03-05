@@ -1,6 +1,5 @@
 import { useRef, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import TextareaAutosize from 'react-textarea-autosize';
 import styles from './Chat.module.css';
 
 import { useAppSelector } from '../../store/hooks';
@@ -151,14 +150,13 @@ const Chat = () => {
 
             {/* Input */}
             <div className={styles['input-area']}>
-              <TextareaAutosize
+              <textarea
                 className={styles['input-textarea']}
                 placeholder="Skriv en melding... (Enter for å sende)"
                 value={messageInput}
                 onChange={e => setMessageInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                minRows={1}
-                maxRows={4}
+                rows={1}
               />
               <button
                 className={styles['send-btn']}
