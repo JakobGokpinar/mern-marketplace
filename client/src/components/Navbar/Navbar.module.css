@@ -3,9 +3,11 @@
    ============================================ */
 
 .navigation {
-    background-color: var(--color-surface) !important;
-    border-bottom: 1px solid var(--color-border);
-    box-shadow: var(--shadow-sm);
+    background-color: rgba(255, 255, 255, 0.96) !important;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: none;
     transition: transform 0.3s ease;
     padding: 6px 0 !important;
 }
@@ -43,6 +45,78 @@
 
 .navigation.navbar-hidden {
     transform: translateY(-100%);
+}
+
+/* ============================================
+   Left section (categories)
+   ============================================ */
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+    margin-right: 8px;
+}
+
+
+.navbar-categories-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    padding: 6px 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: color var(--transition-fast), background var(--transition-fast);
+    white-space: nowrap;
+}
+
+.navbar-categories-toggle:hover {
+    color: var(--color-text);
+    background: var(--color-bg-subtle);
+}
+
+.navbar-categories-toggle i {
+    font-size: 10px;
+    transition: transform var(--transition-fast);
+}
+
+.navbar-categories-menu {
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--shadow-lg) !important;
+    padding: 6px 0 !important;
+    min-width: 200px;
+    margin-top: 6px !important;
+}
+
+.navbar-categories-item {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px !important;
+    font-size: 14px;
+    color: var(--color-text) !important;
+    transition: background var(--transition-fast);
+}
+
+.navbar-categories-item:hover {
+    background: var(--color-primary-lightest) !important;
+    color: var(--color-primary-darker) !important;
+}
+
+.navbar-categories-item i {
+    width: 16px;
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 13px;
+}
+
+.navbar-categories-item:hover i {
+    color: var(--color-primary);
 }
 
 /* ============================================

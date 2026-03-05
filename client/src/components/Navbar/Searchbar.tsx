@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './Searchbar.module.css';
 
 import { InputGroup, Button } from 'react-bootstrap';
@@ -14,27 +14,44 @@ interface ProductSuggestion {
   id: string;
 }
 
+interface SuggestionItem {
+  url: string;
+}
+
 export default function Searchbar() {
+  const navigate = useNavigate();
   const [productObjects, setProductObjects] = useState<ProductSuggestion[]>([]);
   const [suggestedCategories, setSuggestedCategories] = useState<string[]>([]);
   const [searchInput, setSearchInput] = useState<string>('');
   const [isShow, setIsShow] = useState<boolean>(false);
+  const [focusedIndex, setFocusedIndex] = useState<number>(-1);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const debouncedSearch = useDebounce(searchInput, 300);
 
-  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchInput(e.target.value);
+  // Flat list of all navigable items in render order
+  const allItems = useMemo<SuggestionItem[]>(() => {
+    if (!isShow) return [];
+    const items: SuggestionItem[] = [{ url: `/search?q=${searchInput}` }];
+    productObjects.forEach(p => items.push({ url: `/produkt/${p.id}` }));
+    suggestedCategories.filter(Boolean).forEach(c => items.push({ url: `/search?category=${c}` }));
+    return items;
+  }, [isShow, searchInput, productObjects, suggestedCategories]);
+
+  const close = () => {
+    setIsShow(false);
+    setFocusedIndex(-1);
   };
 
-  const handleLinkClick = () => {
-    setIsShow(false);
-  };
+  useEffect(() => {
+    // Reset keyboard focus when new results arrive
+    setFocusedIndex(-1);
+  }, [productObjects, suggestedCategories]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setIsShow(false);
+        close();
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -43,7 +60,7 @@ export default function Searchbar() {
 
   useEffect(() => {
     if (debouncedSearch === '') {
-      setIsShow(false);
+      close();
       return;
     }
 
@@ -62,16 +79,48 @@ export default function Searchbar() {
       });
   }, [debouncedSearch]);
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!isShow) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setFocusedIndex(prev => Math.min(prev + 1, allItems.length - 1));
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setFocusedIndex(prev => Math.max(prev - 1, -1));
+        break;
+      case 'Enter':
+        if (focusedIndex >= 0 && allItems[focusedIndex]) {
+          e.preventDefault();
+          navigate(allItems[focusedIndex].url);
+          close();
+        }
+        break;
+      case 'Escape':
+        close();
+        break;
+    }
+  };
+
+  // Returns index in the flat allItems list for a given rendered item
+  let itemCounter = 0;
+  const nextIndex = () => itemCounter++;
+
   return (
-    <div ref={containerRef}>
+    <div ref={containerRef} className={styles['searchbar-container']}>
       <Form action='/search' className={styles['searchbar-form']}>
         <InputGroup className={styles['searchbar-group']}>
           <Form.Control
             name='q'
             type='search'
             placeholder='Søk etter produkter...'
-            onChange={handleInput}
+            onChange={e => setSearchInput(e.target.value)}
+            onKeyDown={handleKeyDown}
             autoComplete='off'
+            aria-autocomplete='list'
+            aria-expanded={isShow}
           />
           <Button type='submit' className={styles['searchbar-btn']}>
             <i className="fa-solid fa-magnifying-glass" />
@@ -80,38 +129,64 @@ export default function Searchbar() {
       </Form>
 
       {isShow && (
-        <div id="suggestionBox" className={`${styles['search-suggestion-box']} border`}>
-          <div id='searchWord' className='mb-4'>
-            <p className={`${styles['suggestion-title']} mb-1`}>Søk</p>
-            <Link to={`/search?q=${searchInput}`} onClick={handleLinkClick}>
-              Finn flere resultater for '{searchInput}'
-            </Link>
+        <div className={styles['suggestion-box']} role="listbox">
+          <div className={styles['suggestion-group']}>
+            <p className={styles['suggestion-label']}>Søk</p>
+            {(() => { const idx = nextIndex(); return (
+              <a
+                href={`/search?q=${searchInput}`}
+                onClick={close}
+                className={`${styles['suggestion-search-link']}${focusedIndex === idx ? ` ${styles['suggestion-item--focused']}` : ''}`}
+                role="option"
+                aria-selected={focusedIndex === idx}
+              >
+                <i className="fa-solid fa-magnifying-glass" />
+                Finn flere resultater for <strong>'{searchInput}'</strong>
+              </a>
+            ); })()}
           </div>
 
           {productObjects.length > 0 && (
-            <div id='searchProduct' className={styles['suggestion-group']}>
-              <p className={styles['suggestion-title']}>Produkter</p>
-              {productObjects.map((item, index) => (
-                <Link to={`/produkt/${item.id}`} key={index} onClick={handleLinkClick}>
-                  <div className={styles['suggestion-content']} key={item.title}>
-                    <p style={{ margin: 0 }}>{item.title}</p>
-                    <img className={styles['suggestion-img']} src={item.img?.location} alt="annonce" />
-                  </div>
-                </Link>
-              ))}
+            <div className={styles['suggestion-group']}>
+              <p className={styles['suggestion-label']}>Produkter</p>
+              {productObjects.map((item) => {
+                const idx = nextIndex();
+                return (
+                  <a
+                    key={item.id}
+                    href={`/produkt/${item.id}`}
+                    onClick={close}
+                    className={`${styles['suggestion-product']}${focusedIndex === idx ? ` ${styles['suggestion-item--focused']}` : ''}`}
+                    role="option"
+                    aria-selected={focusedIndex === idx}
+                  >
+                    {item.img && <img className={styles['suggestion-product-img']} src={item.img.location} alt="" />}
+                    <span>{item.title}</span>
+                  </a>
+                );
+              })}
             </div>
           )}
 
           {suggestedCategories.length > 0 && (
-            <div id='searchCategories' className={styles['suggestion-group']}>
-              <p className={styles['suggestion-title']}>Kategorier</p>
-              {suggestedCategories.filter(item => item != null).map((item, index) => (
-                <Link to={`search?category=${item}`} key={index} onClick={handleLinkClick}>
-                  <div className={styles['category-suggestion-content']}>
+            <div className={styles['suggestion-group']}>
+              <p className={styles['suggestion-label']}>Kategorier</p>
+              {suggestedCategories.filter(Boolean).map((item) => {
+                const idx = nextIndex();
+                return (
+                  <a
+                    key={item}
+                    href={`/search?category=${item}`}
+                    onClick={close}
+                    className={`${styles['suggestion-category']}${focusedIndex === idx ? ` ${styles['suggestion-item--focused']}` : ''}`}
+                    role="option"
+                    aria-selected={focusedIndex === idx}
+                  >
+                    <i className="fa-solid fa-tag" />
                     {item}
-                  </div>
-                </Link>
-              ))}
+                  </a>
+                );
+              })}
             </div>
           )}
         </div>

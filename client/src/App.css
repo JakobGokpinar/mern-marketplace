@@ -3,7 +3,9 @@
     display: flex;
     flex-direction: column;
     padding-top: 62px;
+
 }
+
 .app-div__content {
-    margin-bottom: 5%;
+    flex: 1;
 }
