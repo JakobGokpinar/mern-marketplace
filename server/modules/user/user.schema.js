@@ -10,8 +10,13 @@ const findSellerQuery = z.object({
   sellerId: objectId,
 });
 
-const findProductQuery = z.object({
+const updateUserInfo = z.object({
+  name: z.string().min(1).max(100),
+  lastname: z.string().min(1).max(100),
+});
+
+const favoriteBody = z.object({
   id: objectId,
 });
 
-module.exports = { findUserQuery, findSellerQuery, findProductQuery };
+module.exports = { findUserQuery, findSellerQuery, updateUserInfo, favoriteBody };

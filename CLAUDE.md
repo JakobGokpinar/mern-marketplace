@@ -21,14 +21,15 @@ MERN (MongoDB, Express, React 18, Node.js). Vite + TypeScript frontend.
 - `src/schemas/` — Zod validation schemas (auth.schema.ts, annonce.schema.ts, profile.schema.ts)
 - `src/utils/` — cropImage.ts, dataURltoFile.ts, formatPrice.ts, timeago.ts
 
-## Backend Structure
-- `server/routes/` — Express route definitions (9 files)
-- `server/controllers/` — Request handlers (9 files)
-- `server/models/` — Mongoose models (6 files)
-- `server/services/` — Shared logic (s3.js)
+## Backend Structure (domain modules)
+- `server/modules/auth/` — login, signup, logout, email verification (routes, controller, schema)
+- `server/modules/user/` — profile, favorites, fetch/find users (routes, controller, schema)
+- `server/modules/listing/` — CRUD, search, browse listings (routes, controller, schema)
+- `server/modules/chat/` — conversations, messages, unread (routes, controller, schema)
+- `server/models/` — Mongoose models (UserModel, AnnonceModel, ConversationModel, EmailVerifyToken)
+- `server/services/` — shared logic (s3.js)
 - `server/middleware/` — ensureAuth, validate (Zod), csrf, upload (multer)
-- `server/schemas/` — Zod validation schemas for all endpoints
-- `server/config/` — db, passport, logger, validateEnv
+- `server/config/` — db, passport, sendEmail, logger, validateEnv
 
 ## State Management
 - **Server state**: TanStack Query v5 (useQuery / useMutation)

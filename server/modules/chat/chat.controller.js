@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
-const ConversationModel = require('../models/ConversationModel');
+const ConversationModel = require('../../models/ConversationModel');
+
+const MESSAGES_PER_PAGE = 50;
 
 const createRoom = async (req, res) => {
     // Buyer must be the authenticated user — prevent creating rooms on behalf of others
@@ -19,9 +21,7 @@ const createRoom = async (req, res) => {
     } catch (error) {
         return res.status(500).json({ message: 'Could not create room' });
     }
-}
-
-const MESSAGES_PER_PAGE = 50;
+};
 
 const getRooms = async (req, res) => {
     // Use authenticated user's ID — never trust the client to send the right user ID
@@ -38,7 +38,7 @@ const getRooms = async (req, res) => {
     } catch (error) {
         return res.status(500).json({ message: 'Could not fetch rooms' });
     }
-}
+};
 
 const getMessages = async (req, res) => {
     const roomId = req.query.roomId;
@@ -68,7 +68,7 @@ const getMessages = async (req, res) => {
     } catch (error) {
         return res.status(500).json({ message: 'Could not fetch messages' });
     }
-}
+};
 
 const getRoomByCredentials = async (req, res) => {
     let buyer = req.query.buyer;
@@ -84,7 +84,7 @@ const getRoomByCredentials = async (req, res) => {
     } catch (error) {
         return res.status(500).json({ message: 'Could not fetch room' });
     }
-}
+};
 
 const newMessage = async (req, res) => {
     const roomId = new ObjectId(req.body.roomId);
@@ -112,7 +112,7 @@ const newMessage = async (req, res) => {
     } catch (error) {
         return res.status(500).json({ message: 'Error occured while sending the message' });
     }
-}
+};
 
 const resetUnread = async (req, res) => {
     const roomId = req.body.roomId;
@@ -133,6 +133,6 @@ const resetUnread = async (req, res) => {
     } catch (error) {
         return res.status(500).json({ message: 'Error occured' });
     }
-}
+};
 
 module.exports = { createRoom, getRooms, getRoomByCredentials, getMessages, newMessage, resetUnread };

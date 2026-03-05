@@ -2,6 +2,10 @@ const { z } = require('zod');
 
 const objectId = z.string().regex(/^[a-f\d]{24}$/i, 'Invalid ID');
 
+const findProductQuery = z.object({
+  id: objectId,
+});
+
 const uploadImagesQuery = z.object({
   annonceid: objectId.optional(),
 });
@@ -52,4 +56,4 @@ const updateAnnonce = z.object({
   }),
 });
 
-module.exports = { uploadImagesQuery, saveAnnonce, removeAnnonce, removeImages, updateAnnonce };
+module.exports = { findProductQuery, uploadImagesQuery, saveAnnonce, removeAnnonce, removeImages, updateAnnonce };

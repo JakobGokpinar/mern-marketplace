@@ -6,7 +6,7 @@ const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
 const MongoDbStore = require('connect-mongo').default;
-const { Server } = require('socket.io'); 
+const { Server } = require('socket.io');
 const http = require('http');
 const connectToDatabase = require('./config/db.js');
 const UserModel = require('./models/UserModel.js')
@@ -18,16 +18,11 @@ const validateEnv = require('./config/validateEnv');
 // Initialize passport strategies (must be before routes that use passport)
 require('./config/passport');
 
-// Route imports
-const authRouter = require('./routes/auth.routes');
-const userRouter = require('./routes/user.routes');
-const annonceRouter = require('./routes/annonce.routes');
-const searchRouter = require('./routes/search.routes');
-const findProductRouter = require('./routes/product.routes');
-const favoritesRouter = require('./routes/favorites.routes');
-const profileRouter = require('./routes/profile.routes');
-const chatRouter = require('./routes/chat.routes');
-const emailRouter = require('./routes/email.routes');
+// Module imports
+const authRouter = require('./modules/auth/auth.routes');
+const userRouter = require('./modules/user/user.routes');
+const listingRouter = require('./modules/listing/listing.routes');
+const chatRouter = require('./modules/chat/chat.routes');
 
 // Determine environment
 if (process.argv.includes('dev')) {
@@ -53,8 +48,8 @@ const allowedOrigins = [
 ];
 
 const app = express();
-var server = http.createServer(app); 
-const io = new Server(server, { 
+var server = http.createServer(app);
+const io = new Server(server, {
     cors: {
         origin: allowedOrigins,
         credentials: true
@@ -127,15 +122,12 @@ api.use((req, res, next) => {
     }
     doubleCsrfProtection(req, res, next);
 });
+
+// Mount modules — each module owns its URL prefixes internally
 api.use('/', authRouter);
-api.use('/fetchuser', userRouter);
-api.use('/newannonce', annonceRouter);
-api.use('/search', searchRouter);
-api.use('/product', findProductRouter);
-api.use('/favorites', favoritesRouter);
-api.use('/profile', profileRouter);
-api.use('/chat', chatRouter);
-api.use('/email', emailRouter);
+api.use('/', userRouter);
+api.use('/', listingRouter);
+api.use('/', chatRouter);
 
 app.use('/api', api);
 
@@ -154,7 +146,7 @@ const findUser = (userId) => {
 }
 
 io.on('connection', (socket) => {
-    socket.on('addUser', (userId) => {  
+    socket.on('addUser', (userId) => {
         addUser(userId, socket.id)
         io.emit('getUsers', connectedUsers)
     })
