@@ -1,16 +1,13 @@
 import mongoose from 'mongoose';
 
-const { ObjectId } = mongoose.Types;
-
 const ConversationSchema = new mongoose.Schema({
-  buyer: { type: ObjectId, required: true, index: true },
-  seller: { type: ObjectId, required: true, index: true },
-  productId: { type: ObjectId, required: true, index: true },
-  messages: { type: Array },
-  unreadMessages: { type: Number, default: 0 },
-  roomCreatedAt: { type: Date, default: Date.now },
-});
+  buyer: { type: mongoose.Schema.Types.ObjectId, required: true, index: true, ref: 'User' },
+  seller: { type: mongoose.Schema.Types.ObjectId, required: true, index: true, ref: 'User' },
+  productId: { type: mongoose.Schema.Types.ObjectId, required: true, index: true, ref: 'Listing' },
+  unreadBuyer: { type: Number, default: 0 },
+  unreadSeller: { type: Number, default: 0 },
+}, { timestamps: { createdAt: 'roomCreatedAt', updatedAt: false } });
 
-const ConversationModel = mongoose.model('rooms', ConversationSchema);
+const ConversationModel = mongoose.model('Conversation', ConversationSchema);
 
 export default ConversationModel;

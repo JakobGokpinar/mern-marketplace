@@ -47,14 +47,8 @@ const Conversations = ({ productId, conversation, loggedUser, isActive, findFrie
       .catch(() => {});
   }, [productId]);
 
-  const lastMsg = conversation.messages?.length > 0
-    ? conversation.messages[conversation.messages.length - 1]
-    : null;
-
-  const unreadCount = (() => {
-    if (!lastMsg || lastMsg.sender === loggedUser?._id) return 0;
-    return (conversation as ChatRoom & { unreadMessages?: number }).unreadMessages ?? 0;
-  })();
+  const isBuyer = loggedUser?._id === conversation.buyer;
+  const unreadCount = isBuyer ? conversation.unreadBuyer : conversation.unreadSeller;
 
   return (
     <div className={`${styles['item']} ${isActive ? styles['item--active'] : ''}`}>
@@ -68,11 +62,6 @@ const Conversations = ({ productId, conversation, loggedUser, isActive, findFrie
 
       <div className={styles['body']}>
         <div className={styles['name']}>{friend?.username ?? '...'}</div>
-        {lastMsg && (
-          <div className={styles['preview']}>
-            {lastMsg.sender === loggedUser?._id ? 'Du: ' : ''}{lastMsg.msg}
-          </div>
-        )}
         {product?.title && (
           <div className={styles['product-title']}>{product.title}</div>
         )}

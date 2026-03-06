@@ -1,9 +1,9 @@
 const required = [
   'SESSION_SECRET',
-  'AWS_ACCESS_KEY',
-  'AWS_SECRET_ACCESS_KEY',
-  'AWS_BUCKET_NAME',
-  'AWS_BUCKET_REGION',
+  'S3_ACCESS_KEY',
+  'S3_SECRET_ACCESS_KEY',
+  'S3_BUCKET_NAME',
+  'S3_BUCKET_REGION',
 ];
 
 const validateEnv = () => {

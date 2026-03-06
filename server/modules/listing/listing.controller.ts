@@ -1,9 +1,9 @@
 import type { Request, Response } from 'express';
-import crypto from 'crypto';
 import mongoose from 'mongoose';
 import ListingModel from '../../models/Listing';
 import UserModel from '../../models/User';
 import ConversationModel from '../../models/Conversation';
+import MessageModel from '../../models/Message';
 import { getEnvFolder, deleteObjectsByPrefix } from '../../services/s3';
 import { createListingUpload } from '../../middleware/upload';
 import logger from '../../config/logger';
@@ -44,7 +44,7 @@ function markFavorites(items: any[], favoritesArray: any[]) {
 
 export const uploadImagesToAws = (req: Request, res: Response) => {
   const user = req.user as any;
-  let listingId = (req.query.listingId as string) || crypto.randomBytes(12).toString('hex');
+  const listingId = (req.query.listingId as string) || new ObjectId().toString();
   const keyPrefix = getEnvFolder() + '/' + user.email + '/listing-' + listingId;
   const upload = createListingUpload(keyPrefix);
 
@@ -56,22 +56,25 @@ export const uploadImagesToAws = (req: Request, res: Response) => {
   });
 };
 
-export const saveListingToDatabase = (req: Request, res: Response) => {
+export const saveListingToDatabase = async (req: Request, res: Response) => {
   const user = req.user as any;
   const listingProps = req.body.listingProperties;
   const images = req.body.imageLocations;
   const listingId = req.body.listingId;
 
-  const newListing = new ListingModel({
-    ...listingProps,
-    _id: new ObjectId(listingId),
-    images,
-    sellerId: new ObjectId(user._id),
-  });
-
-  newListing.save()
-    .then(() => res.json({ message: 'listing created' }))
-    .catch(() => res.status(500).json({ message: 'Could not save listing' }));
+  try {
+    const newListing = new ListingModel({
+      _id: new ObjectId(listingId),
+      ...listingProps,
+      images,
+      sellerId: new ObjectId(user._id),
+    });
+    await newListing.save();
+    return res.json({ message: 'listing created' });
+  } catch (error) {
+    logger.error(error);
+    return res.status(500).json({ message: 'Could not save listing' });
+  }
 };
 
 export const removeListing = async (req: Request, res: Response) => {
@@ -88,7 +91,14 @@ export const removeListing = async (req: Request, res: Response) => {
     await deleteObjectsByPrefix(getEnvFolder() + '/' + email + '/listing-' + listingId + '/');
     await ListingModel.deleteOne({ _id: new ObjectId(listingId) });
     await UserModel.updateMany({}, { $pull: { favorites: new ObjectId(listingId) } });
+
+    const conversations = await ConversationModel.find({ productId: new ObjectId(listingId) });
+    const conversationIds = conversations.map(c => c._id);
+    if (conversationIds.length > 0) {
+      await MessageModel.deleteMany({ conversationId: { $in: conversationIds } });
+    }
     await ConversationModel.deleteMany({ productId: new ObjectId(listingId) });
+
     return res.status(200).json({ message: 'Listing deleted from database' });
   } catch (error) {
     logger.error(error);
@@ -121,14 +131,9 @@ export const updateListing = async (req: Request, res: Response) => {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
-    const newListing = new ListingModel({
-      ...listingProperties,
-      _id: new ObjectId(listingId),
-      images,
-      sellerId: new ObjectId(userId),
+    await ListingModel.findByIdAndUpdate(listingId, {
+      $set: { ...listingProperties, images, sellerId: new ObjectId(userId) },
     });
-
-    await ListingModel.replaceOne({ _id: new ObjectId(listingId) }, newListing);
     return res.status(200).json({ message: 'mission successful' });
   } catch (error) {
     logger.error(error);
@@ -173,7 +178,7 @@ export const getItems = async (req: Request, res: Response) => {
     const favoritesArray = await getFavoritesArray(req);
 
     const [productArray, totalCount] = await Promise.all([
-      ListingModel.find().sort({ date: -1 }).skip(skip).limit(limit).lean(),
+      ListingModel.find().sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
       ListingModel.countDocuments(),
     ]);
 
@@ -233,7 +238,7 @@ function getDate(value: string | undefined) {
   else if (value === 'this week') time = 7;
   else if (value === 'this month') time = 30;
   currentDate.setDate(currentDate.getDate() - time);
-  return { date: { $gte: currentDate } };
+  return { createdAt: { $gte: currentDate } };
 }
 function getStatus(value: string | undefined) {
   if (!value) return;
@@ -262,7 +267,7 @@ export const findProducts = async (req: Request, res: Response) => {
 
   try {
     const [result, totalCount] = await Promise.all([
-      ListingModel.find(queryObject).sort({ date: -1 }).skip(skip).limit(limit).lean(),
+      ListingModel.find(queryObject).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
       ListingModel.countDocuments(queryObject),
     ]);
 

@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import EmailVerifyToken from '../models/EmailVerifyToken';
+import TokenModel from '../models/Token';
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
@@ -16,7 +16,7 @@ const sendVerificationEmail = async (
   receiver_id: string,
   token: string
 ) => {
-  await EmailVerifyToken.create({ userId: receiver_id, token });
+  await TokenModel.create({ userId: receiver_id, token });
 
   const options = {
     from: process.env.EMAIL_USER,

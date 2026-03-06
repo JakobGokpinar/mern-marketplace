@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
 import { randomUUID } from 'crypto';
 import mongoose from 'mongoose';
-import EmailVerifyToken from '../../models/EmailVerifyToken';
+import TokenModel from '../../models/Token';
 import UserModel from '../../models/User';
 import sendEmail from '../../config/sendEmail';
 import logger from '../../config/logger';
@@ -26,8 +26,8 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
     if (!user) return res.status(400).json(info);
 
     try {
-      const email_verify_token = randomUUID();
-      await sendEmail(user.email, user.username, user._id, email_verify_token);
+      const verifyToken = randomUUID();
+      await sendEmail(user.email, user.username, user._id, verifyToken);
       res.status(200).json({ success: true, user, message: 'user created' });
     } catch (error: any) {
       return res.status(500).json({ success: false, user, message: 'user could not be created', err: error.message });
@@ -51,7 +51,7 @@ export const verifyEmailHandler = async (req: Request, res: Response) => {
       return res.status(403).json({ success: false, message: 'Vennligst logg deg inn med egen mailadresse for konto verifikasjon.' });
     }
     const token = req.body.token;
-    const tokens = await EmailVerifyToken.find({ userId });
+    const tokens = await TokenModel.find({ userId });
     if (!tokens || tokens.length === 0) {
       return res.json({ success: false, message: 'The session has expired. Please try again later' });
     }
@@ -59,18 +59,13 @@ export const verifyEmailHandler = async (req: Request, res: Response) => {
     if (last_token.token !== token) {
       return res.json({ success: false, message: 'The session has expired. Please try again later' });
     }
-    const token_creation_date = new Date(last_token.createdAt);
-    const current_date = new Date();
-    const time_difference = (current_date.getTime() - token_creation_date.getTime()) / (1000 * 60);
-    if (time_difference > 10) {
-      return res.json({ success: false, message: 'The session has expired. Please try sending a new verification email' });
-    }
+    // TTL index auto-deletes tokens after 600s, so if we found one it's still valid
     const data = await UserModel.findOneAndUpdate(
       { _id: new ObjectId(userId) },
       { isEmailVerified: true },
       { new: true }
     );
-    await EmailVerifyToken.deleteMany({ userId });
+    await TokenModel.deleteMany({ userId });
     return res.status(200).json({ success: true, user: data, message: 'Your email has been verified' });
   } catch (error) {
     logger.error(error);
@@ -81,8 +76,8 @@ export const verifyEmailHandler = async (req: Request, res: Response) => {
 export const sendVerificationEmail = async (req: Request, res: Response) => {
   try {
     const user = req.user as any;
-    const email_verify_token = randomUUID();
-    await sendEmail(user.email, user.username, user._id, email_verify_token);
+    const verifyToken = randomUUID();
+    await sendEmail(user.email, user.username, user._id, verifyToken);
     return res.status(200).json({ success: true, message: 'A new verification email has been sent. Please check your Input or Spam folder.' });
   } catch (error: any) {
     logger.error(error);

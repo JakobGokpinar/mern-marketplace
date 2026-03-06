@@ -30,11 +30,11 @@ const ObjectId = mongoose.Types.ObjectId;
 if (process.argv.includes('dev')) {
   process.env.NODE_ENV = 'development';
   process.env.CLIENT_URL = process.env.CLIENT_URL_DEV;
-  process.env.MONGO_URL = process.env.MONGO_URL_DEV;
+  process.env.MONGODB_URL = process.env.MONGODB_DEV;
 } else if (process.argv.includes('start')) {
   process.env.NODE_ENV = 'production';
   process.env.CLIENT_URL = process.env.CLIENT_URL_PROD;
-  process.env.MONGO_URL = process.env.MONGO_URL_PROD;
+  process.env.MONGODB_URL = process.env.MONGODB_PROD;
 }
 
 validateEnv();
@@ -57,12 +57,12 @@ const io = new Server(server, {
   },
 });
 
-const mongoUrl = process.env.MONGO_URL!;
+const mongoUrl = process.env.MONGODB_URL!;
 connectToDatabase(mongoUrl);
 
 app.use(helmet());
 app.use(cookieParser());
-app.enable('trust proxy');
+app.set('trust proxy', 1);
 
 app.use(cors({
   origin: allowedOrigins,

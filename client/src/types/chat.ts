@@ -10,8 +10,7 @@ export interface ChatRoom {
   buyer: string;
   seller: string;
   productId: string;
-  messages: Message[];
-  unreadCount?: number;
-  unreadMessages?: number;
-  lastActivity?: string;
+  unreadBuyer: number;
+  unreadSeller: number;
+  roomCreatedAt?: string;
 }

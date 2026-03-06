@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import UserModel from '../../models/User';
 import ListingModel from '../../models/Listing';
 import ConversationModel from '../../models/Conversation';
+import MessageModel from '../../models/Message';
 import { getEnvFolder, deleteObjectsByPrefix, deleteObject, getObject, streamToBuffer } from '../../services/s3';
 import { createProfileUpload } from '../../middleware/upload';
 import logger from '../../config/logger';
@@ -138,6 +139,12 @@ export const deleteAccount = async (req: Request, res: Response) => {
     }
 
     await ListingModel.deleteMany({ sellerId: new ObjectId(userId) });
+
+    const conversations = await ConversationModel.find({ $or: [{ buyer: new ObjectId(userId) }, { seller: new ObjectId(userId) }] });
+    const conversationIds = conversations.map(c => c._id);
+    if (conversationIds.length > 0) {
+      await MessageModel.deleteMany({ conversationId: { $in: conversationIds } });
+    }
     await ConversationModel.deleteMany({ $or: [{ buyer: new ObjectId(userId) }, { seller: new ObjectId(userId) }] });
 
     if (listingIds.length > 0) {

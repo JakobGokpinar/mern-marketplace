@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import ConversationModel from '../../models/Conversation';
+import MessageModel from '../../models/Message';
 
 const ObjectId = mongoose.Types.ObjectId;
 const MESSAGES_PER_PAGE = 50;
@@ -31,7 +32,7 @@ export const getRooms = async (req: Request, res: Response) => {
         { buyer: new ObjectId(userId) },
         { seller: new ObjectId(userId) },
       ],
-    }).select('-messages').lean();
+    }).lean();
     return res.status(200).json(response);
   } catch (error) {
     return res.status(500).json({ message: 'Could not fetch rooms' });
@@ -44,25 +45,29 @@ export const getMessages = async (req: Request, res: Response) => {
   const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || MESSAGES_PER_PAGE));
 
   try {
-    const room = await ConversationModel.findById(new ObjectId(roomId)).select('messages buyer seller').lean();
+    const room = await ConversationModel.findById(new ObjectId(roomId)).select('buyer seller').lean();
     if (!room) return res.status(404).json({ message: 'Room not found' });
 
     const userId = (req.user as any)._id.toString();
-    if ((room as any).buyer.toString() !== userId && (room as any).seller.toString() !== userId) {
+    if (room.buyer!.toString() !== userId && room.seller!.toString() !== userId) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
-    let messages = (room as any).messages || [];
+    const query: any = { conversationId: new ObjectId(roomId) };
     if (before) {
-      const beforeDate = new Date(before);
-      messages = messages.filter((m: any) => new Date(m.sentAt) < beforeDate);
+      query.sentAt = { $lt: new Date(before) };
     }
 
-    const totalCount = messages.length;
-    const sliced = messages.slice(-limit);
-    const hasMore = totalCount > limit;
+    const totalCount = await MessageModel.countDocuments(query);
+    const messages = await MessageModel.find(query)
+      .sort({ sentAt: -1 })
+      .limit(limit)
+      .lean();
 
-    return res.status(200).json({ messages: sliced, hasMore });
+    return res.status(200).json({
+      messages: messages.reverse(),
+      hasMore: totalCount > limit,
+    });
   } catch (error) {
     return res.status(500).json({ message: 'Could not fetch messages' });
   }
@@ -94,16 +99,20 @@ export const newMessage = async (req: Request, res: Response) => {
     return res.status(403).json({ message: 'Forbidden' });
   }
 
-  const message = {
-    sender: (req.user as any)._id,
-    msg: req.body.msg,
-    sentAt: Date.now(),
-  };
   try {
-    await ConversationModel.updateOne({ _id: roomId }, {
-      $push: { messages: message },
-      $inc: { unreadMessages: 1 },
+    await MessageModel.create({
+      conversationId: roomId,
+      sender: new ObjectId(userId),
+      msg: req.body.msg,
     });
+
+    // Increment unread counter for the other party
+    const isBuyer = room.buyer!.toString() === userId;
+    await ConversationModel.updateOne(
+      { _id: roomId },
+      { $inc: isBuyer ? { unreadSeller: 1 } : { unreadBuyer: 1 } },
+    );
+
     return res.status(200).json({ message: 'Message sent' });
   } catch (error) {
     return res.status(500).json({ message: 'Error occured while sending the message' });
@@ -121,9 +130,11 @@ export const resetUnread = async (req: Request, res: Response) => {
   }
 
   try {
-    await ConversationModel.updateOne({ _id: roomId }, {
-      $set: { unreadMessages: 0 },
-    });
+    const isBuyer = room.buyer!.toString() === userId;
+    await ConversationModel.updateOne(
+      { _id: roomId },
+      { $set: isBuyer ? { unreadBuyer: 0 } : { unreadSeller: 0 } },
+    );
     res.status(200).json({ message: 'Unread messages reset' });
   } catch (error) {
     return res.status(500).json({ message: 'Error occured' });

@@ -18,17 +18,18 @@ config({ path: path.join(__dirname, '..', '.env') });
 import ListingModel from '../models/Listing';
 import UserModel from '../models/User';
 import ConversationModel from '../models/Conversation';
+import MessageModel from '../models/Message';
 
 const ObjectId = mongoose.Types.ObjectId;
 
 const s3 = new S3Client({
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    accessKeyId: process.env.S3_ACCESS_KEY!,
+    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY!,
   },
-  region: process.env.AWS_BUCKET_REGION,
+  region: process.env.S3_BUCKET_REGION,
 });
-const BUCKET_NAME = process.env.AWS_BUCKET_NAME!;
+const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
 
 const CUTOFF_DATE = new Date('2026-01-01');
 const DRY_RUN = !process.argv.includes('--execute');
@@ -50,15 +51,15 @@ async function deleteS3Images(prefix: string) {
 async function run() {
   console.log(DRY_RUN ? '\n=== DRY RUN (pass --execute to actually delete) ===\n' : '\n=== EXECUTING DELETION ===\n');
 
-  const mongoUrl = process.env.MONGO_URL_PROD;
+  const mongoUrl = process.env.MONGODB_PROD;
   if (!mongoUrl) {
-    console.error('MONGO_URL_PROD not set in .env');
+    console.error('MONGODB_PROD not set in .env');
     process.exit(1);
   }
   await mongoose.connect(mongoUrl);
   console.log('Connected to production database.\n');
 
-  const oldListings = await ListingModel.find({ date: { $lt: CUTOFF_DATE } });
+  const oldListings = await ListingModel.find({ createdAt: { $lt: CUTOFF_DATE } });
   console.log(`Found ${oldListings.length} listing(s) older than ${CUTOFF_DATE.toISOString().slice(0, 10)}.\n`);
 
   if (oldListings.length === 0) {
@@ -74,7 +75,7 @@ async function run() {
   for (const listing of oldListings) {
     const listingId = listing._id!.toString();
     const title = listing.title || '(no title)';
-    const date = listing.date ? listing.date.toISOString().slice(0, 10) : 'unknown';
+    const date = (listing as any).createdAt ? (listing as any).createdAt.toISOString().slice(0, 10) : 'unknown';
 
     let sellerEmail: string | null = null;
     if (listing.sellerId) {
@@ -110,8 +111,11 @@ async function run() {
     }
     console.log(`  Favorites: ${DRY_RUN ? 'would be cleaned' : 'cleaned'}`);
 
-    const convCount = await ConversationModel.countDocuments({ productId: new ObjectId(listingId) });
+    const conversations = await ConversationModel.find({ productId: new ObjectId(listingId) });
+    const convCount = conversations.length;
     if (!DRY_RUN && convCount > 0) {
+      const convIds = conversations.map(c => c._id);
+      await MessageModel.deleteMany({ conversationId: { $in: convIds } });
       await ConversationModel.deleteMany({ productId: new ObjectId(listingId) });
     }
     totalConversations += convCount;
