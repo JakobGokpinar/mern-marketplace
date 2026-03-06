@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Form, Row, Col, Spinner } from "react-bootstrap";
+import { Button, Form, Spinner } from "react-bootstrap";
 import styles from "./Login.module.css";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { sendSignUpRequest } from "../../store/authThunks";
@@ -12,8 +12,7 @@ function Register() {
   const navigate = useNavigate();
   const isLoggedIn = useAppSelector((state) => state.user.isLoggedIn);
   const [isLoading, setIsLoading] = useState(false);
-  const [name, setName] = useState('');
-  const [lastname, setLastname] = useState('');
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { errors, validate } = useFormValidation(registerSchema);
@@ -25,10 +24,10 @@ function Register() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!validate({ name, lastname, email, password })) return;
+    if (!validate({ fullName, email, password })) return;
 
     setIsLoading(true);
-    await dispatch(sendSignUpRequest({ name, lastname, email, password }));
+    await dispatch(sendSignUpRequest({ fullName, email, password }));
     setIsLoading(false);
   };
 
@@ -46,32 +45,16 @@ function Register() {
 
         <Form onSubmit={handleSubmit} noValidate className={styles['auth-form']}>
           <Form.Group className="mb-3">
-            <Row>
-              <Col>
-                <Form.Label>Navn</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="name"
-                  placeholder="Ola"
-                  onChange={e => setName(e.target.value)}
-                  disabled={isLoading}
-                  isInvalid={!!errors.name}
-                />
-                <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
-              </Col>
-              <Col>
-                <Form.Label>Etternavn</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="lastname"
-                  placeholder="Nordmann"
-                  onChange={e => setLastname(e.target.value)}
-                  disabled={isLoading}
-                  isInvalid={!!errors.lastname}
-                />
-                <Form.Control.Feedback type="invalid">{errors.lastname}</Form.Control.Feedback>
-              </Col>
-            </Row>
+            <Form.Label>Fullt navn</Form.Label>
+            <Form.Control
+              type="text"
+              name="fullName"
+              placeholder="Ola Nordmann"
+              onChange={e => setFullName(e.target.value)}
+              disabled={isLoading}
+              isInvalid={!!errors.fullName}
+            />
+            <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="registerEmail">

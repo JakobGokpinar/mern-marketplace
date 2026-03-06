@@ -159,7 +159,7 @@ export const findProduct = async (req: Request, res: Response) => {
   try {
     const result = await ListingModel.findOne({ _id: new ObjectId(productId) }).lean();
     const seller = await UserModel.findOne({ _id: new ObjectId((result as any).sellerId) })
-      .select('username profilePicture lastActiveAt userCreatedAt')
+      .select('fullName profilePicture lastActiveAt userCreatedAt')
       .lean();
 
     const isFavorite = favoritesArray.some(favId => favId.toString() === (result as any)._id.toString());

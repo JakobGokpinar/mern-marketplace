@@ -19,7 +19,7 @@ const groupMessagesBySender = (messages: Message[]): Message[][] =>
 
 interface LoggedUser {
   _id: string;
-  username?: string;
+  fullName?: string;
   profilePicture?: string;
 }
 
@@ -122,14 +122,14 @@ const Chat = () => {
                 <i className="fa-solid fa-arrow-left" />
               </button>
               {friend?.profilePicture ? (
-                <img src={friend.profilePicture} alt={friend.username} className={styles['header-avatar']} />
+                <img src={friend.profilePicture} alt={friend.fullName} className={styles['header-avatar']} />
               ) : (
                 <div className={styles['header-avatar-placeholder']}>
-                  {friend?.username?.charAt(0)?.toUpperCase() ?? '?'}
+                  {friend?.fullName?.charAt(0)?.toUpperCase() ?? '?'}
                 </div>
               )}
               <div className={styles['header-info']}>
-                <div className={styles['header-name']}>{friend?.username}</div>
+                <div className={styles['header-name']}>{friend?.fullName}</div>
                 {currentFriendStatus && (
                   <div className={styles['header-status']}>Sist aktiv {currentFriendStatus}</div>
                 )}
@@ -178,7 +178,7 @@ const Chat = () => {
                   <div className={styles['typing-dots']}>
                     <span /><span /><span />
                   </div>
-                  {friend?.username} skriver
+                  {friend?.fullName} skriver
                 </div>
               )}
             </div>

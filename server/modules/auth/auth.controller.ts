@@ -25,13 +25,10 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
     if (err) return next(err);
     if (!user) return res.status(400).json(info);
 
-    try {
-      const verifyToken = randomUUID();
-      await sendEmail(user.email, user.username, user._id, verifyToken);
-      res.status(200).json({ success: true, user, message: 'user created' });
-    } catch (error: any) {
-      return res.status(500).json({ success: false, user, message: 'user could not be created', err: error.message });
-    }
+    const verifyToken = randomUUID();
+    sendEmail(user.email, user.fullName, user._id, verifyToken)
+      .catch(err => logger.error('Verification email failed:', err));
+    res.status(200).json({ success: true, user, message: 'user created' });
   })(req, res, next);
 };
 
@@ -77,7 +74,7 @@ export const sendVerificationEmail = async (req: Request, res: Response) => {
   try {
     const user = req.user as any;
     const verifyToken = randomUUID();
-    await sendEmail(user.email, user.username, user._id, verifyToken);
+    await sendEmail(user.email, user.fullName, user._id, verifyToken);
     return res.status(200).json({ success: true, message: 'A new verification email has been sent. Please check your Input or Spam folder.' });
   } catch (error: any) {
     logger.error(error);

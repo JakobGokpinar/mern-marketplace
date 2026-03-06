@@ -66,16 +66,16 @@ describe('email schema', () => {
 });
 
 describe('profile schema', () => {
-  it('accepts valid name and lastname', () => {
-    expect(() => updateUserInfo.parse({ name: 'Jakob', lastname: 'G' })).not.toThrow();
+  it('accepts valid fullName', () => {
+    expect(() => updateUserInfo.parse({ fullName: 'Jakob Gokpinar' })).not.toThrow();
   });
 
-  it('rejects empty name', () => {
-    expect(() => updateUserInfo.parse({ name: '', lastname: 'G' })).toThrow();
+  it('rejects empty fullName', () => {
+    expect(() => updateUserInfo.parse({ fullName: '' })).toThrow();
   });
 
-  it('rejects too long name', () => {
-    expect(() => updateUserInfo.parse({ name: 'a'.repeat(101), lastname: 'G' })).toThrow();
+  it('rejects too long fullName', () => {
+    expect(() => updateUserInfo.parse({ fullName: 'a'.repeat(201) })).toThrow();
   });
 });
 

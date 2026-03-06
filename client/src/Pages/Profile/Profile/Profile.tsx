@@ -35,8 +35,7 @@ const Profile = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [formData, setFormData] = useState<FormData | null>(null);
   const [readerResult, setReaderResult] = useState<string | null>(null);
-  const [name, setName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
+  const [fullName, setFullName] = useState<string>("");
   const [profilePicture, setProfilePicture] = useState<string>("");
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const { errors: formErrors, validate } = useFormValidation(profileSchema);
@@ -73,8 +72,7 @@ const Profile = () => {
   };
 
   const handleCancel = () => {
-    setName(user.name);
-    setLastName(user.lastname);
+    setFullName(user.fullName);
     setReaderResult(null);
   };
 
@@ -93,8 +91,7 @@ const Profile = () => {
   }, [imageFile]);
 
   useEffect(() => {
-    setName(user.name);
-    setLastName(user.lastname);
+    setFullName(user.fullName);
     setProfilePicture(user.profilePicture ?? '');
   }, [user]);
 
@@ -104,7 +101,7 @@ const Profile = () => {
         const picRes = await uploadProfilePictureApi(formData);
         if (picRes.user) dispatch(userActions.setUser(picRes.user));
       }
-      const infoRes = await updateUserInfoApi({ name, lastname: lastName });
+      const infoRes = await updateUserInfoApi({ fullName });
       if (infoRes.user) dispatch(userActions.setUser(infoRes.user));
       return infoRes;
     },
@@ -137,7 +134,7 @@ const Profile = () => {
   });
 
   const sendVerificationEmail = () => {
-    resendVerificationEmailApi(user.email, user.username ?? '', user._id)
+    resendVerificationEmailApi(user.email, user.fullName, user._id)
       .then(response => { toast.success(response.message); })
       .catch(() => { toast.error('Kunne ikke sende e-post'); });
   };
@@ -200,22 +197,11 @@ const Profile = () => {
                 <Form.Label>Email</Form.Label>
                 <Form.Control type="email" defaultValue={user.email} disabled />
               </Form.Group>
-              <Row className={styles['profile-form-element']}>
-                <Col>
-                  <Form.Group>
-                    <Form.Label>Navn</Form.Label>
-                    <Form.Control type="text" value={name || ""} onChange={(e) => setName(e.target.value)} isInvalid={!!formErrors.name} />
-                    <Form.Control.Feedback type="invalid">{formErrors.name}</Form.Control.Feedback>
-                  </Form.Group>
-                </Col>
-                <Col>
-                  <Form.Group>
-                    <Form.Label>Etternavn</Form.Label>
-                    <Form.Control type="text" value={lastName || ""} onChange={(e) => setLastName(e.target.value)} isInvalid={!!formErrors.lastname} />
-                    <Form.Control.Feedback type="invalid">{formErrors.lastname}</Form.Control.Feedback>
-                  </Form.Group>
-                </Col>
-              </Row>
+              <Form.Group className={styles['profile-form-element']}>
+                <Form.Label>Fullt navn</Form.Label>
+                <Form.Control type="text" value={fullName || ""} onChange={(e) => setFullName(e.target.value)} isInvalid={!!formErrors.fullName} />
+                <Form.Control.Feedback type="invalid">{formErrors.fullName}</Form.Control.Feedback>
+              </Form.Group>
             </Form>
             <div className={styles['profile-control-buttons']}>
               <Button className={styles['control-button']} variant="outline-primary" onClick={handleCancel}>
@@ -228,7 +214,7 @@ const Profile = () => {
                 </Button>
               ) : (
                 <Button className={styles['control-button']} variant="primary" onClick={() => {
-                  if (!validate({ name, lastname: lastName })) return;
+                  if (!validate({ fullName })) return;
                   updateMutation.mutate();
                 }}>
                   Lagre

@@ -34,7 +34,7 @@ export const findUser = async (req: Request, res: Response) => {
 export const findSeller = async (req: Request, res: Response) => {
   try {
     const response = await UserModel.findOne({ _id: new ObjectId(req.query.sellerId as string) })
-      .select('username profilePicture');
+      .select('fullName profilePicture');
     return res.status(200).json({ seller: response });
   } catch (error) {
     logger.error(error);
@@ -85,13 +85,12 @@ export const removeProfileImage = async (req: Request, res: Response) => {
 };
 
 export const updateUserInfoHandler = async (req: Request, res: Response) => {
-  const { name, lastname } = req.body;
+  const { fullName } = req.body;
   const userId = (req.user as any)._id;
-  const username = name + ' ' + lastname;
 
   try {
     const result = await UserModel.findByIdAndUpdate({ _id: new ObjectId(userId) }, {
-      $set: { name, lastname, username }
+      $set: { fullName }
     }, { new: true });
     return res.json({ user: result, message: 'User updated' });
   } catch (error) {

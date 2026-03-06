@@ -13,12 +13,12 @@ export const fetchUser = () => async (dispatch: AppDispatch) => {
   }
 };
 
-export const sendSignUpRequest = (userData: { name: string; lastname: string; email: string; password: string }) => async (dispatch: AppDispatch) => {
+export const sendSignUpRequest = (userData: { fullName: string; email: string; password: string }) => async (dispatch: AppDispatch) => {
   try {
     const { message, user } = await signupApi(userData);
     if (user) {
       dispatch(userActions.login(user));
-      toast.success(`Velkommen, ${user.name}. Vennligst sjekk epost adressen for å verifisere kontoen.`);
+      toast.success(`Velkommen, ${user.fullName}. Vennligst sjekk epost adressen for å verifisere kontoen.`);
     } else {
       toast.error(message);
     }
@@ -33,7 +33,7 @@ export const sendLoginRequest = (credentials: { email: string; password: string 
     const { user } = await loginApi(credentials);
     if (user) {
       dispatch(userActions.login(user));
-      toast.success(`Velkommen tilbake, ${user.name}`);
+      toast.success(`Velkommen tilbake, ${user.fullName}`);
     }
   } catch (err) {
     const msg = isAxiosError(err) ? err.response?.data?.message : undefined;

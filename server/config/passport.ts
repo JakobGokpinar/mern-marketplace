@@ -42,14 +42,11 @@ passport.use('local-signup', new Strategy({ usernameField: 'email', passReqToCal
       return done(null, false, { message: 'Denne e-postadressen er allerede registrert i systemet.' });
     }
 
-    const { name, lastname } = req.body;
-    const username = name + ' ' + lastname;
+    const { fullName } = req.body;
     const user = await UserModel.create({
       email,
       password,
-      name,
-      lastname,
-      username,
+      fullName,
       isEmailVerified: process.env.NODE_ENV === 'development',
     });
     return done(null, user, { message: 'user created' });

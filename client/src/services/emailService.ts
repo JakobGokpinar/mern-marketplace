@@ -11,7 +11,7 @@ export const verifyEmailApi = async (userId: string, token: string): Promise<Ema
   return res.data;
 };
 
-export const resendVerificationEmailApi = async (email: string, username: string, id: string): Promise<EmailResponse> => {
-  const res = await instanceAxs.post<EmailResponse>('/email/newverificationemail', { email, username, id });
+export const resendVerificationEmailApi = async (email: string, fullName: string, id: string): Promise<EmailResponse> => {
+  const res = await instanceAxs.post<EmailResponse>('/email/newverificationemail', { email, fullName, id });
   return res.data;
 };

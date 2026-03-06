@@ -11,7 +11,7 @@ export const loginApi = async (credentials: { email: string; password: string })
   return res.data;
 };
 
-export const signupApi = async (userData: { name: string; lastname: string; email: string; password: string }): Promise<AuthResponse> => {
+export const signupApi = async (userData: { fullName: string; email: string; password: string }): Promise<AuthResponse> => {
   const res = await instanceAxs.post<AuthResponse>('/signup', userData);
   return res.data;
 };

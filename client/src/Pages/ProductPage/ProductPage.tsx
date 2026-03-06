@@ -176,14 +176,14 @@ function ProductPage() {
           <div className={styles['pp__seller-card']}>
             <div className={styles['pp__seller-avatar-wrapper']}>
               {seller?.profilePicture ? (
-                <img src={seller.profilePicture} alt={seller?.username} className={styles['pp__seller-avatar']} />
+                <img src={seller.profilePicture} alt={seller?.fullName} className={styles['pp__seller-avatar']} />
               ) : (
                 <div className={`${styles['pp__seller-avatar']} ${styles['pp__seller-avatar--placeholder']}`}>
                   <i className="fa-solid fa-user" />
                 </div>
               )}
             </div>
-            <p className={styles['pp__seller-name']}>{seller?.username}</p>
+            <p className={styles['pp__seller-name']}>{seller?.fullName}</p>
             <p className={styles['pp__seller-since']}>Bruker siden {seller?.userCreatedAt ? new Date(seller.userCreatedAt).getFullYear() : ''}</p>
             {seller?.lastActiveAt && (
               <div className={styles['pp__seller-status']}>

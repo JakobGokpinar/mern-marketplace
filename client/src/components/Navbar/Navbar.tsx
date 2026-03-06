@@ -106,11 +106,11 @@ const Navigation = () => {
                       <i className="fa-solid fa-user" />
                     </div>
                   )}
-                  <span className={styles['navbar-username']}>{user?.name || ''}</span>
+                  <span className={styles['navbar-username']}>{user?.fullName || ''}</span>
                 </Dropdown.Toggle>
                 <Dropdown.Menu className={styles['navbar-dropdown-menu']}>
                   <div className={styles['navbar-dropdown-header']}>
-                    <span className={styles['navbar-dropdown-name']}>{user?.username || ''}</span>
+                    <span className={styles['navbar-dropdown-name']}>{user?.fullName || ''}</span>
                     <span className={styles['navbar-dropdown-email']}>{user?.email}</span>
                   </div>
                   <Dropdown.Divider />

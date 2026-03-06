@@ -9,7 +9,7 @@ export const useAuth = () => {
   const login = (credentials: { email: string; password: string }) =>
     dispatch(sendLoginRequest(credentials));
 
-  const signup = (userData: { name: string; lastname: string; email: string; password: string }) =>
+  const signup = (userData: { fullName: string; email: string; password: string }) =>
     dispatch(sendSignUpRequest(userData));
 
   const logout = () => dispatch(logoutRequest());

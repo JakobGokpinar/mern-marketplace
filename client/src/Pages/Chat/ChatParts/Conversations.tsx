@@ -5,13 +5,13 @@ import type { ChatRoom } from '../../../types/chat';
 
 interface LoggedUser {
   _id: string;
-  username?: string;
+  fullName?: string;
   profilePicture?: string;
 }
 
 interface FriendData {
   _id: string;
-  username?: string;
+  fullName?: string;
   profilePicture?: string;
 }
 
@@ -53,15 +53,15 @@ const Conversations = ({ productId, conversation, loggedUser, isActive, findFrie
   return (
     <div className={`${styles['item']} ${isActive ? styles['item--active'] : ''}`}>
       {friend?.profilePicture ? (
-        <img src={friend.profilePicture} alt={friend.username} className={styles['avatar']} />
+        <img src={friend.profilePicture} alt={friend.fullName} className={styles['avatar']} />
       ) : (
         <div className={styles['avatar-placeholder']}>
-          {friend?.username?.charAt(0)?.toUpperCase() ?? '?'}
+          {friend?.fullName?.charAt(0)?.toUpperCase() ?? '?'}
         </div>
       )}
 
       <div className={styles['body']}>
-        <div className={styles['name']}>{friend?.username ?? '...'}</div>
+        <div className={styles['name']}>{friend?.fullName ?? '...'}</div>
         {product?.title && (
           <div className={styles['product-title']}>{product.title}</div>
         )}

@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport({
 
 const sendVerificationEmail = async (
   receiver_email: string,
-  receiver_username: string,
+  receiverName: string,
   receiver_id: string,
   token: string
 ) => {
@@ -27,12 +27,12 @@ const sendVerificationEmail = async (
   <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width:480px;margin:0 auto;padding:20px 0 48px">
     <tr>
       <td>
-        <p style="font-size:24px;line-height:1.25;margin:16px 0"><strong>${receiver_username}</strong>, velkommen til Rego</p>
+        <p style="font-size:24px;line-height:1.25;margin:16px 0"><strong>${receiverName}</strong>, velkommen til Rego</p>
         <table style="padding:24px;border:solid 1px #dedede;border-radius:5px;text-align:center" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
           <tbody>
             <tr>
               <td>
-                <p style="font-size:14px;line-height:24px;margin:0 0 10px 0;text-align:left">Hei <strong>${receiver_username}</strong>!</p>
+                <p style="font-size:14px;line-height:24px;margin:0 0 10px 0;text-align:left">Hei <strong>${receiverName}</strong>!</p>
                 <p style="font-size:14px;line-height:24px;margin:0 0 10px 0;text-align:left">
                   Du er registrert på Rego. Klikk på knappen nedenfor for å bekrefte e-postadressen din.
                 </p>
