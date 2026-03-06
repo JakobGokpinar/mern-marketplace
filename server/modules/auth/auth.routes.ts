@@ -11,6 +11,6 @@ router.post('/signup', authController.signup);
 router.delete('/logout', authController.logout);
 
 router.post('/email/verify', ensureAuth, validate(verifyEmail), authController.verifyEmailHandler);
-router.post('/email/newverificationemail', ensureAuth, authController.sendVerificationEmail);
+router.post('/email/newverificationemail', ensureAuth, authController.resendVerificationEmail);
 
 export default router;

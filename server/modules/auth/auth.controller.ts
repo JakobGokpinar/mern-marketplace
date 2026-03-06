@@ -4,10 +4,20 @@ import { randomUUID } from 'crypto';
 import mongoose from 'mongoose';
 import TokenModel from '../../models/Token';
 import UserModel from '../../models/User';
-import sendEmail from '../../config/sendEmail';
+import { sendVerificationEmail } from '../../config/sendEmail';
 import logger from '../../config/logger';
 
 const ObjectId = mongoose.Types.ObjectId;
+
+function buildVerifyUrl(token: string) {
+  return `${process.env.CLIENT_URL}/emailVerify?t=${token}`;
+}
+
+async function createTokenAndSendEmail(userId: string, email: string, name: string) {
+  const token = randomUUID();
+  await TokenModel.create({ userId, token });
+  await sendVerificationEmail(email, name, buildVerifyUrl(token));
+}
 
 export const signin = async (req: Request, res: Response, next: NextFunction) => {
   passport.authenticate('local-signin', function (err: any, user: any, info: any) {
@@ -25,8 +35,7 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
     if (err) return next(err);
     if (!user) return res.status(400).json(info);
 
-    const verifyToken = randomUUID();
-    sendEmail(user.email, user.fullName, user._id, verifyToken)
+    createTokenAndSendEmail(user._id, user.email, user.fullName)
       .catch(err => logger.error('Verification email failed:', err));
     res.status(200).json({ success: true, user, message: 'user created' });
   })(req, res, next);
@@ -70,11 +79,10 @@ export const verifyEmailHandler = async (req: Request, res: Response) => {
   }
 };
 
-export const sendVerificationEmail = async (req: Request, res: Response) => {
+export const resendVerificationEmail = async (req: Request, res: Response) => {
   try {
     const user = req.user as any;
-    const verifyToken = randomUUID();
-    await sendEmail(user.email, user.fullName, user._id, verifyToken);
+    await createTokenAndSendEmail(user._id, user.email, user.fullName);
     return res.status(200).json({ success: true, message: 'A new verification email has been sent. Please check your Input or Spam folder.' });
   } catch (error: any) {
     logger.error(error);
