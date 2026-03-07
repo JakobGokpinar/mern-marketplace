@@ -1,5 +1,5 @@
 import styles from './Favorites.module.css';
-import ProductCard from '../../components/ProductCard/ProductCard';
+import ProductCard from '../../components/product-card/ProductCard';
 import { useQuery } from '@tanstack/react-query';
 import Spinner from 'react-bootstrap/Spinner';
 import { getFavoritesApi } from '../../services/favoriteService';

@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import ProductCard from '../../components/ProductCard/ProductCard';
-import styles from "./Menu.module.css";
+import ProductCard from '../../components/product-card/ProductCard';
+import styles from "./Home.module.css";
 import { queryKeys } from '../../lib/queryKeys';
 import { fetchProductsApi } from '../../services/productService';
 import Spinner from 'react-bootstrap/Spinner';
 import Button from 'react-bootstrap/Button';
-import { ProductGridSkeleton } from '../../components/Skeleton/ProductCardSkeleton';
+import { ProductGridSkeleton } from '../../components/skeleton/ProductCardSkeleton';
 import type { Product } from '../../types/product';
 
 const Menu = () => {

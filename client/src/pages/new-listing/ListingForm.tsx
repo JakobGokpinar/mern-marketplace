@@ -1,7 +1,7 @@
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
-import styles from './AnnonceForm.module.css';
+import styles from './ListingForm.module.css';
 import ImageManager from './ImageManager';
 import SpecialPropsEditor from './SpecialPropsEditor';
 import type { ListingImage, ListingPropertyObject, CategoryItem, SubCategoryItem } from './types';

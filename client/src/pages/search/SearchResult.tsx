@@ -12,8 +12,8 @@ import Button from "react-bootstrap/Button";
 import FilterBadge from "./FilterBadge";
 import Spinner from "react-bootstrap/Spinner";
 
-import ProductCard from "../../components/ProductCard/ProductCard";
-import { ProductGridSkeleton } from "../../components/Skeleton/ProductCardSkeleton";
+import ProductCard from "../../components/product-card/ProductCard";
+import { ProductGridSkeleton } from "../../components/skeleton/ProductCardSkeleton";
 import { queryKeys } from "../../lib/queryKeys";
 import { searchProductsApi } from "../../services/productService";
 import { useNorwayGeo } from "../../hooks/useNorwayGeo";

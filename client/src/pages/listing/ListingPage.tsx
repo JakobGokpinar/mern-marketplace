@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { useAppSelector } from "../../store/hooks";
 import { useQuery } from "@tanstack/react-query";
 
-import styles from './ProductPage.module.css';
+import styles from './ListingPage.module.css';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';

@@ -1,6 +1,6 @@
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import Carousel from 'react-bootstrap/Carousel';
-import styles from './AnnoncePreview.module.css';
+import styles from './ListingPreview.module.css';
 import type { ListingImage, SpecProp, ListingPropertyObject, CategoryItem } from './types';
 
 interface ListingPreviewProps {

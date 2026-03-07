@@ -4,8 +4,8 @@ import styles from './Chat.module.css';
 
 import { useAppSelector } from '../../store/hooks';
 import { useChat } from '../../hooks/useChat';
-import Conversations from './ChatParts/Conversations';
-import Messages from './ChatParts/Messages';
+import Conversations from './parts/Conversations';
+import Messages from './parts/Messages';
 import type { Message } from '../../types/chat';
 import type { ChatRoom } from '../../types/chat';
 

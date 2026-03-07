@@ -6,7 +6,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import styles from './NewAnnonce.module.css';
+import styles from './NewListing.module.css';
 
 import { compressListingImage } from '../../utils/compressImage';
 import { instanceAxs } from '../../lib/axios';
@@ -14,8 +14,8 @@ import { useFindCommuneByPostnumber } from '../../hooks/useNorwayGeo';
 import { useDebounce } from '../../hooks/useDebounce';
 import categoryData from '../../categories.json';
 import toast from 'react-hot-toast';
-import AnnonceForm from './AnnonceForm';
-import AnnoncePreview from './AnnoncePreview';
+import ListingForm from './ListingForm';
+import ListingPreview from './ListingPreview';
 import { useFormValidation } from '../../hooks/useFormValidation';
 import { listingSchema } from '../../schemas/annonce.schema';
 import type { ListingImage, SpecProp, ListingPropertyObject, CategoryItem, SubCategoryItem } from './types';
@@ -281,7 +281,7 @@ const NewListing = () => {
 
       <Row className={styles['layout-row']}>
         <Col className={styles['form-col']} lg={5} md={6}>
-          <AnnonceForm
+          <ListingForm
             listing={listing}
             selectedMainCat={selectedMainCat}
             selectedSubCat={selectedSubCat}
@@ -303,7 +303,7 @@ const NewListing = () => {
         </Col>
         <Col lg={7} md={6} className={styles['preview-col']}>
           <div className={styles['preview-sticky']}>
-            <AnnoncePreview
+            <ListingPreview
               listing={listing}
               selectedMainCat={selectedMainCat}
               imageArray={imageArray}

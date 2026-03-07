@@ -4,14 +4,14 @@ import { useAppDispatch } from './store/hooks';
 import './App.css';
 
 import { Toaster } from 'react-hot-toast';
-import Navbar from './components/Navbar/Navbar';
-import Footer from './components/Footer/Footer';
+import Navbar from './components/navbar/Navbar';
+import Footer from './components/footer/Footer';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import EmailVerify from './pages/email-verify/EmailVerify';
 import NotFound from './pages/not-found/NotFound';
-import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
-import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
+import ProtectedRoute from './components/protected-route/ProtectedRoute';
+import ErrorBoundary from './components/error-boundary/ErrorBoundary';
 
 import { userActions } from './store/userSlice';
 import { logoutRequest } from './store/authThunks';
@@ -20,11 +20,11 @@ import toast from 'react-hot-toast';
 import { useSocket } from './hooks/useSocket';
 import type { User } from './types/user';
 
-const Menu = React.lazy(() => import('./pages/home/Menu'));
-const ProductPage = React.lazy(() => import('./pages/listing/ProductPage'));
+const Home = React.lazy(() => import('./pages/home/Home'));
+const ListingPage = React.lazy(() => import('./pages/listing/ListingPage'));
 const Chat = React.lazy(() => import('./pages/chat/Chat'));
 const SearchResult = React.lazy(() => import('./pages/search/SearchResult'));
-const NewListing = React.lazy(() => import('./pages/new-listing/NewAnnonce'));
+const NewListing = React.lazy(() => import('./pages/new-listing/NewListing'));
 const Account = React.lazy(() => import('./pages/account/Account'));
 const Favorites = React.lazy(() => import('./pages/favorites/Favorites'));
 const MyListings = React.lazy(() => import('./pages/my-listings/MyListings'));
@@ -69,9 +69,9 @@ const AppContent = () => {
             <Routes>
               <Route path='/login' element={<Login />} />
               <Route path='/register' element={<Register />} />
-              <Route path='/' element={<Menu />} />
+              <Route path='/' element={<Home />} />
               <Route path='/search' element={<SearchResult />} />
-              <Route path='/listing/:id' element={<ProductPage />} />
+              <Route path='/listing/:id' element={<ListingPage />} />
               <Route path='/emailverify' element={<EmailVerify />} />
 
               <Route path='/new-listing' element={<ProtectedRoute><NewListing /></ProtectedRoute>} />
