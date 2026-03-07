@@ -68,6 +68,7 @@ const NewListing = () => {
     mutationFn: async () => {
       const listingProperties = {
         ...listing,
+        price: Number(listing.price),
         specialProperties: specPropArray.filter(item => item.title !== 'Status'),
       };
       const formData = await buildFormData();

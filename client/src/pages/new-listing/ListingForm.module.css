@@ -21,10 +21,10 @@
 
 .section-label {
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--color-text-secondary);
+  color: var(--color-text);
   margin: 0 0 4px;
 }
 
@@ -32,7 +32,7 @@
 
 .field-label {
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 600;
   color: var(--color-text);
   margin-bottom: 6px;
 }
@@ -65,10 +65,10 @@
   padding: 10px var(--space-md);
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-sm);
-  background: transparent;
+  background: var(--color-bg-subtle);
   color: var(--color-text-secondary);
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -106,9 +106,10 @@
   cursor: pointer;
   color: var(--color-text-secondary);
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 600;
   transition: all var(--transition-fast);
   width: fit-content;
+  background: var(--color-bg-subtle);
 }
 
 .upload-label:hover {

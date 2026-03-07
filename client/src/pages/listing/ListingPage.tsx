@@ -140,7 +140,7 @@ function ProductPage() {
 
           <div className={styles['pp__section']}>
             <h3 className={styles['pp__section-title']}>Beskrivelse</h3>
-            <textarea className={styles['pp__description']} value={listing.description} disabled readOnly />
+            <p className={styles['pp__description']}>{listing.description}</p>
           </div>
 
           <div className={styles['pp__section']}>
@@ -162,12 +162,14 @@ function ProductPage() {
           </div>
 
           <div className={styles['pp__section']}>
-            <h3 className={styles['pp__section-title']}>Adresse</h3>
-            <div className={styles['pp__address']}>
-              <Icon name="location-dot" />
+            <h3 className={styles['pp__section-title']}>Lokasjon</h3>
+            <div className={styles['pp__location-card']}>
+              <div className={styles['pp__location-icon']}>
+                <Icon name="location-dot" />
+              </div>
               <div>
-                <p>{listing.postnumber}</p>
-                <p>{listing.location}</p>
+                <p className={styles['pp__location-place']}>{listing.location}</p>
+                <p className={styles['pp__location-post']}>{listing.postnumber}</p>
               </div>
             </div>
           </div>

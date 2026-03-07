@@ -3,7 +3,7 @@
 .page {
   max-width: 1200px;
   margin: 0 auto;
-  padding: var(--space-xl) var(--space-lg) var(--space-2xl);
+  padding: var(--space-xl) var(--space-lg) 120px;
 }
 
 /* ── Page header ───────────────────────────────── */
@@ -34,7 +34,7 @@
 
 /* Left column: form scrolls normally */
 .form-col {
-  padding-right: var(--space-xl);
+  padding-right: var(--space-2xl);
 }
 
 /* Right column: hidden on mobile, visible md+ */

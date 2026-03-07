@@ -179,15 +179,11 @@
 }
 
 .pp__description {
-  width: 100%;
-  border: none;
-  background: transparent;
-  resize: none;
-  overflow: hidden;
   color: var(--color-text);
   font-size: 0.95rem;
   line-height: 1.6;
-  font-family: inherit;
+  white-space: pre-line;
+  margin: 0;
 }
 
 /* ============================================
@@ -225,28 +221,43 @@
   font-weight: 500;
   color: var(--color-text);
   word-break: break-word;
+  text-transform: capitalize;
 }
 
 /* ============================================
    Address
    ============================================ */
 
-.pp__address {
+.pp__location-card {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  color: var(--color-text-secondary);
-  font-size: 0.95rem;
+  align-items: center;
+  gap: 14px;
 }
 
-.pp__address i {
+.pp__location-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
   color: var(--color-primary);
-  margin-top: 4px;
+  font-size: 1rem;
 }
 
-.pp__address p {
+.pp__location-place {
   margin: 0;
-  line-height: 1.6;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-text);
+}
+
+.pp__location-post {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
 }
 
 /* ============================================

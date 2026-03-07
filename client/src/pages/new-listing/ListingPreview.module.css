@@ -163,17 +163,11 @@
 /* ── Description ──────────────────────────────── */
 
 .description {
-  width: 100%;
-  border: none;
-  background: transparent;
-  resize: none;
-  overflow: hidden;
   color: var(--color-text-secondary);
   font-size: 0.95rem;
   line-height: 1.7;
-  font-family: inherit;
-  cursor: default;
-  padding: 0;
+  white-space: pre-line;
+  margin: 0;
 }
 
 /* ── Nøkkelinfo cards ─────────────────────────── */
@@ -221,6 +215,7 @@
   font-weight: 500;
   color: var(--color-text);
   word-break: break-word;
+  text-transform: capitalize;
 }
 
 .spec-remove {
@@ -235,20 +230,34 @@
 
 /* ── Address ──────────────────────────────────── */
 
-.address {
+.location-card {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  color: var(--color-text-secondary);
-  font-size: 0.95rem;
+  align-items: center;
+  gap: 12px;
 }
 
-.address i {
+.location-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
   color: var(--color-primary);
-  margin-top: 3px;
+  font-size: 0.9rem;
 }
 
-.address p {
+.location-place {
   margin: 0;
-  line-height: 1.6;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.location-post {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
 }

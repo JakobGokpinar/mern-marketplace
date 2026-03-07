@@ -107,12 +107,7 @@ const ListingPreview = ({
       {listing.description && (
         <div className={styles['section']}>
           <p className={styles['section-label']}>Beskrivelse</p>
-          <textarea
-            className={styles['description']}
-            value={listing.description}
-            disabled
-            readOnly
-          />
+          <p className={styles['description']}>{listing.description}</p>
         </div>
       )}
 
@@ -143,11 +138,13 @@ const ListingPreview = ({
       {(postNumber || postAddress) && (
         <div className={styles['section']}>
           <p className={styles['section-label']}>Lokasjon</p>
-          <div className={styles['address']}>
-            <Icon name="location-dot" />
+          <div className={styles['location-card']}>
+            <div className={styles['location-icon']}>
+              <Icon name="location-dot" />
+            </div>
             <div>
-              {postNumber && <p>{postNumber}</p>}
-              {postAddress && <p>{postAddress}</p>}
+              {postAddress && <p className={styles['location-place']}>{postAddress}</p>}
+              {postNumber && <p className={styles['location-post']}>{postNumber}</p>}
             </div>
           </div>
         </div>

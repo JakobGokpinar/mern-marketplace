@@ -17,9 +17,11 @@ const SpecialPropsEditor = ({ isPublishing, onAdd }: SpecialPropsEditorProps) =>
   const [title, setTitle] = useState('');
   const [value, setValue] = useState('');
 
+  const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
   const handleAdd = () => {
     if (!title.trim() || !value.trim()) return;
-    onAdd(title.trim(), value.trim());
+    onAdd(capitalize(title.trim()), capitalize(value.trim()));
     setTitle('');
     setValue('');
     setShowBackdrop(false);
