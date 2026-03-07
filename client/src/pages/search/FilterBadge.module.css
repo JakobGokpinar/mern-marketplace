@@ -12,7 +12,7 @@
     padding: 4px 10px;
     background: var(--color-primary-lightest);
     color: var(--color-primary-darker);
-    border: 1px solid rgba(13, 148, 136, 0.2);
+    border: 1px solid rgba(29, 185, 84, 0.2);
     border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 500;
@@ -26,7 +26,7 @@
     height: 18px;
     border-radius: 50%;
     border: none;
-    background: rgba(13, 148, 136, 0.15);
+    background: rgba(29, 185, 84, 0.15);
     color: var(--color-primary-dark);
     cursor: pointer;
     padding: 0;

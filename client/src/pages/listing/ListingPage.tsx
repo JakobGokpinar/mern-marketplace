@@ -65,7 +65,7 @@ function ProductPage() {
   const copyListingLink = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     navigator.clipboard.writeText(`${siteLink}/l/${id}`);
-    toast.success('Lenken ble kopiert');
+    toast.success('Lenken kopiert');
     setShowShareModal(false);
   };
 

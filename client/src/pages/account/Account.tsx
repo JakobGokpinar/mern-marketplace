@@ -11,6 +11,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import Modal from 'react-bootstrap/Modal';
 
 import Icon from '../../components/icons/Icon';
+import { useTheme } from '../../hooks/useTheme';
 import { compressProfileImage } from '../../utils/compressImage';
 import {
   uploadProfilePictureApi,
@@ -32,6 +33,7 @@ const Account = () => {
   const user = useAppSelector(state => state.user.user) as User;
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
   const hiddenFileInput = useRef<HTMLInputElement>(null);
 
   const [editingName, setEditingName] = useState(false);
@@ -340,7 +342,7 @@ const Account = () => {
         <h2 className={styles['section-title']}>Utseende</h2>
         <div className={styles['row']}>
           <span className={styles['row-label']}>Mørk modus</span>
-          <Form.Check type="switch" className={styles['theme-switch']} disabled />
+          <Form.Check type="switch" className={styles['theme-switch']} checked={theme === 'dark'} onChange={toggleTheme} />
         </div>
       </div>
 

@@ -15,13 +15,13 @@
 .searchbar-group {
   border-radius: 50px !important;
   overflow: hidden;
-  border: 1px solid rgba(0, 0, 0, 0.09);
+  border: 1px solid var(--color-border-light);
   background: var(--color-bg-subtle);
   transition: border-color var(--transition-fast);
 }
 
 .searchbar-group:focus-within {
-  border-color: rgba(13, 148, 136, 0.35);
+  border-color: rgba(29, 185, 84, 0.35);
   background: var(--color-surface);
 }
 

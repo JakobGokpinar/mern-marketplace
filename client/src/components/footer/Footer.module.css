@@ -1,7 +1,7 @@
 .footer {
   width: 100%;
   margin-top: auto;
-  background: var(--color-primary-darker);
+  background: var(--footer-bg);
   padding: var(--space-xl) 5%;
 }
 

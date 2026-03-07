@@ -188,7 +188,7 @@
   padding: 12px;
   border-radius: var(--radius-md);
   background: var(--color-primary-lightest);
-  border: 1px solid rgba(13, 148, 136, 0.12);
+  border: 1px solid rgba(29, 185, 84, 0.12);
   cursor: pointer;
   transition: background var(--transition-fast), border-color var(--transition-fast);
 }
@@ -240,7 +240,7 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: white;
+  background: var(--color-bg);
   display: flex;
   align-items: center;
   justify-content: center;

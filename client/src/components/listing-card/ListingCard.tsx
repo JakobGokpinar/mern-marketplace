@@ -66,7 +66,7 @@ function ListingCard({
   const handleCopyLink = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     navigator.clipboard.writeText(`${siteLink}/l/${id}`);
-    toast.success('Lenken ble kopiert');
+    toast.success('Lenken kopiert');
     setShowModal(false);
   };
 

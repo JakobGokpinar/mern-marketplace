@@ -22,6 +22,7 @@ import { logoutRequest } from './store/authThunks';
 import { onUnauthorized } from './lib/authEvents';
 import toast from 'react-hot-toast';
 import { useSocket } from './hooks/useSocket';
+import { ThemeContext, useThemeProvider } from './hooks/useTheme';
 import type { User } from './types/user';
 
 const Home = React.lazy(() => import('./pages/home/Home'));
@@ -99,14 +100,16 @@ const AppContent = () => {
 };
 
 const App = () => {
+  const themeValue = useThemeProvider();
+
   return (
-    <>
+    <ThemeContext.Provider value={themeValue}>
       <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <AppContent />
       </Router>
       <Analytics />
       <SpeedInsights />
-    </>
+    </ThemeContext.Provider>
   );
 };
 

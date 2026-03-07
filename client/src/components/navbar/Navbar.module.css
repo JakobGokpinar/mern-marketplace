@@ -3,7 +3,7 @@
    ============================================ */
 
 .navigation {
-    background-color: #ffffff !important;
+    background-color: var(--color-bg) !important;
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -201,6 +201,30 @@
 }
 
 /* ============================================
+   Theme Toggle
+   ============================================ */
+
+.navbar-theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    padding: 0;
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.navbar-theme-toggle:hover {
+    background: var(--color-primary-lightest);
+    color: var(--color-primary);
+}
+
+/* ============================================
    User Dropdown
    ============================================ */
 
@@ -392,6 +416,14 @@
 
     .navigation .navbar-user-toggle:global(.btn) {
         width: 100%;
+        justify-content: flex-start;
+    }
+
+    .navbar-theme-toggle {
+        width: 100%;
+        height: auto;
+        border-radius: var(--radius-sm);
+        padding: 10px 12px;
         justify-content: flex-start;
     }
 

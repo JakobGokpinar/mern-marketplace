@@ -60,7 +60,7 @@
 
 .product-card__favorite:hover {
   transform: scale(1.1);
-  background: white;
+  background: var(--color-bg);
 }
 
 .product-card__favorite i {

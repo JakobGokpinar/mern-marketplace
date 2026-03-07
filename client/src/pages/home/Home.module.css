@@ -4,33 +4,12 @@
 
 .homepage {
   min-height: 60vh;
-  position: relative;
   padding: 0 0 var(--space-2xl);
-}
-
-/* Subtle teal header strip behind the top of the grid */
-.homepage::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 180px;
-  background: linear-gradient(
-    180deg,
-    var(--color-primary-lightest) 0%,
-    transparent 100%
-  );
-  border-radius: 0 0 50% 50% / 0 0 40px 40px;
-  pointer-events: none;
-  z-index: 0;
 }
 
 /* ---- Result count ---- */
 
 .homepage-count {
-  position: relative;
-  z-index: 1;
   font-size: var(--fs-sm);
   font-weight: 500;
   color: var(--color-text-secondary);
@@ -42,8 +21,6 @@
 /* ---- Product grid ---- */
 
 .homepage-grid {
-  position: relative;
-  z-index: 1;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--space-lg);
@@ -64,8 +41,6 @@
 /* ---- Empty state ---- */
 
 .homepage-empty {
-  position: relative;
-  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -92,8 +67,6 @@
 /* ---- Load more ---- */
 
 .homepage-load-more {
-  position: relative;
-  z-index: 1;
   display: flex;
   justify-content: center;
   padding: var(--space-xl) 0 var(--space-md);
@@ -134,11 +107,6 @@
 
 /* Mobile */
 @media (max-width: 576px) {
-  .homepage::before {
-    height: 120px;
-    border-radius: 0 0 50% 50% / 0 0 24px 24px;
-  }
-
   .homepage {
     padding-bottom: var(--space-xl);
   }

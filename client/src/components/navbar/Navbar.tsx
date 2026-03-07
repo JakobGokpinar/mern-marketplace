@@ -11,6 +11,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Searchbar from "./Searchbar";
 import Icon from "../icons/Icon";
 import { logoutRequest } from "../../store/authThunks";
+import { useTheme } from "../../hooks/useTheme";
 
 const CATEGORIES = [
   { label: 'Elektronikk',     icon: 'laptop',   slug: 'Elektronikk' },
@@ -31,6 +32,7 @@ const Navigation = () => {
   const user = useAppSelector(state => state.user.user);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const SCROLL_THRESHOLD = 80;
@@ -98,6 +100,9 @@ const Navigation = () => {
                 <Icon name="heart-outline" />
                 <span className={styles['navbar-icon-label']}>Favoritter</span>
               </Nav.Link>
+              <button onClick={toggleTheme} className={styles['navbar-theme-toggle']} aria-label="Bytt tema">
+                <Icon name={theme === 'light' ? 'moon' : 'sun'} />
+              </button>
               <Dropdown align="end" className={styles['navbar-user-dropdown']}>
                 <Dropdown.Toggle variant="light" className={styles['navbar-user-toggle']}>
                   {user?.profilePicture ? (
@@ -130,6 +135,9 @@ const Navigation = () => {
             </Nav>
           ) : (
             <Nav className={styles['navbar-actions']}>
+              <button onClick={toggleTheme} className={styles['navbar-theme-toggle']} aria-label="Bytt tema">
+                <Icon name={theme === 'light' ? 'moon' : 'sun'} />
+              </button>
               <Nav.Link href="/login" className={styles['navbar-login-link']}>Logg Inn</Nav.Link>
               <Nav.Link href="/register" className={styles['navbar-register-link']}>Registrer</Nav.Link>
             </Nav>

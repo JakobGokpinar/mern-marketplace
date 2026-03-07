@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-primary-lightest);
+  background-color: var(--color-bg-subtle);
   padding: var(--space-lg);
 }
 
@@ -68,7 +68,7 @@
 
 .auth-form :global(.form-control:focus) {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
+  box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.12);
 }
 
 .auth-submit {
