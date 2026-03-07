@@ -42,11 +42,14 @@ instanceAxs.interceptors.response.use(
         emitUnauthorized();
       }
     }
-    // If CSRF token is rejected (403 with CSRF error), clear and retry
-    if (axios.isAxiosError(error) && error.response?.status === 403) {
+    // If CSRF token is rejected (403 with CSRF error), clear and retry once
+    if (axios.isAxiosError(error) && error.response?.status === 403 && !(error.config as any)?._csrfRetry) {
       const msg = error.response?.data?.message ?? '';
       if (typeof msg === 'string' && msg.toLowerCase().includes('csrf')) {
         csrfToken = null;
+        const config = error.config!;
+        (config as any)._csrfRetry = true;
+        return instanceAxs(config);
       }
     }
     return Promise.reject(error);

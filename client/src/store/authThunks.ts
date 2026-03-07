@@ -3,6 +3,7 @@ import { isAxiosError } from 'axios';
 import type { AppDispatch } from './index';
 import { userActions } from './userSlice';
 import { loginApi, signupApi, logoutApi, fetchUserApi } from '../services/authService';
+import { clearCsrfToken } from '../lib/axios';
 
 export const fetchUser = () => async (dispatch: AppDispatch) => {
   try {
@@ -44,6 +45,7 @@ export const sendLoginRequest = (credentials: { email: string; password: string 
 export const logoutRequest = () => async (dispatch: AppDispatch) => {
   // Clear frontend state immediately — never block the user on a server response
   dispatch(userActions.logout());
+  clearCsrfToken();
   toast('Du har logget ut');
   // Best-effort server-side session invalidation
   logoutApi().catch(() => {});

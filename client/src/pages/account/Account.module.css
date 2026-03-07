@@ -23,6 +23,7 @@
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
   margin-bottom: var(--space-lg);
+  box-shadow: var(--shadow-sm);
 }
 
 .section-title {
@@ -103,9 +104,9 @@
   flex-shrink: 0;
 }
 
-.avatar-placeholder i {
-  font-size: 40px;
+.avatar-placeholder svg {
   color: var(--color-primary);
+  opacity: 0.55;
 }
 
 .avatar-actions {

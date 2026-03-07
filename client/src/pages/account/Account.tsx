@@ -146,8 +146,8 @@ const Account = () => {
       {!user.isEmailVerified && (
         <Alert variant="warning" className={styles['verification-alert']}>
           <Icon name="circle-exclamation" style={{ marginRight: 8 }} />
-          E-posten din er ikke bekreftet.{' '}
-          <Alert.Link onClick={sendVerificationEmail}>Send ny bekreftelsesmail</Alert.Link>
+          Bekreft e-postadressen din for å legge ut annonser.{' '}
+          <Alert.Link onClick={sendVerificationEmail}>Send bekreftelsesmail</Alert.Link>
         </Alert>
       )}
 
@@ -161,7 +161,7 @@ const Account = () => {
             <img src={avatarSrc} alt="" className={styles['avatar-preview']} />
           ) : (
             <div className={styles['avatar-placeholder']}>
-              <Icon name="user" />
+              <Icon name="user" size={34} />
             </div>
           )}
           <div className={styles['avatar-actions']}>

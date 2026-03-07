@@ -37,8 +37,6 @@ const Navigation = () => {
     const handleScroll = () => {
       const y = window.scrollY;
       if (y <= 0) { setIsRender(true); lastScrollY.current = 0; return; }
-      const atBottom = (window.innerHeight + y) >= (document.documentElement.scrollHeight - 10);
-      if (atBottom) { setIsRender(true); lastScrollY.current = y; return; }
       const delta = y - lastScrollY.current;
       if (delta > SCROLL_THRESHOLD) { setIsRender(false); lastScrollY.current = y; }
       else if (delta < -SCROLL_THRESHOLD) { setIsRender(true); lastScrollY.current = y; }

@@ -255,7 +255,7 @@ const NewListing = () => {
     return (
       <Modal show>
         <Modal.Header>
-          <Modal.Title>Verifiser din e-post</Modal.Title>
+          <Modal.Title>Verifiser din konto</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>Du må verifisere e-postadressen din før du kan legge ut en annonse.</p>
