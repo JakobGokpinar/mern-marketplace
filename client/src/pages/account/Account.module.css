@@ -211,6 +211,12 @@
   border-radius: var(--btn-radius);
 }
 
+/* ---- Theme switch ---- */
+
+.theme-switch {
+  margin-left: auto;
+}
+
 /* ---- Danger zone ---- */
 
 .section-danger {

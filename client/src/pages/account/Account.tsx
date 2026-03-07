@@ -332,6 +332,15 @@ const Account = () => {
         </div>
       </div>
 
+      {/* ---- Appearance section ---- */}
+      <div className={styles['section']}>
+        <h2 className={styles['section-title']}>Utseende</h2>
+        <div className={styles['row']}>
+          <span className={styles['row-label']}>Mørk modus</span>
+          <Form.Check type="switch" className={styles['theme-switch']} disabled />
+        </div>
+      </div>
+
       {/* ---- Danger zone ---- */}
       <div className={`${styles['section']} ${styles['section-danger']}`}>
         <h2 className={styles['section-title']}>Faresone</h2>
