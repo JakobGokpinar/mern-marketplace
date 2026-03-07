@@ -78,10 +78,10 @@ const NewListing = () => {
         await instanceAxs.delete(`/listings/${listingId}/images`);
         const result = await instanceAxs.post(`/listings/images?listingId=${listingId}`, formData);
         const returnedFiles = result.data.files as Array<{ originalname: string; location: string }>;
-        const updatedImages = imageArray.map(img => ({
-          ...img,
-          location: returnedFiles.find(f => f.originalname === img.name)?.location,
-        }));
+        const updatedImages = imageArray.map(img => {
+          const jpgName = img.name.replace(/\.[^.]+$/, '.jpg');
+          return { ...img, location: returnedFiles.find(f => f.originalname === jpgName)?.location };
+        });
         await instanceAxs.put(`/listings/${listingId}`, {
           images: updatedImages,
           listingProperties,
@@ -95,7 +95,8 @@ const NewListing = () => {
         }
         const returnedFiles = result.data.files as Array<{ originalname: string; location: string }>;
         const finalImages = imageArray.flatMap(img => {
-          const match = returnedFiles.find(f => f.originalname === img.name);
+          const jpgName = img.name.replace(/\.[^.]+$/, '.jpg');
+          const match = returnedFiles.find(f => f.originalname === jpgName);
           return match ? [{ ...img, location: match.location }] : [];
         });
         await instanceAxs.post('/listings', {

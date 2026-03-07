@@ -63,8 +63,15 @@ const Menu = () => {
         </>
       ) : (
         <div className={styles['homepage-empty']}>
-          <Icon name="box-open" />
-          <p>Ingen annonser ennå</p>
+          <div className={styles['homepage-empty-icon']}>
+            <Icon name="tag" size={40} />
+          </div>
+          <h2 className={styles['homepage-empty-title']}>Ingen annonser ennå</h2>
+          <p className={styles['homepage-empty-subtitle']}>Bli den første til å legge ut noe!</p>
+          <a href="/new-listing" className={styles['homepage-empty-cta']}>
+            <Icon name="plus" size={14} />
+            Legg ut annonse
+          </a>
         </div>
       )}
     </div>

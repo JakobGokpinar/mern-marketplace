@@ -14,8 +14,8 @@ export const fetchProductApi = async (id: string): Promise<Product> => {
 };
 
 export const fetchMyProductsApi = async (): Promise<Product[]> => {
-  const res = await instanceAxs.get<Product[]>('/listings/mine');
-  return res.data;
+  const res = await instanceAxs.get<{ productArray: Product[] }>('/listings/mine');
+  return res.data.productArray;
 };
 
 export const searchProductsApi = async (params: SearchParams, page = 1): Promise<PaginatedResponse> => {
