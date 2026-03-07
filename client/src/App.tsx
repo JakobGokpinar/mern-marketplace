@@ -6,10 +6,10 @@ import './App.css';
 import { Toaster } from 'react-hot-toast';
 import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
-import Login from './pages/LoginAndRegister/Login';
-import Register from './pages/LoginAndRegister/Register';
-import EmailVerify from './pages/EmailVerification/EmailVerify';
-import NotFound from './pages/NotFound';
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
+import EmailVerify from './pages/email-verify/EmailVerify';
+import NotFound from './pages/not-found/NotFound';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 
@@ -20,14 +20,14 @@ import toast from 'react-hot-toast';
 import { useSocket } from './hooks/useSocket';
 import type { User } from './types/user';
 
-const Menu = React.lazy(() => import('./pages/HomePage/Menu'));
-const ProductPage = React.lazy(() => import('./pages/ProductPage/ProductPage'));
-const Chat = React.lazy(() => import('./pages/Chat/Chat'));
-const SearchResult = React.lazy(() => import('./pages/SearchedResultPage/SearchResult'));
-const NewListing = React.lazy(() => import('./pages/NewAnnonce/NewAnnonce'));
-const Account = React.lazy(() => import('./pages/Account/Account'));
-const Favorites = React.lazy(() => import('./pages/Favorites/Favorites'));
-const MyListings = React.lazy(() => import('./pages/MyListings/MyListings'));
+const Menu = React.lazy(() => import('./pages/home/Menu'));
+const ProductPage = React.lazy(() => import('./pages/listing/ProductPage'));
+const Chat = React.lazy(() => import('./pages/chat/Chat'));
+const SearchResult = React.lazy(() => import('./pages/search/SearchResult'));
+const NewListing = React.lazy(() => import('./pages/new-listing/NewAnnonce'));
+const Account = React.lazy(() => import('./pages/account/Account'));
+const Favorites = React.lazy(() => import('./pages/favorites/Favorites'));
+const MyListings = React.lazy(() => import('./pages/my-listings/MyListings'));
 
 const AppContent = () => {
   const dispatch = useAppDispatch();
