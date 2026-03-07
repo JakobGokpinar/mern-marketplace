@@ -93,7 +93,7 @@ const AppContent = () => {
         </div>
         <Footer />
       </div>
-      <Toaster position="bottom-center" toastOptions={{ duration: 5000 }} />
+      <Toaster position="bottom-center" toastOptions={{ duration: 5000 }} containerStyle={{ bottom: 120 }} />
     </>
   );
 };
