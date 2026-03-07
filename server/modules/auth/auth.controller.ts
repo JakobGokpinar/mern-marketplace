@@ -83,9 +83,9 @@ export const resendVerificationEmail = async (req: Request, res: Response) => {
   try {
     const user = req.user as any;
     await createTokenAndSendEmail(user._id, user.email, user.fullName);
-    return res.status(200).json({ success: true, message: 'A new verification email has been sent. Please check your Input or Spam folder.' });
+    return res.status(200).json({ success: true, message: 'Bekreftelsesmail sendt. Sjekk innboksen eller søppelpost.' });
   } catch (error: any) {
     logger.error(error);
-    return res.status(500).json({ success: false, message: 'Verification email could not be sent', err: error.message });
+    return res.status(500).json({ success: false, message: 'Kunne ikke sende bekreftelsesmail' });
   }
 };

@@ -116,6 +116,8 @@ export const changePassword = async (req: Request, res: Response) => {
     const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) return res.status(400).json({ success: false, message: 'Nåværende passord er feil' });
 
+    if (currentPassword === newPassword) return res.status(400).json({ success: false, message: 'Nytt passord kan ikke være det samme som nåværende' });
+
     user.password = newPassword;
     await user.save();
 
@@ -146,7 +148,7 @@ export const changeEmail = async (req: Request, res: Response) => {
     const verifyUrl = `${process.env.CLIENT_URL}/emailVerify?t=${token}`;
     sendVerificationEmail(newEmail, user.fullName, verifyUrl).catch(err => logger.error(err));
 
-    return res.json({ success: true, user, message: 'E-post oppdatert. Sjekk innboksen for bekreftelse.' });
+    return res.json({ success: true, user, message: 'E-post oppdatert. Bekreftelsesmail sendt. Sjekk innboksen eller søppelpost.' });
   } catch (error) {
     logger.error(error);
     return res.status(500).json({ success: false, message: 'Kunne ikke endre e-post' });

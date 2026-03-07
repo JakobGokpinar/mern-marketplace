@@ -19,7 +19,7 @@ export const sendSignUpRequest = (userData: { fullName: string; email: string; p
     const { message, user } = await signupApi(userData);
     if (user) {
       dispatch(userActions.login(user));
-      toast.success(`Velkommen, ${user.fullName}. Vennligst sjekk epost adressen for å verifisere kontoen.`);
+      toast.success(`Velkommen, ${user.fullName}! Bekreftelsesmail sendt. Sjekk innboksen eller søppelpost.`);
     } else {
       toast.error(message);
     }

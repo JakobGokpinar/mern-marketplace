@@ -293,10 +293,17 @@ const Account = () => {
                 />
                 <Form.Control
                   type="password"
-                  placeholder="Nytt passord (minst 6 tegn)"
+                  placeholder="Nytt passord"
                   value={newPassword}
                   onChange={e => setNewPassword(e.target.value)}
                 />
+                {newPassword.length > 0 && (
+                  <ul className={styles['password-rules']}>
+                    <li className={newPassword.length >= 6 ? styles['rule-pass'] : styles['rule-fail']}>Minst 6 tegn</li>
+                    <li className={/[a-zA-Z]/.test(newPassword) ? styles['rule-pass'] : styles['rule-fail']}>Minst én bokstav</li>
+                    <li className={/\d/.test(newPassword) ? styles['rule-pass'] : styles['rule-fail']}>Minst ett tall</li>
+                  </ul>
+                )}
                 <div className={styles['password-actions']}>
                   <Button
                     variant="outline-secondary"
@@ -307,7 +314,7 @@ const Account = () => {
                   <Button
                     variant="primary"
                     onClick={() => changePasswordMutation.mutate()}
-                    disabled={changePasswordMutation.isPending || !currentPassword || newPassword.length < 6}
+                    disabled={changePasswordMutation.isPending || !currentPassword || newPassword.length < 6 || !/[a-zA-Z]/.test(newPassword) || !/\d/.test(newPassword)}
                   >
                     {changePasswordMutation.isPending ? <Spinner size="sm" /> : 'Lagre'}
                   </Button>

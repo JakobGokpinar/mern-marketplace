@@ -181,6 +181,24 @@
   box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
 }
 
+.password-rules {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--fs-xs);
+}
+
+.rule-pass {
+  color: var(--color-success);
+}
+
+.rule-fail {
+  color: var(--color-text-muted);
+}
+
 .password-actions {
   display: flex;
   justify-content: flex-end;
