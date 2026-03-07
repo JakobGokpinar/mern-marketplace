@@ -144,7 +144,7 @@ export const useChat = () => {
       setMessageInput('');
     },
     onError: () => {
-      toast.error('Feil mens sender en melding');
+      toast.error('Kunne ikke sende meldingen');
     },
   });
 

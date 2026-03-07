@@ -39,6 +39,8 @@ export default function Searchbar() {
     return items;
   }, [isShow, searchInput, productObjects, suggestedCategories]);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const close = () => {
     setIsShow(false);
     setFocusedIndex(-1);
@@ -59,12 +61,19 @@ export default function Searchbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Show suggestion box immediately when typing
   useEffect(() => {
-    if (debouncedSearch === '') {
+    if (searchInput.trim()) {
+      setIsShow(true);
+    } else {
       close();
-      return;
     }
+  }, [searchInput]);
 
+  useEffect(() => {
+    if (debouncedSearch === '') return;
+
+    setIsLoading(true);
     instanceAxs.post('/listings/search', { q: debouncedSearch })
       .then(response => {
         const responseData = (response.data.productArray as Array<{ title: string; images?: Array<{ location: string }>; _id: string }>).map(item => ({
@@ -76,8 +85,8 @@ export default function Searchbar() {
 
         setProductObjects(responseData);
         setSuggestedCategories(suggestedCat);
-        setIsShow(true);
-      });
+      })
+      .finally(() => setIsLoading(false));
   }, [debouncedSearch]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -146,6 +155,13 @@ export default function Searchbar() {
               </a>
             ); })()}
           </div>
+
+          {isLoading && productObjects.length === 0 && (
+            <div className={styles['suggestion-group']}>
+              <div className={styles['suggestion-shimmer']} />
+              <div className={styles['suggestion-shimmer']} style={{ width: '60%' }} />
+            </div>
+          )}
 
           {productObjects.length > 0 && (
             <div className={styles['suggestion-group']}>

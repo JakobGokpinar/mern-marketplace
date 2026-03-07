@@ -20,7 +20,7 @@ export const sendSignUpRequest = (userData: { fullName: string; email: string; p
     if (user) {
       clearCsrfToken(); // session changed after signup
       dispatch(userActions.login(user));
-      toast.success(`Velkommen, ${user.fullName}! Bekreftelsesmail sendt. Sjekk innboksen eller søppelpost.`);
+      toast.success(`Velkommen, ${user.fullName}! Sjekk innboksen for bekreftelsesmail.`);
     } else {
       toast.error(message);
     }

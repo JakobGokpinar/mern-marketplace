@@ -160,6 +160,35 @@
   margin-bottom: var(--space-lg);
 }
 
+/* ---- Password visibility toggle ---- */
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper :global(.form-control) {
+  padding-right: 42px;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color var(--transition-fast);
+}
+
+.password-toggle:hover {
+  color: var(--color-text-secondary);
+}
+
 /* ---- Password form ---- */
 
 .password-form {

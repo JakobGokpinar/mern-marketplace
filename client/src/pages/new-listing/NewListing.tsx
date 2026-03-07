@@ -108,15 +108,15 @@ const NewListing = () => {
     },
     onSuccess: (type) => {
       if (type === 'updated') {
-        toast.success('Annonsen ble oppdatert');
+        toast.success('Annonsen oppdatert');
         navigate('/my-listings');
       } else {
-        toast.success('Annonsen ble publisert');
+        toast.success('Annonsen publisert');
         navigate('/');
       }
     },
     onError: () => {
-      toast.error('Annonsen kunne ikke publiseres akkurat nå. Vennligst prøv igjen senere.');
+      toast.error('Kunne ikke publisere annonsen. Prøv igjen.');
     },
   });
 
@@ -259,7 +259,7 @@ const NewListing = () => {
           <Modal.Title>Verifiser din konto</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Du må verifisere e-postadressen din før du kan legge ut en annonse.</p>
+          <p>Verifiser e-postadressen din for å legge ut annonser.</p>
           <a href="/account">
             <Button variant="primary">Gå til min konto</Button>
           </a>

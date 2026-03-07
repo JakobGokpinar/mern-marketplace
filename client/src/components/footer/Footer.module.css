@@ -47,13 +47,13 @@
 
 .footer-tagline {
   font-size: var(--fs-xs);
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.6);
   margin: 0;
 }
 
 .footer-copy {
   font-size: var(--fs-xs);
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.45);
   margin: 0;
 }
 
@@ -69,13 +69,13 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.5);
   margin: 0;
 }
 
 .footer-links a {
   font-size: var(--fs-sm);
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.75);
   text-decoration: none;
   transition: color var(--transition-fast);
 }

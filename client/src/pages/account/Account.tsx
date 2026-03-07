@@ -44,6 +44,7 @@ const Account = () => {
   const [editingPassword, setEditingPassword] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [editingEmail, setEditingEmail] = useState(false);
   const [newEmail, setNewEmail] = useState('');
   const { errors: formErrors, validate } = useFormValidation(profileSchema);
@@ -296,12 +297,17 @@ const Account = () => {
                   onChange={e => setCurrentPassword(e.target.value)}
                   autoFocus
                 />
-                <Form.Control
-                  type="password"
-                  placeholder="Nytt passord"
-                  value={newPassword}
-                  onChange={e => setNewPassword(e.target.value)}
-                />
+                <div className={styles['password-wrapper']}>
+                  <Form.Control
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Nytt passord"
+                    value={newPassword}
+                    onChange={e => setNewPassword(e.target.value)}
+                  />
+                  <button type="button" className={styles['password-toggle']} onClick={() => setShowPassword(p => !p)} tabIndex={-1}>
+                    <Icon name={showPassword ? 'eye-slash' : 'eye-outline'} size={14} />
+                  </button>
+                </div>
                 {newPassword.length > 0 && (
                   <ul className={styles['password-rules']}>
                     <li className={newPassword.length >= 6 ? styles['rule-pass'] : styles['rule-fail']}>Minst 6 tegn</li>

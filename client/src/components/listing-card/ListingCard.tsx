@@ -45,7 +45,7 @@ function ListingCard({
   const handleToggleFavorite = () => {
     if (!id) return;
     if (!user?._id) {
-      toast.error('Du må logge inn for å lagre favoritter');
+      toast.error('Logg inn for å lagre favoritter');
       return;
     }
     toggleFavorite(id, isFavorite);

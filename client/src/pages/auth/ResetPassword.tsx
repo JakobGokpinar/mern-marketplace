@@ -12,6 +12,7 @@ const ResetPassword = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get('t') || '';
   const [newPassword, setNewPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [done, setDone] = useState(false);
 
   const isValid = newPassword.length >= 6 && /[a-zA-Z]/.test(newPassword) && /\d/.test(newPassword);
@@ -74,13 +75,18 @@ const ResetPassword = () => {
             >
               <Form.Group className="mb-3" controlId="resetPassword">
                 <Form.Label>Nytt passord</Form.Label>
-                <Form.Control
-                  type="password"
-                  placeholder="Velg et nytt passord"
-                  value={newPassword}
-                  onChange={e => setNewPassword(e.target.value)}
-                  disabled={mutation.isPending}
-                />
+                <div className={styles['password-wrapper']}>
+                  <Form.Control
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Velg et nytt passord"
+                    value={newPassword}
+                    onChange={e => setNewPassword(e.target.value)}
+                    disabled={mutation.isPending}
+                  />
+                  <button type="button" className={styles['password-toggle']} onClick={() => setShowPassword(p => !p)} tabIndex={-1}>
+                    <Icon name={showPassword ? 'eye-slash' : 'eye-outline'} size={14} />
+                  </button>
+                </div>
               </Form.Group>
 
               {newPassword.length > 0 && (

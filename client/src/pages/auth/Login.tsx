@@ -14,6 +14,7 @@ const Login = () => {
   const location = useLocation();
   const isLoggedIn = useAppSelector((state) => state.user.isLoggedIn);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { errors, validate } = useFormValidation(loginSchema);
 
   useEffect(() => {
@@ -64,14 +65,19 @@ const Login = () => {
 
           <Form.Group className="mb-4" controlId="loginPassword">
             <Form.Label>Passord</Form.Label>
-            <Form.Control
-              type="password"
-              name="password"
-              placeholder="••••••••"
-              disabled={isLoading}
-              isInvalid={!!errors.password}
-            />
-            <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
+            <div className={styles['password-wrapper']}>
+              <Form.Control
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                placeholder="••••••••"
+                disabled={isLoading}
+                isInvalid={!!errors.password}
+              />
+              <button type="button" className={styles['password-toggle']} onClick={() => setShowPassword(p => !p)} tabIndex={-1}>
+                <Icon name={showPassword ? 'eye-slash' : 'eye-outline'} size={14} />
+              </button>
+              <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
+            </div>
           </Form.Group>
 
           <Button variant="primary" type="submit" className={styles['auth-submit']} disabled={isLoading}>

@@ -16,6 +16,7 @@ function Register() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const { errors, validate } = useFormValidation(registerSchema);
 
   useEffect(() => {
@@ -73,15 +74,20 @@ function Register() {
 
           <Form.Group className="mb-4" controlId="registerPassword">
             <Form.Label>Passord</Form.Label>
-            <Form.Control
-              type="password"
-              name="password"
-              placeholder="••••••••"
-              onChange={e => setPassword(e.target.value)}
-              disabled={isLoading}
-              isInvalid={!!errors.password}
-            />
-            <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
+            <div className={styles['password-wrapper']}>
+              <Form.Control
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                placeholder="••••••••"
+                onChange={e => setPassword(e.target.value)}
+                disabled={isLoading}
+                isInvalid={!!errors.password}
+              />
+              <button type="button" className={styles['password-toggle']} onClick={() => setShowPassword(p => !p)} tabIndex={-1}>
+                <Icon name={showPassword ? 'eye-slash' : 'eye-outline'} size={14} />
+              </button>
+              <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
+            </div>
           </Form.Group>
 
           <Button variant="primary" type="submit" className={styles['auth-submit']} disabled={isLoading}>

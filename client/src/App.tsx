@@ -43,7 +43,7 @@ const AppContent = () => {
   useEffect(() => {
     return onUnauthorized(() => {
       dispatch(userActions.logout());
-      toast.error('Sesjonen din har utløpt. Logg inn på nytt.');
+      toast.error('Økten har utløpt — logg inn på nytt');
     });
   }, [dispatch]);
 

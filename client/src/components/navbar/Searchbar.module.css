@@ -44,17 +44,18 @@
 
 .searchbar-btn {
   border: none !important;
-  background: transparent !important;
-  padding: 0 14px !important;
-  color: var(--color-text-muted) !important;
+  background: var(--color-primary) !important;
+  padding: 0 12px !important;
+  color: white !important;
   font-size: 13px;
-  transition: color var(--transition-fast) !important;
+  border-radius: 0 50px 50px 0 !important;
+  transition: background var(--transition-fast) !important;
 }
 
 .searchbar-btn:hover,
 .searchbar-btn:focus {
-  color: var(--color-primary) !important;
-  background: transparent !important;
+  background: var(--color-primary-dark) !important;
+  color: white !important;
   box-shadow: none !important;
 }
 
@@ -170,6 +171,20 @@
   background: var(--color-primary-lightest) !important;
   color: var(--color-primary-darker) !important;
   outline: none;
+}
+
+.suggestion-shimmer {
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--color-border-light) 25%, var(--color-bg-subtle) 50%, var(--color-border-light) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 @media (max-width: 991px) {
