@@ -2,7 +2,7 @@ import express from 'express';
 import * as authController from './auth.controller';
 import ensureAuth from '../../middleware/ensureAuth';
 import validate from '../../middleware/validate';
-import { verifyEmail } from './auth.schema';
+import { verifyEmail, forgotPassword, resetPassword } from './auth.schema';
 
 const router = express.Router();
 
@@ -12,5 +12,8 @@ router.delete('/auth/logout', authController.logout);
 
 router.post('/auth/email/verify', ensureAuth, validate(verifyEmail), authController.verifyEmailHandler);
 router.post('/auth/email/resend', ensureAuth, authController.resendVerificationEmail);
+
+router.post('/auth/password/forgot', validate(forgotPassword), authController.forgotPassword);
+router.post('/auth/password/reset', validate(resetPassword), authController.resetPassword);
 
 export default router;

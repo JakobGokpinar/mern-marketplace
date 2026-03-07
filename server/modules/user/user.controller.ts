@@ -7,7 +7,7 @@ import ConversationModel from '../../models/Conversation';
 import MessageModel from '../../models/Message';
 import { getEnvFolder, deleteObjectsByPrefix, deleteObject, getObject, streamToBuffer, extractKeyFromUrl } from '../../services/s3';
 import { createProfileUpload } from '../../middleware/upload';
-import { sendVerificationEmail } from '../../config/sendEmail';
+import { sendVerificationEmail, sendPasswordChangedEmail, sendEmailChangedNotification } from '../../config/sendEmail';
 import TokenModel from '../../models/Token';
 import { randomUUID } from 'crypto';
 import logger from '../../config/logger';
@@ -121,6 +121,8 @@ export const changePassword = async (req: Request, res: Response) => {
     user.password = newPassword;
     await user.save();
 
+    sendPasswordChangedEmail(user.email, user.fullName).catch(err => logger.error(err));
+
     return res.json({ success: true, message: 'Passordet er oppdatert' });
   } catch (error) {
     logger.error(error);
@@ -136,17 +138,21 @@ export const changeEmail = async (req: Request, res: Response) => {
     const existing = await UserModel.findOne({ email: newEmail });
     if (existing) return res.status(400).json({ success: false, message: 'E-postadressen er allerede i bruk' });
 
+    const oldUser = await UserModel.findById(userId).select('email fullName');
+    if (!oldUser) return res.status(404).json({ success: false, message: 'Bruker ikke funnet' });
+    const oldEmail = oldUser.email;
+
     const user = await UserModel.findByIdAndUpdate(
       userId,
       { $set: { email: newEmail, isEmailVerified: false } },
       { new: true }
     );
-    if (!user) return res.status(404).json({ success: false, message: 'Bruker ikke funnet' });
 
     const token = randomUUID();
     await TokenModel.create({ userId, token });
     const verifyUrl = `${process.env.CLIENT_URL}/emailVerify?t=${token}`;
-    sendVerificationEmail(newEmail, user.fullName, verifyUrl).catch(err => logger.error(err));
+    sendVerificationEmail(newEmail, user!.fullName, verifyUrl).catch(err => logger.error(err));
+    sendEmailChangedNotification(oldEmail, user!.fullName, newEmail).catch(err => logger.error(err));
 
     return res.json({ success: true, user, message: 'E-post oppdatert. Bekreftelsesmail sendt. Sjekk innboksen eller søppelpost.' });
   } catch (error) {

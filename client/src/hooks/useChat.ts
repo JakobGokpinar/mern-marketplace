@@ -48,7 +48,7 @@ export const useChat = () => {
 
   const { data: conversations = [], refetch: refetchConversations } = useQuery({
     queryKey: queryKeys.chat.rooms(userId),
-    queryFn: () => getChatRoomsApi(userId),
+    queryFn: () => getChatRoomsApi(),
     enabled: !!userId,
   });
 

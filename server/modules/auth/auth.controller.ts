@@ -4,7 +4,8 @@ import { randomUUID } from 'crypto';
 import mongoose from 'mongoose';
 import TokenModel from '../../models/Token';
 import UserModel from '../../models/User';
-import { sendVerificationEmail } from '../../config/sendEmail';
+import bcrypt from 'bcrypt';
+import { sendVerificationEmail, sendPasswordResetEmail, sendPasswordChangedEmail } from '../../config/sendEmail';
 import logger from '../../config/logger';
 
 const ObjectId = mongoose.Types.ObjectId;
@@ -87,5 +88,54 @@ export const resendVerificationEmail = async (req: Request, res: Response) => {
   } catch (error: any) {
     logger.error(error);
     return res.status(500).json({ success: false, message: 'Kunne ikke sende bekreftelsesmail' });
+  }
+};
+
+export const forgotPassword = async (req: Request, res: Response) => {
+  const { email } = req.body;
+  // Always return success to prevent email enumeration
+  const genericMsg = 'Hvis kontoen finnes, har vi sendt en e-post med instruksjoner.';
+
+  try {
+    const user = await UserModel.findOne({ email });
+    if (!user) return res.json({ success: true, message: genericMsg });
+
+    await TokenModel.deleteMany({ userId: user._id, type: 'password-reset' });
+    const token = randomUUID();
+    await TokenModel.create({ userId: user._id, token, type: 'password-reset' });
+
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password?t=${token}`;
+    await sendPasswordResetEmail(email, user.fullName, resetUrl);
+
+    return res.json({ success: true, message: genericMsg });
+  } catch (error) {
+    logger.error(error);
+    return res.status(500).json({ success: false, message: 'Kunne ikke sende e-post' });
+  }
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+  const { token, newPassword } = req.body;
+
+  try {
+    const tokenDoc = await TokenModel.findOne({ token, type: 'password-reset' });
+    if (!tokenDoc) return res.status(400).json({ success: false, message: 'Lenken er ugyldig eller utløpt' });
+
+    const user = await UserModel.findById(tokenDoc.userId).select('+password');
+    if (!user) return res.status(404).json({ success: false, message: 'Bruker ikke funnet' });
+
+    const isSame = await bcrypt.compare(newPassword, user.password);
+    if (isSame) return res.status(400).json({ success: false, message: 'Nytt passord kan ikke være det samme som nåværende' });
+
+    user.password = newPassword;
+    await user.save();
+
+    await TokenModel.deleteMany({ userId: user._id, type: 'password-reset' });
+    sendPasswordChangedEmail(user.email, user.fullName).catch(err => logger.error(err));
+
+    return res.json({ success: true, message: 'Passordet er oppdatert. Du kan nå logge inn.' });
+  } catch (error) {
+    logger.error(error);
+    return res.status(500).json({ success: false, message: 'Kunne ikke tilbakestille passord' });
   }
 };

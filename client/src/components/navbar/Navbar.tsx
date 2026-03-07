@@ -67,7 +67,7 @@ const Navigation = () => {
           <Nav className={styles['navbar-left']}>
             <Dropdown className={styles['navbar-categories']}>
               <Dropdown.Toggle as="button" className={styles['navbar-categories-toggle']}>
-                Kategorier <Icon name="chevron-down" />
+                Kategorier
               </Dropdown.Toggle>
               <Dropdown.Menu className={styles['navbar-categories-menu']} popperConfig={{ strategy: 'fixed' }}>
                 {CATEGORIES.map(cat => (

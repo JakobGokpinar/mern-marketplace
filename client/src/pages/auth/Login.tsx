@@ -80,6 +80,9 @@ const Login = () => {
         </Form>
 
         <p className={styles['auth-footer']}>
+          <a href="/forgot-password">Glemt passord?</a>
+        </p>
+        <p className={styles['auth-footer']}>
           Ny her? <a href="/register">Opprett en konto</a>
         </p>
       </div>

@@ -1,7 +1,7 @@
 import { instanceAxs } from '../lib/axios';
 import type { ChatRoom, Message } from '../types/chat';
 
-export const getChatRoomsApi = async (userId: string): Promise<ChatRoom[]> => {
+export const getChatRoomsApi = async (): Promise<ChatRoom[]> => {
   const res = await instanceAxs.get<ChatRoom[]>('/chat/rooms');
   return res.data;
 };

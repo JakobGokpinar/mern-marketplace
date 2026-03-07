@@ -29,3 +29,13 @@ export const fetchUserByIdApi = async (userId: string): Promise<User> => {
   const res = await instanceAxs.get<{ user: User }>('/users/' + userId);
   return res.data.user;
 };
+
+export const forgotPasswordApi = async (email: string): Promise<{ success: boolean; message: string }> => {
+  const res = await instanceAxs.post<{ success: boolean; message: string }>('/auth/password/forgot', { email });
+  return res.data;
+};
+
+export const resetPasswordApi = async (token: string, newPassword: string): Promise<{ success: boolean; message: string }> => {
+  const res = await instanceAxs.post<{ success: boolean; message: string }>('/auth/password/reset', { token, newPassword });
+  return res.data;
+};
