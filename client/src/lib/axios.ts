@@ -8,7 +8,7 @@ const instanceAxs = axios.create({
   withCredentials: true,
 });
 
-const AUTH_PATHS = ['/login', '/signup'];
+const AUTH_PATHS = ['/auth/login', '/auth/signup'];
 
 let csrfToken: string | null = null;
 

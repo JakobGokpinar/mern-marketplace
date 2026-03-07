@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { sendLoginRequest } from "../../store/authThunks";
 import { useFormValidation } from "../../hooks/useFormValidation";
 import { loginSchema } from "../../schemas/auth.schema";
+import Icon from '../../components/icons/Icon';
 
 const Login = () => {
   const dispatch = useAppDispatch();
@@ -41,7 +42,7 @@ const Login = () => {
       <div className={styles['auth-card']}>
         <div className={styles['auth-brand']}>
           <div className={styles['auth-brand-icon']}>
-            <i className="fa-solid fa-tag" />
+            <Icon name="tag" />
           </div>
           <span className={styles['auth-brand-name']}>Rego</span>
         </div>

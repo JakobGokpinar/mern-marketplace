@@ -9,7 +9,7 @@ export const fetchProductsApi = async (page = 1): Promise<PaginatedResponse> => 
 };
 
 export const fetchProductApi = async (id: string): Promise<Product> => {
-  const res = await instanceAxs.get<Product>('/listing', { params: { id } });
+  const res = await instanceAxs.get<Product>('/listings/' + id);
   return res.data;
 };
 

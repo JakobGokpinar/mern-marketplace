@@ -35,14 +35,14 @@ const Conversations = ({ productId, conversation, loggedUser, isActive, findFrie
   useEffect(() => {
     const friendId = findFriend(conversation.buyer, conversation.seller, loggedUser);
     if (!friendId) return;
-    instanceAxs.get(`/fetchuser?userId=${friendId}`)
+    instanceAxs.get(`/users/${friendId}`)
       .then(r => setFriend(r.data.user))
       .catch(() => {});
   }, [conversation, loggedUser]);
 
   useEffect(() => {
     if (!productId) return;
-    instanceAxs.get(`/listing?id=${productId}`)
+    instanceAxs.get(`/listings/${productId}`)
       .then(r => setProduct(r.data.product))
       .catch(() => {});
   }, [productId]);

@@ -11,6 +11,7 @@ import Spinner from 'react-bootstrap/Spinner';
 
 import { verifyEmailApi } from '../../services/emailService';
 import { userActions } from '../../store/userSlice';
+import Icon from '../../components/icons/Icon';
 
 const EmailVerify = () => {
   const user = useAppSelector(state => state.user.user);
@@ -59,7 +60,7 @@ const EmailVerify = () => {
     <div className={styles['email-verify-container']}>
       <div className={styles['email-verify-content']}>
         <Alert variant={alertVarient} className={styles['email-verify-alert']}>
-          <i className={`fa-solid ${isVerifySuccessful ? 'fa-circle-check' : 'fa-triangle-exclamation'} fa-lg mx-2`} />
+          <Icon name={isVerifySuccessful ? 'circle-check' : 'triangle-exclamation'} size={20} style={{ margin: '0 8px' }} />
           {alertMessage}
         </Alert>
         <Form.Label className={styles['email-verify-token-label']}>Token</Form.Label>

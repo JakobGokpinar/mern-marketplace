@@ -7,6 +7,7 @@ import Form from 'react-bootstrap/Form';
 
 import { instanceAxs } from '../../lib/axios';
 import { useDebounce } from '../../hooks/useDebounce';
+import Icon from '../icons/Icon';
 
 interface ProductSuggestion {
   title: string;
@@ -33,7 +34,7 @@ export default function Searchbar() {
   const allItems = useMemo<SuggestionItem[]>(() => {
     if (!isShow) return [];
     const items: SuggestionItem[] = [{ url: `/search?q=${searchInput}` }];
-    productObjects.forEach(p => items.push({ url: `/listing/${p.id}` }));
+    productObjects.forEach(p => items.push({ url: `/l/${p.id}` }));
     suggestedCategories.filter(Boolean).forEach(c => items.push({ url: `/search?category=${c}` }));
     return items;
   }, [isShow, searchInput, productObjects, suggestedCategories]);
@@ -123,7 +124,7 @@ export default function Searchbar() {
             aria-expanded={isShow}
           />
           <Button type='submit' className={styles['searchbar-btn']}>
-            <i className="fa-solid fa-magnifying-glass" />
+            <Icon name="magnifying-glass" />
           </Button>
         </InputGroup>
       </Form>
@@ -140,7 +141,7 @@ export default function Searchbar() {
                 role="option"
                 aria-selected={focusedIndex === idx}
               >
-                <i className="fa-solid fa-magnifying-glass" />
+                <Icon name="magnifying-glass" />
                 Finn flere resultater for <strong>'{searchInput}'</strong>
               </a>
             ); })()}
@@ -154,7 +155,7 @@ export default function Searchbar() {
                 return (
                   <a
                     key={item.id}
-                    href={`/listing/${item.id}`}
+                    href={`/l/${item.id}`}
                     onClick={close}
                     className={`${styles['suggestion-product']}${focusedIndex === idx ? ` ${styles['suggestion-item--focused']}` : ''}`}
                     role="option"
@@ -182,7 +183,7 @@ export default function Searchbar() {
                     role="option"
                     aria-selected={focusedIndex === idx}
                   >
-                    <i className="fa-solid fa-tag" />
+                    <Icon name="tag" />
                     {item}
                   </a>
                 );

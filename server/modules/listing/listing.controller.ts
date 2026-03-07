@@ -79,7 +79,7 @@ export const saveListingToDatabase = async (req: Request, res: Response) => {
 
 export const removeListing = async (req: Request, res: Response) => {
   const email = (req.user as any).email;
-  const listingId = req.body.listingId;
+  const listingId = req.params.id as string;
 
   const listing = await ListingModel.findById(new ObjectId(listingId));
   if (!listing) return res.status(404).json({ message: 'Listing not found' });
@@ -109,7 +109,7 @@ export const removeListing = async (req: Request, res: Response) => {
 export const removeListingImagesFromAWS = async (req: Request, res: Response) => {
   try {
     const userEmail = (req.user as any).email;
-    const listingId = req.body.listingId;
+    const listingId = req.params.id as string;
     await deleteObjectsByPrefix(getEnvFolder() + '/' + userEmail + '/listing-' + listingId + '/');
     return res.status(200).json({ message: 'listing images deleted successfully' });
   } catch (error) {
@@ -120,7 +120,7 @@ export const removeListingImagesFromAWS = async (req: Request, res: Response) =>
 
 export const updateListing = async (req: Request, res: Response) => {
   const userId = (req.user as any).id;
-  const listingId = req.body.listingId;
+  const listingId = req.params.id as string;
   const images = req.body.images;
   const listingProperties = req.body.listingProperties;
 
@@ -144,7 +144,7 @@ export const updateListing = async (req: Request, res: Response) => {
 // --- Read / Search ---
 
 export const findProduct = async (req: Request, res: Response) => {
-  const productId = req.query.id as string;
+  const productId = req.params.id as string;
   let favoritesArray: any[] = [];
 
   if (req.isAuthenticated()) {

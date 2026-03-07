@@ -8,16 +8,16 @@ interface FavoriteResponse {
 }
 
 export const addToFavoritesApi = async (listingId: string): Promise<FavoriteResponse> => {
-  const res = await instanceAxs.post<FavoriteResponse>('/favorites/add', { id: listingId });
+  const res = await instanceAxs.post<FavoriteResponse>('/user/me/favorites', { id: listingId });
   return res.data;
 };
 
 export const removeFromFavoritesApi = async (listingId: string): Promise<FavoriteResponse> => {
-  const res = await instanceAxs.post<FavoriteResponse>('/favorites/remove', { id: listingId });
+  const res = await instanceAxs.delete<FavoriteResponse>('/user/me/favorites/' + listingId);
   return res.data;
 };
 
 export const getFavoritesApi = async (): Promise<Product[]> => {
-  const res = await instanceAxs.get<{ productArray: Product[] }>('/favorites/get');
+  const res = await instanceAxs.get<{ productArray: Product[] }>('/user/me/favorites');
   return res.data.productArray;
 };

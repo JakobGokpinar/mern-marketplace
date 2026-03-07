@@ -22,6 +22,7 @@ import { timeago } from "../../utils/timeago";
 import { formatPrice } from "../../utils/formatPrice";
 import type { Product } from "../../types/product";
 import type { User } from "../../types/user";
+import Icon from '../../components/icons/Icon';
 
 interface ProductPageData {
   product: Product & { isFavorite?: boolean };
@@ -40,7 +41,7 @@ function ProductPage() {
   const { data, isPending } = useQuery<ProductPageData>({
     queryKey: queryKeys.products.detail(id ?? ''),
     queryFn: async () => {
-      const res = await instanceAxs.get(`/listing?id=${id}`);
+      const res = await instanceAxs.get(`/listings/${id}`);
       return res.data as ProductPageData;
     },
     enabled: !!id,
@@ -63,7 +64,7 @@ function ProductPage() {
 
   const copyListingLink = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    navigator.clipboard.writeText(`${siteLink}/listing/${id}`);
+    navigator.clipboard.writeText(`${siteLink}/l/${id}`);
     toast.success('Lenken ble kopiert');
     setShowShareModal(false);
   };
@@ -100,7 +101,7 @@ function ProductPage() {
               ))}
             </Carousel>
             <div className={styles['pp__img-count']}>
-              <i className="fa-regular fa-image" /> {listing.images?.length || 0}
+              <Icon name="image-outline" /> {listing.images?.length || 0}
             </div>
           </div>
 
@@ -117,7 +118,7 @@ function ProductPage() {
                     onClick={() => id && toggleFavorite(id, true)}
                     disabled={isFavLoading}
                   >
-                    {isFavLoading ? <Spinner size="sm" /> : <><i className="fa-solid fa-heart" /> Favoritt</>}
+                    {isFavLoading ? <Spinner size="sm" /> : <><Icon name="heart" /> Favoritt</>}
                   </button>
                 ) : (
                   <button
@@ -125,12 +126,12 @@ function ProductPage() {
                     onClick={() => id && toggleFavorite(id, false)}
                     disabled={isFavLoading}
                   >
-                    {isFavLoading ? <Spinner size="sm" /> : <><i className="fa-regular fa-heart" /> Favoritt</>}
+                    {isFavLoading ? <Spinner size="sm" /> : <><Icon name="heart-outline" /> Favoritt</>}
                   </button>
                 )
               )}
               <button className={styles['pp__action-btn']} onClick={() => setShowShareModal(true)}>
-                <i className="fa-solid fa-arrow-up-from-bracket" /> Del
+                <Icon name="arrow-up-from-bracket" /> Del
               </button>
             </div>
           </div>
@@ -163,7 +164,7 @@ function ProductPage() {
           <div className={styles['pp__section']}>
             <h3 className={styles['pp__section-title']}>Adresse</h3>
             <div className={styles['pp__address']}>
-              <i className="fa-solid fa-location-dot" />
+              <Icon name="location-dot" />
               <div>
                 <p>{listing.postnumber}</p>
                 <p>{listing.location}</p>
@@ -179,7 +180,7 @@ function ProductPage() {
                 <img src={seller.profilePicture} alt={seller?.fullName} className={styles['pp__seller-avatar']} loading="lazy" />
               ) : (
                 <div className={`${styles['pp__seller-avatar']} ${styles['pp__seller-avatar--placeholder']}`}>
-                  <i className="fa-solid fa-user" />
+                  <Icon name="user" />
                 </div>
               )}
             </div>
@@ -193,7 +194,7 @@ function ProductPage() {
               </div>
             )}
             <button className={styles['pp__seller-msg-btn']} onClick={sendMessage}>
-              <i className="fa-regular fa-message" /> Send Melding
+              <Icon name="message-outline" /> Send Melding
             </button>
           </div>
         </Col>
@@ -204,7 +205,7 @@ function ProductPage() {
           <Modal.Title>Del annonsen</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form.Control type="text" className="mb-3" value={`${siteLink}/listing/${id}`} readOnly />
+          <Form.Control type="text" className="mb-3" value={`${siteLink}/l/${id}`} readOnly />
           <Button variant="primary" onClick={copyListingLink}>Kopier Lenken</Button>
         </Modal.Body>
       </Modal>

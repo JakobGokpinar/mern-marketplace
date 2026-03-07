@@ -1,4 +1,5 @@
 import { useRef, DragEvent } from 'react';
+import Icon from '../../components/icons/Icon';
 import styles from './ImageManager.module.css';
 import type { ListingImage } from './types';
 
@@ -46,7 +47,7 @@ const ImageManager = ({ imageArray, onDelete, onDescriptionChange, onReorder }: 
         >
           {/* drag handle */}
           <span className={styles['handle']} title="Dra for å sortere">
-            <i className="fa-solid fa-grip-vertical" />
+            <Icon name="grip-vertical" />
           </span>
 
           {/* thumbnail + cover badge */}
@@ -79,7 +80,7 @@ const ImageManager = ({ imageArray, onDelete, onDescriptionChange, onReorder }: 
             title="Slett bilde"
             aria-label="Slett bilde"
           >
-            <i className="fa-solid fa-trash-can" />
+            <Icon name="trash-can" />
           </button>
         </li>
       ))}

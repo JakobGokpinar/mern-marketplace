@@ -20,8 +20,8 @@ interface CreateListingResponse {
 
 export const uploadListingImagesApi = async (formData: FormData, listingId?: string): Promise<string[]> => {
   const url = listingId
-    ? `/listing/imageupload?listingId=${listingId}`
-    : '/listing/imageupload';
+    ? `/listings/images?listingId=${listingId}`
+    : '/listings/images';
   const res = await instanceAxs.post<string[]>(url, formData);
   return res.data;
 };
@@ -31,7 +31,7 @@ export const createListingApi = async (
   imageLocations: string[],
   listingId: string
 ): Promise<CreateListingResponse> => {
-  const res = await instanceAxs.post<CreateListingResponse>('/listing/create', {
+  const res = await instanceAxs.post<CreateListingResponse>('/listings', {
     listingProperties,
     imageLocations,
     listingId,
@@ -44,14 +44,13 @@ export const updateListingApi = async (
   listingProperties: ListingProperties,
   listingId: string
 ): Promise<CreateListingResponse> => {
-  const res = await instanceAxs.post<CreateListingResponse>('/listing/update', {
+  const res = await instanceAxs.put<CreateListingResponse>('/listings/' + listingId, {
     images,
     listingProperties,
-    listingId,
   });
   return res.data;
 };
 
 export const removeListingImagesApi = async (listingId: string): Promise<void> => {
-  await instanceAxs.post('/listing/remove/images', { listingId });
+  await instanceAxs.delete('/listings/' + listingId + '/images');
 };

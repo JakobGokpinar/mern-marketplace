@@ -1,6 +1,7 @@
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
+import Icon from '../../components/icons/Icon';
 import styles from './ListingForm.module.css';
 import ImageManager from './ImageManager';
 import SpecialPropsEditor from './SpecialPropsEditor';
@@ -112,7 +113,7 @@ const ListingForm = ({
 
       <Form.Group className={styles['form-group']}>
         <label className={styles['upload-label']}>
-          <i className="fa-solid fa-cloud-arrow-up" />
+          <Icon name="cloud-arrow-up" />
           <span>Velg bilder</span>
           <Form.Control
             type="file"
@@ -179,7 +180,7 @@ const ListingForm = ({
             onClick={() => onStatusChange('nytt')}
             disabled={isPublishing}
           >
-            <i className="fa-solid fa-tag" />
+            <Icon name="tag" />
             Nytt
           </button>
           <button
@@ -188,7 +189,7 @@ const ListingForm = ({
             onClick={() => onStatusChange('brukt')}
             disabled={isPublishing}
           >
-            <i className="fa-solid fa-recycle" />
+            <Icon name="recycle" />
             Brukt
           </button>
         </div>
@@ -264,7 +265,7 @@ const ListingForm = ({
           <Form.Control.Feedback type="invalid">{errors.postnumber}</Form.Control.Feedback>
           {postAddress && (
             <span className={styles['postnumber-place']}>
-              <i className="fa-solid fa-location-dot" />
+              <Icon name="location-dot" />
               {postAddress}
             </span>
           )}

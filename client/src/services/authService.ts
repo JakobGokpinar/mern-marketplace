@@ -7,25 +7,25 @@ interface AuthResponse {
 }
 
 export const loginApi = async (credentials: { email: string; password: string }): Promise<AuthResponse> => {
-  const res = await instanceAxs.post<AuthResponse>('/login', credentials);
+  const res = await instanceAxs.post<AuthResponse>('/auth/login', credentials);
   return res.data;
 };
 
 export const signupApi = async (userData: { fullName: string; email: string; password: string }): Promise<AuthResponse> => {
-  const res = await instanceAxs.post<AuthResponse>('/signup', userData);
+  const res = await instanceAxs.post<AuthResponse>('/auth/signup', userData);
   return res.data;
 };
 
 export const logoutApi = async (): Promise<void> => {
-  await instanceAxs.delete('/logout');
+  await instanceAxs.delete('/auth/logout');
 };
 
 export const fetchUserApi = async (): Promise<User> => {
-  const res = await instanceAxs.get<{ user: User }>('/fetchuser');
+  const res = await instanceAxs.get<{ user: User }>('/user/me');
   return res.data.user;
 };
 
 export const fetchUserByIdApi = async (userId: string): Promise<User> => {
-  const res = await instanceAxs.get<{ user: User }>('/fetchuser', { params: { userId } });
+  const res = await instanceAxs.get<{ user: User }>('/users/' + userId);
   return res.data.user;
 };

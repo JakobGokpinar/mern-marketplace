@@ -1,3 +1,4 @@
+import Icon from '../icons/Icon';
 import styles from './Footer.module.css';
 
 const Footer = () => (
@@ -6,7 +7,7 @@ const Footer = () => (
       <div className={styles['footer-brand']}>
         <div className={styles['footer-brand-mark']}>
           <div className={styles['footer-brand-icon']}>
-            <i className="fa-solid fa-tag" />
+            <Icon name="tag" />
           </div>
           <span className={styles['footer-brand-name']}>Rego</span>
         </div>

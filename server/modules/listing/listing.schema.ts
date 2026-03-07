@@ -2,10 +2,6 @@ import { z } from 'zod';
 
 const objectId = z.string().regex(/^[a-f\d]{24}$/i, 'Invalid ID');
 
-export const findProductQuery = z.object({
-  id: objectId,
-});
-
 export const uploadImagesQuery = z.object({
   listingId: objectId.optional(),
 });
@@ -29,16 +25,7 @@ export const saveListing = z.object({
   listingId: objectId,
 });
 
-export const removeListing = z.object({
-  listingId: objectId,
-});
-
-export const removeImages = z.object({
-  listingId: objectId,
-});
-
 export const updateListing = z.object({
-  listingId: objectId,
   images: z.array(z.any()),
   listingProperties: z.object({
     title: z.string().min(1).max(200),

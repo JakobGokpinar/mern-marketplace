@@ -1,5 +1,6 @@
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import Carousel from 'react-bootstrap/Carousel';
+import Icon from '../../components/icons/Icon';
 import styles from './ListingPreview.module.css';
 import type { ListingImage, SpecProp, ListingPropertyObject, CategoryItem } from './types';
 
@@ -37,13 +38,13 @@ const ListingPreview = ({
       {/* ── Empty state ────────────────────────────── */}
       {isEmpty && (
         <div className={styles['preview-header']}>
-          <i className="fa-regular fa-eye" />
+          <Icon name="eye-outline" />
           <span>Forhåndsvisning</span>
         </div>
       )}
       {isEmpty && (
         <div className={styles['empty-state']}>
-          <i className={`fa-regular fa-rectangle-list ${styles['empty-icon']}`} />
+          <Icon name="rectangle-list-outline" className={styles['empty-icon']} />
           <p className={styles['empty-title']}>Ingen innhold ennå</p>
           <p className={styles['empty-sub']}>
             Det du fyller inn til venstre vises her i sanntid
@@ -130,7 +131,7 @@ const ListingPreview = ({
                 <span className={styles['spec-label']}>{item.title}</span>
                 <span className={styles['spec-value']}>{item.value}</span>
                 <span className={styles['spec-remove']}>
-                  <i className="fa-solid fa-xmark" />
+                  <Icon name="xmark" />
                 </span>
               </div>
             ))}
@@ -143,7 +144,7 @@ const ListingPreview = ({
         <div className={styles['section']}>
           <p className={styles['section-label']}>Lokasjon</p>
           <div className={styles['address']}>
-            <i className="fa-solid fa-location-dot" />
+            <Icon name="location-dot" />
             <div>
               {postNumber && <p>{postNumber}</p>}
               {postAddress && <p>{postAddress}</p>}

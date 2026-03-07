@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "./FilterBadge.module.css";
+import Icon from '../../components/icons/Icon';
 
 interface FilterParam {
   key: string;
@@ -40,7 +41,7 @@ const FilterBadge = ({ searchParams, removeSelectedFilter, counties }: FilterBad
         <span key={index} className={styles['filter-badge']}>
           {item.key}: {item.value}
           <button className={styles['filter-badge__close']} onClick={(e) => handleOnClick(e, item)}>
-            <i className="fa-solid fa-xmark" />
+            <Icon name="xmark" />
           </button>
         </span>
       ))}

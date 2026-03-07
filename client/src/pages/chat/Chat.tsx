@@ -8,6 +8,7 @@ import Conversations from './parts/Conversations';
 import Messages from './parts/Messages';
 import type { Message } from '../../types/chat';
 import type { ChatRoom } from '../../types/chat';
+import Icon from '../../components/icons/Icon';
 
 const groupMessagesBySender = (messages: Message[]): Message[][] =>
   messages.reduce<Message[][]>((groups, msg) => {
@@ -119,7 +120,7 @@ const Chat = () => {
                 onClick={() => setMobilePanelOpen(false)}
                 aria-label="Tilbake"
               >
-                <i className="fa-solid fa-arrow-left" />
+                <Icon name="arrow-left" />
               </button>
               {friend?.profilePicture ? (
                 <img src={friend.profilePicture} alt={friend.fullName} className={styles['header-avatar']} />
@@ -136,7 +137,7 @@ const Chat = () => {
               </div>
               {currentProduct && (
                 <Link
-                  to={`/listing/${currentProduct._id}`}
+                  to={`/l/${currentProduct._id}`}
                   target="_blank"
                   className={styles['header-product']}
                 >
@@ -200,7 +201,7 @@ const Chat = () => {
                 disabled={!messageInput.trim() || isSending}
                 aria-label="Send melding"
               >
-                <i className="fa-solid fa-paper-plane" style={{ fontSize: 14 }} />
+                <Icon name="paper-plane" size={14} />
               </button>
             </div>
           </>

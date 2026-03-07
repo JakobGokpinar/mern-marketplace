@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import ListingCard from '../../components/listing-card/ListingCard';
+import Icon from '../../components/icons/Icon';
 import styles from "./Home.module.css";
 import { queryKeys } from '../../lib/queryKeys';
 import { fetchProductsApi } from '../../services/productService';
@@ -62,7 +63,7 @@ const Menu = () => {
         </>
       ) : (
         <div className={styles['homepage-empty']}>
-          <i className="fa-solid fa-box-open" />
+          <Icon name="box-open" />
           <p>Ingen annonser ennå</p>
         </div>
       )}

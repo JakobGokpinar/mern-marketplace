@@ -1,11 +1,15 @@
 import type { Request, Response } from 'express';
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 import UserModel from '../../models/User';
 import ListingModel from '../../models/Listing';
 import ConversationModel from '../../models/Conversation';
 import MessageModel from '../../models/Message';
-import { getEnvFolder, deleteObjectsByPrefix, deleteObject, getObject, streamToBuffer } from '../../services/s3';
+import { getEnvFolder, deleteObjectsByPrefix, deleteObject, getObject, streamToBuffer, extractKeyFromUrl } from '../../services/s3';
 import { createProfileUpload } from '../../middleware/upload';
+import { sendVerificationEmail } from '../../config/sendEmail';
+import TokenModel from '../../models/Token';
+import { randomUUID } from 'crypto';
 import logger from '../../config/logger';
 
 const ObjectId = mongoose.Types.ObjectId;
@@ -23,7 +27,7 @@ export const fetchUser = async (req: Request, res: Response) => {
 
 export const findUser = async (req: Request, res: Response) => {
   try {
-    const response = await UserModel.findOne({ _id: new ObjectId(req.query.userId as string) });
+    const response = await UserModel.findOne({ _id: new ObjectId(req.params.id as string) });
     return res.status(200).json({ user: response });
   } catch (error) {
     logger.error(error);
@@ -33,7 +37,7 @@ export const findUser = async (req: Request, res: Response) => {
 
 export const findSeller = async (req: Request, res: Response) => {
   try {
-    const response = await UserModel.findOne({ _id: new ObjectId(req.query.sellerId as string) })
+    const response = await UserModel.findOne({ _id: new ObjectId(req.params.id as string) })
       .select('fullName profilePicture');
     return res.status(200).json({ seller: response });
   } catch (error) {
@@ -67,13 +71,15 @@ export const uploadImageToAws = (req: Request, res: Response) => {
 };
 
 export const removeProfileImage = async (req: Request, res: Response) => {
-  const user = req.user as any;
-  const userId = user._id;
-  const imageKey = getEnvFolder() + '/' + user.email + '/profilePicture.jpeg';
-
-  try { await deleteObject(imageKey); } catch (err) { logger.error(err); }
+  const userId = (req.user as any)._id;
 
   try {
+    const existing = await UserModel.findById(userId).select('profilePicture');
+    if (existing?.profilePicture) {
+      const key = extractKeyFromUrl(existing.profilePicture);
+      if (key) await deleteObject(key).catch(err => logger.error(err));
+    }
+
     const result = await UserModel.findByIdAndUpdate({ _id: new ObjectId(userId) }, {
       $unset: { profilePicture: '' }
     }, { new: true });
@@ -99,26 +105,71 @@ export const updateUserInfoHandler = async (req: Request, res: Response) => {
   }
 };
 
-export const getProfileImage = async (req: Request, res: Response) => {
-  const user = req.user as any;
-  const imageKey = getEnvFolder() + '/' + user.email + '/profilePicture.jpeg';
+export const changePassword = async (req: Request, res: Response) => {
+  const userId = (req.user as any)._id;
+  const { currentPassword, newPassword } = req.body;
 
   try {
-    const data = await getObject(imageKey);
+    const user = await UserModel.findById(userId).select('+password');
+    if (!user) return res.status(404).json({ success: false, message: 'Bruker ikke funnet' });
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) return res.status(400).json({ success: false, message: 'Nåværende passord er feil' });
+
+    user.password = newPassword;
+    await user.save();
+
+    return res.json({ success: true, message: 'Passordet er oppdatert' });
+  } catch (error) {
+    logger.error(error);
+    return res.status(500).json({ success: false, message: 'Kunne ikke endre passord' });
+  }
+};
+
+export const changeEmail = async (req: Request, res: Response) => {
+  const userId = (req.user as any)._id;
+  const { newEmail } = req.body;
+
+  try {
+    const existing = await UserModel.findOne({ email: newEmail });
+    if (existing) return res.status(400).json({ success: false, message: 'E-postadressen er allerede i bruk' });
+
+    const user = await UserModel.findByIdAndUpdate(
+      userId,
+      { $set: { email: newEmail, isEmailVerified: false } },
+      { new: true }
+    );
+    if (!user) return res.status(404).json({ success: false, message: 'Bruker ikke funnet' });
+
+    const token = randomUUID();
+    await TokenModel.create({ userId, token });
+    const verifyUrl = `${process.env.CLIENT_URL}/emailVerify?t=${token}`;
+    sendVerificationEmail(newEmail, user.fullName, verifyUrl).catch(err => logger.error(err));
+
+    return res.json({ success: true, user, message: 'E-post oppdatert. Sjekk innboksen for bekreftelse.' });
+  } catch (error) {
+    logger.error(error);
+    return res.status(500).json({ success: false, message: 'Kunne ikke endre e-post' });
+  }
+};
+
+export const getProfileImage = async (req: Request, res: Response) => {
+  const userId = (req.user as any)._id;
+
+  try {
+    const dbUser = await UserModel.findById(userId).select('profilePicture');
+    if (!dbUser?.profilePicture) return res.status(404).json({ message: 'No profile image found' });
+
+    const key = extractKeyFromUrl(dbUser.profilePicture);
+    if (!key) return res.status(404).json({ message: 'No profile image found' });
+
+    const data = await getObject(key);
     const buffer = await streamToBuffer(data.Body);
     res.writeHead(200, { 'Content-Type': 'image/jpeg' });
     res.write(buffer, 'binary');
     res.end(null, 'binary');
   } catch (err) {
-    try {
-      const fallbackData = await getObject(getEnvFolder() + '/' + user.email + '/defaultProfileImage.png');
-      const buffer = await streamToBuffer(fallbackData.Body);
-      res.writeHead(200, { 'Content-Type': 'image/png' });
-      res.write(buffer, 'binary');
-      res.end(null, 'binary');
-    } catch (fallbackErr) {
-      return res.status(404).json({ message: 'No profile image found' });
-    }
+    return res.status(404).json({ message: 'No profile image found' });
   }
 };
 
@@ -150,7 +201,11 @@ export const deleteAccount = async (req: Request, res: Response) => {
       await UserModel.updateMany({}, { $pull: { favorites: { $in: listingIds } } });
     }
 
-    try { await deleteObject(getEnvFolder() + '/' + email + '/profilePicture.jpeg'); } catch (err) { /* continue */ }
+    const dbUser = await UserModel.findById(userId).select('profilePicture');
+    if (dbUser?.profilePicture) {
+      const key = extractKeyFromUrl(dbUser.profilePicture);
+      if (key) await deleteObject(key).catch(() => {});
+    }
 
     await UserModel.deleteOne({ _id: new ObjectId(userId) });
 
@@ -195,8 +250,7 @@ export const addToFavorites = async (req: Request, res: Response) => {
 
 export const removeFromFavorites = async (req: Request, res: Response) => {
   const userId = (req.user as any).id;
-  const listingId = req.body.id;
-  if (!listingId) return res.json({ message: 'Please select a valid listing' });
+  const listingId = req.params.id as string;
 
   try {
     const result = await UserModel.findByIdAndUpdate(

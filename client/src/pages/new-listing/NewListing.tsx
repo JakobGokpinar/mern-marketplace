@@ -74,21 +74,20 @@ const NewListing = () => {
 
       if (isModifyListing) {
         const listingId = listing._id;
-        await instanceAxs.post('/listing/remove/images', { listingId });
-        const result = await instanceAxs.post(`/listing/imageupload?listingId=${listingId}`, formData);
+        await instanceAxs.delete(`/listings/${listingId}/images`);
+        const result = await instanceAxs.post(`/listings/images?listingId=${listingId}`, formData);
         const returnedFiles = result.data.files as Array<{ originalname: string; location: string }>;
         const updatedImages = imageArray.map(img => ({
           ...img,
           location: returnedFiles.find(f => f.originalname === img.name)?.location,
         }));
-        await instanceAxs.post('/listing/update', {
+        await instanceAxs.put(`/listings/${listingId}`, {
           images: updatedImages,
           listingProperties,
-          listingId,
         });
         return 'updated' as const;
       } else {
-        const result = await instanceAxs.post('/listing/imageupload', formData);
+        const result = await instanceAxs.post('/listings/images', formData);
         if (result.data.message !== 'images uploaded') {
           toast(result.data.message);
           throw new Error(result.data.message);
@@ -98,7 +97,7 @@ const NewListing = () => {
           const match = returnedFiles.find(f => f.originalname === img.name);
           return match ? [{ ...img, location: match.location }] : [];
         });
-        await instanceAxs.post('/listing/create', {
+        await instanceAxs.post('/listings', {
           listingProperties,
           imageLocations: finalImages,
           listingId: result.data.listingId,

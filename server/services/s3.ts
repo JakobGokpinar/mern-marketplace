@@ -37,4 +37,13 @@ const streamToBuffer = async (stream: any): Promise<Buffer> => {
   return Buffer.concat(chunks);
 };
 
-export { s3, BUCKET_NAME, getEnvFolder, deleteObjectsByPrefix, deleteObject, getObject, streamToBuffer };
+const extractKeyFromUrl = (url: string): string | null => {
+  try {
+    const parsed = new URL(url);
+    return decodeURIComponent(parsed.pathname.slice(1)); // remove leading "/"
+  } catch {
+    return null;
+  }
+};
+
+export { s3, BUCKET_NAME, getEnvFolder, deleteObjectsByPrefix, deleteObject, getObject, streamToBuffer, extractKeyFromUrl };

@@ -4,6 +4,7 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
+import Icon from '../../components/icons/Icon';
 import styles from './SpecialPropsEditor.module.css';
 
 interface SpecialPropsEditorProps {
@@ -33,13 +34,13 @@ const SpecialPropsEditor = ({ isPublishing, onAdd }: SpecialPropsEditorProps) =>
         onClick={() => setShowBackdrop(true)}
         disabled={isPublishing}
       >
-        <i className="fa-solid fa-plus mx-2" /> Legg til ny nokkelinfo
+        <Icon name="plus" style={{ margin: '0 8px' }} /> Legg til ny nokkelinfo
       </Button>
       <OverlayTrigger
         placement="right"
         overlay={<Tooltip>Legg til raske fakta om produktet ditt.</Tooltip>}
       >
-        <i className="fa-solid fa-circle-question mx-3" />
+        <Icon name="circle-question" style={{ margin: '0 16px' }} />
       </OverlayTrigger>
 
       {showBackdrop && (
@@ -63,7 +64,7 @@ const SpecialPropsEditor = ({ isPublishing, onAdd }: SpecialPropsEditorProps) =>
             </FloatingLabel>
             <div className="d-flex gap-3 mt-4">
               <Button variant="outline-primary" type="button" className="w-75" onClick={handleAdd}>
-                <i className="fa-solid fa-plus mx-2" /> Legg til nokkelinfo
+                <Icon name="plus" style={{ margin: '0 8px' }} /> Legg til nokkelinfo
               </Button>
               <Button variant="outline-dark" type="button" className="w-25" onClick={() => setShowBackdrop(false)}>
                 Lukk

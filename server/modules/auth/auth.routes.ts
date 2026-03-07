@@ -6,11 +6,11 @@ import { verifyEmail } from './auth.schema';
 
 const router = express.Router();
 
-router.post('/login', authController.signin);
-router.post('/signup', authController.signup);
-router.delete('/logout', authController.logout);
+router.post('/auth/login', authController.signin);
+router.post('/auth/signup', authController.signup);
+router.delete('/auth/logout', authController.logout);
 
-router.post('/email/verify', ensureAuth, validate(verifyEmail), authController.verifyEmailHandler);
-router.post('/email/newverificationemail', ensureAuth, authController.resendVerificationEmail);
+router.post('/auth/email/verify', ensureAuth, validate(verifyEmail), authController.verifyEmailHandler);
+router.post('/auth/email/resend', ensureAuth, authController.resendVerificationEmail);
 
 export default router;

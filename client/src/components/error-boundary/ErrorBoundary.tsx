@@ -1,4 +1,5 @@
 import React from 'react';
+import Icon from '../icons/Icon';
 import styles from './ErrorBoundary.module.css';
 
 interface Props {
@@ -25,7 +26,7 @@ class ErrorBoundary extends React.Component<Props, State> {
         <div className={styles['error-container']}>
           <div className={styles['error-card']}>
             <div className={styles['error-icon']}>
-              <i className="fa-solid fa-triangle-exclamation" />
+              <Icon name="triangle-exclamation" />
             </div>
             <h2 className={styles['error-title']}>Noe gikk galt</h2>
             <p className={styles['error-message']}>Last siden på nytt for å prøve igjen.</p>

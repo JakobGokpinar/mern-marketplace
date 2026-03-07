@@ -10,11 +10,14 @@ import Form from 'react-bootstrap/Form';
 import Spinner from 'react-bootstrap/Spinner';
 import Modal from 'react-bootstrap/Modal';
 
+import Icon from '../../components/icons/Icon';
 import { compressProfileImage } from '../../utils/compressImage';
 import {
   uploadProfilePictureApi,
   updateUserInfoApi,
   removeProfilePictureApi,
+  changePasswordApi,
+  changeEmailApi,
   deleteAccountApi,
 } from '../../services/profileService';
 import { resendVerificationEmailApi } from '../../services/emailService';
@@ -33,6 +36,11 @@ const Account = () => {
   const [previewSrc, setPreviewSrc] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [editingPassword, setEditingPassword] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [editingEmail, setEditingEmail] = useState(false);
+  const [newEmail, setNewEmail] = useState('');
   const { errors: formErrors, validate } = useFormValidation(profileSchema);
 
   useEffect(() => {
@@ -95,6 +103,34 @@ const Account = () => {
     onError: () => toast.error('Kunne ikke slette kontoen'),
   });
 
+  const changePasswordMutation = useMutation({
+    mutationFn: () => changePasswordApi(currentPassword, newPassword),
+    onSuccess: (data) => {
+      toast.success(data.message);
+      setEditingPassword(false);
+      setCurrentPassword('');
+      setNewPassword('');
+    },
+    onError: (error: any) => {
+      const msg = error?.response?.data?.message || 'Kunne ikke endre passord';
+      toast.error(msg);
+    },
+  });
+
+  const changeEmailMutation = useMutation({
+    mutationFn: () => changeEmailApi(newEmail),
+    onSuccess: (data) => {
+      if (data.user) dispatch(userActions.setUser(data.user));
+      toast.success(data.message);
+      setEditingEmail(false);
+      setNewEmail('');
+    },
+    onError: (error: any) => {
+      const msg = error?.response?.data?.message || 'Kunne ikke endre e-post';
+      toast.error(msg);
+    },
+  });
+
   const sendVerificationEmail = () => {
     resendVerificationEmailApi(user.email, user.fullName, user._id)
       .then(res => toast.success(res.message))
@@ -109,7 +145,7 @@ const Account = () => {
 
       {!user.isEmailVerified && (
         <Alert variant="warning" className={styles['verification-alert']}>
-          <i className="fa-solid fa-circle-exclamation me-2" />
+          <Icon name="circle-exclamation" style={{ marginRight: 8 }} />
           E-posten din er ikke bekreftet.{' '}
           <Alert.Link onClick={sendVerificationEmail}>Send ny bekreftelsesmail</Alert.Link>
         </Alert>
@@ -125,7 +161,7 @@ const Account = () => {
             <img src={avatarSrc} alt="" className={styles['avatar-preview']} />
           ) : (
             <div className={styles['avatar-placeholder']}>
-              <i className="fa-solid fa-user" />
+              <Icon name="user" />
             </div>
           )}
           <div className={styles['avatar-actions']}>
@@ -205,7 +241,38 @@ const Account = () => {
         {/* Email */}
         <div className={styles['row']}>
           <span className={styles['row-label']}>E-post</span>
-          <span className={styles['row-value']}>{user.email}</span>
+          {editingEmail ? (
+            <>
+              <div className={styles['edit-form']}>
+                <Form.Control
+                  type="email"
+                  value={newEmail}
+                  onChange={e => setNewEmail(e.target.value)}
+                  placeholder="Ny e-postadresse"
+                  autoFocus
+                />
+              </div>
+              <div className={styles['edit-actions']}>
+                <Button variant="outline-secondary" onClick={() => { setEditingEmail(false); setNewEmail(''); }}>
+                  Avbryt
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={() => changeEmailMutation.mutate()}
+                  disabled={changeEmailMutation.isPending || !newEmail || newEmail === user.email}
+                >
+                  {changeEmailMutation.isPending ? <Spinner size="sm" /> : 'Lagre'}
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <span className={styles['row-value']}>{user.email}</span>
+              <div className={styles['row-action']}>
+                <Button variant="outline-primary" onClick={() => { setEditingEmail(true); setNewEmail(user.email); }}>Endre</Button>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -214,10 +281,47 @@ const Account = () => {
         <h2 className={styles['section-title']}>Sikkerhet</h2>
         <div className={styles['row']}>
           <span className={styles['row-label']}>Passord</span>
-          <span className={styles['row-value']}>********</span>
-          <div className={styles['row-action']}>
-            <Button variant="outline-primary" disabled>Endre</Button>
-          </div>
+          {editingPassword ? (
+            <>
+              <div className={styles['password-form']}>
+                <Form.Control
+                  type="password"
+                  placeholder="Nåværende passord"
+                  value={currentPassword}
+                  onChange={e => setCurrentPassword(e.target.value)}
+                  autoFocus
+                />
+                <Form.Control
+                  type="password"
+                  placeholder="Nytt passord (minst 6 tegn)"
+                  value={newPassword}
+                  onChange={e => setNewPassword(e.target.value)}
+                />
+                <div className={styles['password-actions']}>
+                  <Button
+                    variant="outline-secondary"
+                    onClick={() => { setEditingPassword(false); setCurrentPassword(''); setNewPassword(''); }}
+                  >
+                    Avbryt
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={() => changePasswordMutation.mutate()}
+                    disabled={changePasswordMutation.isPending || !currentPassword || newPassword.length < 6}
+                  >
+                    {changePasswordMutation.isPending ? <Spinner size="sm" /> : 'Lagre'}
+                  </Button>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <span className={styles['row-value']}>********</span>
+              <div className={styles['row-action']}>
+                <Button variant="outline-primary" onClick={() => setEditingPassword(true)}>Endre</Button>
+              </div>
+            </>
+          )}
         </div>
       </div>
 

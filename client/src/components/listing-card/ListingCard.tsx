@@ -8,6 +8,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
+import Icon from '../icons/Icon';
 import { useFavorites } from "../../hooks/useFavorites";
 import toast from 'react-hot-toast';
 import { useAppSelector } from "../../store/hooks";
@@ -64,7 +65,7 @@ function ListingCard({
 
   const handleCopyLink = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    navigator.clipboard.writeText(`${siteLink}/listing/${id}`);
+    navigator.clipboard.writeText(`${siteLink}/l/${id}`);
     toast.success('Lenken ble kopiert');
     setShowModal(false);
   };
@@ -75,7 +76,7 @@ function ListingCard({
         <Carousel indicators={false} controls={images.length > 1} interval={null}>
           {images.map((img, index) => (
             <Carousel.Item key={index}>
-              <Link to={`/listing/${id}`}>
+              <Link to={`/l/${id}`}>
                 <img src={img.location} alt={title} loading="lazy" />
               </Link>
             </Carousel.Item>
@@ -91,14 +92,14 @@ function ListingCard({
             {isLoading ? (
               <Spinner size="sm" animation="border" className={styles['product-card__favorite-spinner']} />
             ) : (
-              <i className={`fa-${isFavorite ? "solid" : "regular"} fa-heart`} />
+              <Icon name={isFavorite ? "heart" : "heart-outline"} />
             )}
           </button>
         )}
 
         {images.length > 1 && (
           <span className={styles['product-card__img-count']}>
-            <i className="fa-regular fa-image" style={{ marginRight: 4 }} />
+            <Icon name="image-outline" style={{ marginRight: 4 }} />
             {images.length}
           </span>
         )}
@@ -109,7 +110,7 @@ function ListingCard({
         <div className={styles['product-card__title']}>{title}</div>
         {location && (
           <div className={styles['product-card__location']}>
-            <i className="fa-solid fa-location-dot" />
+            <Icon name="location-dot" />
             {location}
           </div>
         )}
@@ -117,11 +118,11 @@ function ListingCard({
 
       <div className={styles['product-card__actions']}>
         <button className={`${styles['product-card__action-btn']} ${styles['product-card__action-btn--primary']}`} onClick={handleSendMessage}>
-          <i className="fa-regular fa-message" style={{ marginRight: 4 }} />
+          <Icon name="message-outline" style={{ marginRight: 4 }} />
           Melding
         </button>
         <button className={styles['product-card__action-btn']} onClick={() => setShowModal(true)}>
-          <i className="fa-solid fa-arrow-up-from-bracket" style={{ marginRight: 4 }} />
+          <Icon name="arrow-up-from-bracket" style={{ marginRight: 4 }} />
           Del
         </button>
       </div>
@@ -134,7 +135,7 @@ function ListingCard({
           <Form.Control
             type="text"
             className="mb-3"
-            value={`${siteLink}/listing/${id}`}
+            value={`${siteLink}/l/${id}`}
             readOnly
           />
           <Button variant="primary" onClick={handleCopyLink}>

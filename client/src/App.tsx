@@ -71,7 +71,7 @@ const AppContent = () => {
               <Route path='/register' element={<Register />} />
               <Route path='/' element={<Home />} />
               <Route path='/search' element={<SearchResult />} />
-              <Route path='/listing/:id' element={<ListingPage />} />
+              <Route path='/l/:id' element={<ListingPage />} />
               <Route path='/emailverify' element={<EmailVerify />} />
 
               <Route path='/new-listing' element={<ProtectedRoute><NewListing /></ProtectedRoute>} />

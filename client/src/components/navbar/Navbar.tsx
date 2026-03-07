@@ -9,17 +9,18 @@ import Navbar from 'react-bootstrap/Navbar';
 import Dropdown from 'react-bootstrap/Dropdown';
 
 import Searchbar from "./Searchbar";
+import Icon from "../icons/Icon";
 import { logoutRequest } from "../../store/authThunks";
 
 const CATEGORIES = [
-  { label: 'Elektronikk',     icon: 'fa-laptop',   slug: 'Elektronikk' },
-  { label: 'Møbler',          icon: 'fa-couch',    slug: 'Møbler og interiør' },
-  { label: 'Klær og mote',    icon: 'fa-shirt',    slug: 'Klær og mote' },
-  { label: 'Sport',           icon: 'fa-bicycle',  slug: 'Sport og friluftsliv' },
-  { label: 'Bil og kjøretøy', icon: 'fa-car',      slug: 'Bil og kjøretøy' },
-  { label: 'Hage',            icon: 'fa-seedling', slug: 'Hage og utemiljø' },
-  { label: 'Barneartikler',   icon: 'fa-baby',     slug: 'Barneartikler' },
-  { label: 'Hobby og fritid', icon: 'fa-palette',  slug: 'Hobby og fritid' },
+  { label: 'Elektronikk',     icon: 'laptop',   slug: 'Elektronikk' },
+  { label: 'Møbler',          icon: 'couch',    slug: 'Møbler og interiør' },
+  { label: 'Klær og mote',    icon: 'shirt',    slug: 'Klær og mote' },
+  { label: 'Sport',           icon: 'bicycle',  slug: 'Sport og friluftsliv' },
+  { label: 'Bil og kjøretøy', icon: 'car',      slug: 'Bil og kjøretøy' },
+  { label: 'Hage',            icon: 'seedling', slug: 'Hage og utemiljø' },
+  { label: 'Barneartikler',   icon: 'baby',     slug: 'Barneartikler' },
+  { label: 'Hobby og fritid', icon: 'palette',  slug: 'Hobby og fritid' },
 ];
 
 const Navigation = () => {
@@ -57,7 +58,7 @@ const Navigation = () => {
         <Navbar.Brand href="/">
           <div className={styles['navbar-brand-mark']}>
             <div className={styles['navbar-brand-icon']}>
-              <i className="fa-solid fa-tag" />
+              <Icon name="tag" />
             </div>
             <span>Rego</span>
           </div>
@@ -68,12 +69,12 @@ const Navigation = () => {
           <Nav className={styles['navbar-left']}>
             <Dropdown className={styles['navbar-categories']}>
               <Dropdown.Toggle as="button" className={styles['navbar-categories-toggle']}>
-                Kategorier <i className="fa-solid fa-chevron-down" />
+                Kategorier <Icon name="chevron-down" />
               </Dropdown.Toggle>
               <Dropdown.Menu className={styles['navbar-categories-menu']} popperConfig={{ strategy: 'fixed' }}>
                 {CATEGORIES.map(cat => (
                   <Dropdown.Item key={cat.slug} href={`/search?category=${encodeURIComponent(cat.slug)}`} className={styles['navbar-categories-item']}>
-                    <i className={`fa-solid ${cat.icon}`} />
+                    <Icon name={cat.icon} />
                     {cat.label}
                   </Dropdown.Item>
                 ))}
@@ -88,14 +89,14 @@ const Navigation = () => {
           {isLoggedIn ? (
             <Nav className={styles['navbar-actions']}>
               <Nav.Link href="/new-listing" className={styles['navbar-new-listing']}>
-                <i className="fa-solid fa-plus me-1" />
+                <Icon name="plus" style={{ marginRight: 4 }} />
                 <span>Ny Annonse</span>
               </Nav.Link>
               <Nav.Link href="/chat" className={styles['navbar-icon-link']}>
-                <i className="fa-regular fa-message" />
+                <Icon name="message-outline" />
               </Nav.Link>
               <Nav.Link href="/favorites" className={styles['navbar-icon-link']}>
-                <i className="fa-regular fa-heart" />
+                <Icon name="heart-outline" />
               </Nav.Link>
               <Dropdown align="end" className={styles['navbar-user-dropdown']}>
                 <Dropdown.Toggle variant="light" className={styles['navbar-user-toggle']}>
@@ -103,7 +104,7 @@ const Navigation = () => {
                     <img src={user.profilePicture} alt="" className={styles['navbar-avatar-img']} />
                   ) : (
                     <div className={styles['navbar-avatar-placeholder']}>
-                      <i className="fa-solid fa-user" />
+                      <Icon name="user" />
                     </div>
                   )}
                   <span className={styles['navbar-username']}>{user?.fullName || ''}</span>
@@ -115,14 +116,14 @@ const Navigation = () => {
                   </div>
                   <Dropdown.Divider />
                   <Dropdown.Item href="/account">
-                    <i className="fa-regular fa-user me-2" /> Min Konto
+                    <Icon name="user-outline" style={{ marginRight: 8 }} /> Min Konto
                   </Dropdown.Item>
                   <Dropdown.Item href="/my-listings">
-                    <i className="fa-solid fa-scroll me-2" /> Mine Annonser
+                    <Icon name="scroll" style={{ marginRight: 8 }} /> Mine Annonser
                   </Dropdown.Item>
                   <Dropdown.Divider />
                   <Dropdown.Item as="button" onClick={logout} className={styles['navbar-logout-item']}>
-                    <i className="fa-solid fa-arrow-right-from-bracket me-2" /> Logg Ut
+                    <Icon name="arrow-right-from-bracket" style={{ marginRight: 8 }} /> Logg Ut
                   </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>

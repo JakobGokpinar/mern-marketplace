@@ -6,11 +6,11 @@ import { createRoom, getRoomByCredentials, getMessages, newMessage, resetUnread 
 
 const router = express.Router();
 
-router.post('/chat/new/room', ensureAuth, validate(createRoom), chatController.createRoom);
-router.post('/chat/new/message', ensureAuth, validate(newMessage), chatController.newMessage);
-router.post('/chat/get/rooms', ensureAuth, chatController.getRooms);
-router.get('/chat/get/room', ensureAuth, validate(getRoomByCredentials, 'query'), chatController.getRoomByCredentials);
-router.get('/chat/get/messages', ensureAuth, validate(getMessages, 'query'), chatController.getMessages);
-router.post('/chat/resetunread', ensureAuth, validate(resetUnread), chatController.resetUnread);
+router.post('/chat/rooms', ensureAuth, validate(createRoom), chatController.createRoom);
+router.get('/chat/rooms', ensureAuth, chatController.getRooms);
+router.get('/chat/rooms/find', ensureAuth, validate(getRoomByCredentials, 'query'), chatController.getRoomByCredentials);
+router.get('/chat/messages', ensureAuth, validate(getMessages, 'query'), chatController.getMessages);
+router.post('/chat/messages', ensureAuth, validate(newMessage), chatController.newMessage);
+router.put('/chat/rooms/read', ensureAuth, validate(resetUnread), chatController.resetUnread);
 
 export default router;
