@@ -28,7 +28,7 @@ export default function Searchbar() {
   const [focusedIndex, setFocusedIndex] = useState<number>(-1);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const debouncedSearch = useDebounce(searchInput, 300);
+  const debouncedSearch = useDebounce(searchInput, 100);
 
   // Flat list of all navigable items in render order
   const allItems = useMemo<SuggestionItem[]>(() => {
