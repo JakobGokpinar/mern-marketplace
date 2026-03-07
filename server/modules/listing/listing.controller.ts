@@ -99,7 +99,7 @@ export const removeListing = async (req: Request, res: Response) => {
     }
     await ConversationModel.deleteMany({ productId: new ObjectId(listingId) });
 
-    return res.status(200).json({ message: 'Listing deleted from database' });
+    return res.status(200).json({ message: 'Annonsen er slettet' });
   } catch (error) {
     logger.error(error);
     return res.status(500).json({ message: 'Error occured while deleting listing' });
