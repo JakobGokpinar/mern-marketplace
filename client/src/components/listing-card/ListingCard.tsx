@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import styles from "./ProductCard.module.css";
+import styles from "./ListingCard.module.css";
 
 import Carousel from 'react-bootstrap/Carousel';
 import Spinner from "react-bootstrap/Spinner";
@@ -13,7 +13,7 @@ import toast from 'react-hot-toast';
 import { useAppSelector } from "../../store/hooks";
 import { formatPrice } from "../../utils/formatPrice";
 
-interface ProductCardProps {
+interface ListingCardProps {
   images?: Array<{ location: string }>;
   title?: string;
   location?: string;
@@ -24,7 +24,7 @@ interface ProductCardProps {
   sellerId?: string;
 }
 
-function ProductCard({
+function ListingCard({
   images = [],
   title = "Uten tittel",
   location = "",
@@ -32,7 +32,7 @@ function ProductCard({
   id = null,
   isFavorite = false,
   sellerId,
-}: ProductCardProps) {
+}: ListingCardProps) {
 
   const siteLink = import.meta.env.VITE_SITE_URL || window.location.origin;
   const user = useAppSelector(state => state.user.user);
@@ -146,4 +146,4 @@ function ProductCard({
   );
 }
 
-export default ProductCard;
+export default ListingCard;

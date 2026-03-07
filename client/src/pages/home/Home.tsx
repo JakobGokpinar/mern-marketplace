@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import ProductCard from '../../components/product-card/ProductCard';
+import ListingCard from '../../components/listing-card/ListingCard';
 import styles from "./Home.module.css";
 import { queryKeys } from '../../lib/queryKeys';
 import { fetchProductsApi } from '../../services/productService';
 import Spinner from 'react-bootstrap/Spinner';
 import Button from 'react-bootstrap/Button';
-import { ProductGridSkeleton } from '../../components/skeleton/ProductCardSkeleton';
+import { ListingGridSkeleton } from '../../components/skeleton/ListingCardSkeleton';
 import type { Product } from '../../types/product';
 
 const Menu = () => {
@@ -26,7 +26,7 @@ const Menu = () => {
   const hasMore = page < totalPages;
 
   if (isPending && page === 1) {
-    return <ProductGridSkeleton />;
+    return <ListingGridSkeleton />;
   }
 
   return (
@@ -35,7 +35,7 @@ const Menu = () => {
         <>
           <div className={styles['homepage-grid']}>
             {allProducts.map((product) => (
-              <ProductCard
+              <ListingCard
                 key={product._id}
                 images={product.images}
                 title={product.title}

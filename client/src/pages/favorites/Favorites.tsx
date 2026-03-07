@@ -1,5 +1,5 @@
 import styles from './Favorites.module.css';
-import ProductCard from '../../components/product-card/ProductCard';
+import ListingCard from '../../components/listing-card/ListingCard';
 import { useQuery } from '@tanstack/react-query';
 import Spinner from 'react-bootstrap/Spinner';
 import { getFavoritesApi } from '../../services/favoriteService';
@@ -22,7 +22,7 @@ const Favorites = () => {
         <div className={styles['favorites-content']}>
           {favoritesArray.length > 0 ? favoritesArray.map(product => (
             <div className={styles['favorites-product']} key={product._id || product.title}>
-              <ProductCard
+              <ListingCard
                 images={product.images}
                 title={product.title}
                 price={product.price}

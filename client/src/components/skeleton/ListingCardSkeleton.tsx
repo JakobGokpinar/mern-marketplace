@@ -1,6 +1,6 @@
 import styles from './Skeleton.module.css';
 
-const ProductCardSkeleton = () => (
+const ListingCardSkeleton = () => (
   <div className={styles['skeleton-card']}>
     <div className={`${styles['skeleton']} ${styles['skeleton-image']}`} />
     <div className={styles['skeleton-body']}>
@@ -11,12 +11,12 @@ const ProductCardSkeleton = () => (
   </div>
 );
 
-export const ProductGridSkeleton = ({ count = 8 }: { count?: number }) => (
+export const ListingGridSkeleton = ({ count = 8 }: { count?: number }) => (
   <div className={styles['skeleton-grid']}>
     {Array.from({ length: count }, (_, i) => (
-      <ProductCardSkeleton key={i} />
+      <ListingCardSkeleton key={i} />
     ))}
   </div>
 );
 
-export default ProductCardSkeleton;
+export default ListingCardSkeleton;

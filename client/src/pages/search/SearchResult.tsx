@@ -12,8 +12,8 @@ import Button from "react-bootstrap/Button";
 import FilterBadge from "./FilterBadge";
 import Spinner from "react-bootstrap/Spinner";
 
-import ProductCard from "../../components/product-card/ProductCard";
-import { ProductGridSkeleton } from "../../components/skeleton/ProductCardSkeleton";
+import ListingCard from "../../components/listing-card/ListingCard";
+import { ListingGridSkeleton } from "../../components/skeleton/ListingCardSkeleton";
 import { queryKeys } from "../../lib/queryKeys";
 import { searchProductsApi } from "../../services/productService";
 import { useNorwayGeo } from "../../hooks/useNorwayGeo";
@@ -159,10 +159,10 @@ const SearchResult = () => {
 
           <div className={styles['bottom-row']}>
             {isPending && page === 1 ? (
-              <ProductGridSkeleton count={6} />
+              <ListingGridSkeleton count={6} />
             ) : displayProducts.map((product) => (
               <div key={product._id}>
-                <ProductCard
+                <ListingCard
                   images={product.images}
                   title={product.title}
                   price={product.price}
