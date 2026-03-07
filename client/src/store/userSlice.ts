@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { User } from '../types/user';
 import socket from '../lib/socket';
+import queryClient from '../lib/queryClient';
 
 interface UserState {
   user: User | null;
@@ -34,6 +35,7 @@ const userSlice = createSlice({
       window.localStorage.removeItem('user');
       window.localStorage.removeItem('isLoggedIn');
       window.localStorage.removeItem('expiry');
+      queryClient.clear();
     },
     setUser(state, action: PayloadAction<User>) {
       if (!state.user) return;
