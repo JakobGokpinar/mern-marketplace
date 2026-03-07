@@ -15,6 +15,7 @@ import NotFound from './pages/not-found/NotFound';
 import ProtectedRoute from './components/protected-route/ProtectedRoute';
 import ErrorBoundary from './components/error-boundary/ErrorBoundary';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 import { userActions } from './store/userSlice';
 import { logoutRequest } from './store/authThunks';
@@ -104,6 +105,7 @@ const App = () => {
         <AppContent />
       </Router>
       <Analytics />
+      <SpeedInsights />
     </>
   );
 };
