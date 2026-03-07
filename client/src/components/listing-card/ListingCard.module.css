@@ -10,6 +10,7 @@
   transition: all var(--transition-normal);
   width: 280px;
   position: relative;
+  box-shadow: var(--shadow-sm);
 }
 
 .product-card:hover {
