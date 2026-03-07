@@ -2,40 +2,61 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 70vh;
+  min-height: calc(100vh - 62px);
+  background: linear-gradient(
+    180deg,
+    var(--color-primary-lightest) 0%,
+    var(--color-bg) 100%
+  );
+  padding: var(--space-lg);
 }
 
 .not-found-content {
   text-align: center;
+  max-width: 420px;
 }
 
 .not-found-content * {
-  margin-bottom: 16px;
+  margin-bottom: var(--space-md);
 }
 
 .not-found-code {
-  font-size: 96px;
-  font-weight: 700;
+  font-size: 120px;
+  font-weight: 800;
   color: var(--color-primary);
   line-height: 1;
-  margin-bottom: 8px;
+  margin-bottom: var(--space-sm);
+  text-shadow: 0 2px 8px rgba(13, 148, 136, 0.15);
+  letter-spacing: -2px;
 }
 
 .not-found-content h1 {
   font-size: var(--fs-h2);
   font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-sm);
 }
 
 .not-found-content p {
   color: var(--color-text-secondary);
   font-size: var(--fs-body);
+  margin-bottom: var(--space-lg);
 }
 
 .not-found-content a {
-  color: var(--color-primary);
+  display: inline-block;
+  background-color: var(--color-primary);
+  color: white;
   font-weight: 500;
+  font-size: var(--fs-sm);
+  padding: 10px var(--space-lg);
+  border-radius: 999px;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+  text-decoration: none;
 }
 
 .not-found-content a:hover {
-  color: var(--color-primary-hover);
+  background-color: var(--color-primary-dark);
+  color: white;
+  transform: translateY(-1px);
 }

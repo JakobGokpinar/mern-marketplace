@@ -1,4 +1,5 @@
 import React from 'react';
+import styles from './ErrorBoundary.module.css';
 
 interface Props {
   children: React.ReactNode;
@@ -21,15 +22,20 @@ class ErrorBoundary extends React.Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="container text-center py-5">
-          <h2>Noe gikk galt</h2>
-          <p className="text-muted">Last siden på nytt for å prøve igjen.</p>
-          <button
-            className="btn btn-primary"
-            onClick={() => window.location.reload()}
-          >
-            Last siden på nytt
-          </button>
+        <div className={styles['error-container']}>
+          <div className={styles['error-card']}>
+            <div className={styles['error-icon']}>
+              <i className="fa-solid fa-triangle-exclamation" />
+            </div>
+            <h2 className={styles['error-title']}>Noe gikk galt</h2>
+            <p className={styles['error-message']}>Last siden på nytt for å prøve igjen.</p>
+            <button
+              className={styles['error-button']}
+              onClick={() => window.location.reload()}
+            >
+              Last siden på nytt
+            </button>
+          </div>
         </div>
       );
     }

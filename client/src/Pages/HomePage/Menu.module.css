@@ -1,20 +1,58 @@
+/* ============================================
+   Homepage Product Grid
+   ============================================ */
+
 .homepage {
   min-height: 60vh;
-  padding: var(--space-lg) 5%;
+  position: relative;
+  padding: 0 0 var(--space-2xl);
 }
+
+/* Subtle teal header strip behind the top of the grid */
+.homepage::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 180px;
+  background: linear-gradient(
+    180deg,
+    var(--color-primary-lightest) 0%,
+    transparent 100%
+  );
+  border-radius: 0 0 50% 50% / 0 0 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---- Result count ---- */
 
 .homepage-count {
+  position: relative;
+  z-index: 1;
   font-size: var(--fs-sm);
-  color: var(--color-text-muted);
-  margin-bottom: var(--space-md);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: var(--space-lg) 5% var(--space-sm);
+  margin: 0;
 }
 
+/* ---- Product grid ---- */
+
 .homepage-grid {
+  position: relative;
+  z-index: 1;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--space-lg);
-  justify-items: center;
+  padding: var(--space-md) 5% 0;
+  max-width: 1400px;
+  margin: 0 auto;
 }
+
+/* ---- Loading state ---- */
 
 .homepage-loading {
   display: flex;
@@ -23,37 +61,111 @@
   height: 60vh;
 }
 
+/* ---- Empty state ---- */
+
 .homepage-empty {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: var(--space-md);
   height: 50vh;
   color: var(--color-text-muted);
 }
 
 .homepage-empty i {
-  font-size: 48px;
-  margin-bottom: var(--space-md);
+  font-size: 56px;
+  color: var(--color-primary-light);
+  opacity: 0.5;
+  margin-bottom: var(--space-xs);
 }
 
 .homepage-empty p {
-  font-size: 1.1rem;
+  font-size: var(--fs-h3);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin: 0;
 }
+
+/* ---- Load more ---- */
 
 .homepage-load-more {
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: center;
-  margin-top: var(--space-xl);
+  padding: var(--space-xl) 0 var(--space-md);
 }
 
-@media (max-width: 768px) {
+.homepage-load-more :global(.btn) {
+  padding: var(--space-sm) var(--space-xl);
+  font-weight: 500;
+  border-radius: var(--radius-lg);
+  transition: box-shadow var(--transition-normal),
+              transform var(--transition-fast);
+}
+
+.homepage-load-more :global(.btn:hover) {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+/* Tablet landscape / small desktop */
+@media (max-width: 1200px) {
+  .homepage-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Tablet portrait */
+@media (max-width: 900px) {
+  .homepage-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+    padding: var(--space-md) 4% 0;
+  }
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+  .homepage::before {
+    height: 120px;
+    border-radius: 0 0 50% 50% / 0 0 24px 24px;
+  }
+
   .homepage {
-    padding: var(--space-md);
+    padding-bottom: var(--space-xl);
+  }
+
+  .homepage-count {
+    padding: var(--space-md) var(--space-md) var(--space-xs);
   }
 
   .homepage-grid {
     grid-template-columns: 1fr;
     gap: var(--space-md);
+    padding: var(--space-sm) var(--space-md) 0;
+  }
+
+  .homepage-empty {
+    height: 40vh;
+  }
+
+  .homepage-empty i {
+    font-size: 44px;
+  }
+
+  .homepage-empty p {
+    font-size: var(--fs-body);
+  }
+
+  .homepage-load-more {
+    padding: var(--space-lg) 0 var(--space-sm);
   }
 }

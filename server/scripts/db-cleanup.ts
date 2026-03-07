@@ -1,17 +1,15 @@
 /**
- * Cleanup script: Delete listings created before 2026-01-01
+ * db-cleanup — Delete old listings and their associated data (S3 images, conversations, favorites).
+ * Connects to PRODUCTION database.
  *
  * Usage:
- *   tsx server/scripts/cleanup-old-listings.ts          # dry-run (shows what would be deleted)
- *   tsx server/scripts/cleanup-old-listings.ts --execute # actually deletes
+ *   npm run db:cleanup                # dry-run (shows what would be deleted)
+ *   npm run db:cleanup -- --execute   # actually deletes
  */
 
 import { S3Client, ListObjectsV2Command, DeleteObjectsCommand } from '@aws-sdk/client-s3';
 import mongoose from 'mongoose';
 import path from 'path';
-import 'dotenv/config';
-
-// dotenv loads from cwd; ensure .env is found
 import { config } from 'dotenv';
 config({ path: path.join(__dirname, '..', '.env') });
 
