@@ -12,6 +12,7 @@ import EmailVerify from './pages/email-verify/EmailVerify';
 import NotFound from './pages/not-found/NotFound';
 import ProtectedRoute from './components/protected-route/ProtectedRoute';
 import ErrorBoundary from './components/error-boundary/ErrorBoundary';
+import { Analytics } from '@vercel/analytics/react';
 
 import { userActions } from './store/userSlice';
 import { logoutRequest } from './store/authThunks';
@@ -94,9 +95,12 @@ const AppContent = () => {
 
 const App = () => {
   return (
-    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <AppContent />
-    </Router>
+    <>
+      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <AppContent />
+      </Router>
+      <Analytics />
+    </>
   );
 };
 
