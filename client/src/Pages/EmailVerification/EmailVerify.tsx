@@ -41,7 +41,7 @@ const EmailVerify = () => {
         setAlertVarient("success");
         setAlertMessage(response.message);
         setIsVerifySuccessful(true);
-        setTimeout(() => navigate('/profil'), 2000);
+        setTimeout(() => navigate('/account'), 2000);
       } else {
         setAlertVarient("danger");
         setAlertMessage(response.message);

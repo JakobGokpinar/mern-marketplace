@@ -94,7 +94,7 @@ const Navigation = () => {
               <Nav.Link href="/chat" className={styles['navbar-icon-link']}>
                 <i className="fa-regular fa-message" />
               </Nav.Link>
-              <Nav.Link href="/favoritter" className={styles['navbar-icon-link']}>
+              <Nav.Link href="/favorites" className={styles['navbar-icon-link']}>
                 <i className="fa-regular fa-heart" />
               </Nav.Link>
               <Dropdown align="end" className={styles['navbar-user-dropdown']}>
@@ -114,11 +114,8 @@ const Navigation = () => {
                     <span className={styles['navbar-dropdown-email']}>{user?.email}</span>
                   </div>
                   <Dropdown.Divider />
-                  <Dropdown.Item href="/min-konto">
-                    <i className="fa-solid fa-house me-2" /> Min Konto
-                  </Dropdown.Item>
-                  <Dropdown.Item href="/profil">
-                    <i className="fa-regular fa-user me-2" /> Min Profil
+                  <Dropdown.Item href="/account">
+                    <i className="fa-regular fa-user me-2" /> Min Konto
                   </Dropdown.Item>
                   <Dropdown.Item href="/my-listings">
                     <i className="fa-solid fa-scroll me-2" /> Mine Annonser

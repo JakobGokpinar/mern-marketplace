@@ -1,10 +1,9 @@
-import styles from "./Favorites.module.css";
-import ProductCard from "../../../components/ProductCard/ProductCard";
-import { useQuery } from "@tanstack/react-query";
-import Breadcrumb from 'react-bootstrap/Breadcrumb';
+import styles from './Favorites.module.css';
+import ProductCard from '../../components/ProductCard/ProductCard';
+import { useQuery } from '@tanstack/react-query';
 import Spinner from 'react-bootstrap/Spinner';
-import { getFavoritesApi } from "../../../services/favoriteService";
-import { queryKeys } from "../../../lib/queryKeys";
+import { getFavoritesApi } from '../../services/favoriteService';
+import { queryKeys } from '../../lib/queryKeys';
 
 const Favorites = () => {
   const { data: favoritesArray = [], isPending } = useQuery({
@@ -14,10 +13,7 @@ const Favorites = () => {
 
   return (
     <div className={styles['favorites-container']}>
-      <Breadcrumb>
-        <Breadcrumb.Item href='/min-konto'>Min konto</Breadcrumb.Item>
-        <Breadcrumb.Item href='/profil' active>Favoritter</Breadcrumb.Item>
-      </Breadcrumb>
+      <h1 className={styles['favorites-heading']}>Favoritter</h1>
       {isPending ? (
         <div className="d-flex justify-content-center py-5">
           <Spinner animation="border" variant="secondary" />

@@ -25,10 +25,9 @@ const ProductPage = React.lazy(() => import('./pages/ProductPage/ProductPage'));
 const Chat = React.lazy(() => import('./pages/Chat/Chat'));
 const SearchResult = React.lazy(() => import('./pages/SearchedResultPage/SearchResult'));
 const NewListing = React.lazy(() => import('./pages/NewAnnonce/NewAnnonce'));
-const Account = React.lazy(() => import('./pages/Profile/Profile'));
-const Profile = React.lazy(() => import('./pages/Profile/Profile/Profile'));
-const Favorites = React.lazy(() => import('./pages/Profile/Favorites/Favorites'));
-const MyListings = React.lazy(() => import('./pages/Profile/MyAnnonces/MyAnnonces'));
+const Account = React.lazy(() => import('./pages/Account/Account'));
+const Favorites = React.lazy(() => import('./pages/Favorites/Favorites'));
+const MyListings = React.lazy(() => import('./pages/MyListings/MyListings'));
 
 const AppContent = () => {
   const dispatch = useAppDispatch();
@@ -77,10 +76,9 @@ const AppContent = () => {
 
               <Route path='/new-listing' element={<ProtectedRoute><NewListing /></ProtectedRoute>} />
               <Route path='/chat' element={<ProtectedRoute><Chat /></ProtectedRoute>} />
-              <Route path='/min-konto' element={<ProtectedRoute><Account /></ProtectedRoute>} />
-              <Route path='/favoritter' element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
+              <Route path='/account' element={<ProtectedRoute><Account /></ProtectedRoute>} />
+              <Route path='/favorites' element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
               <Route path='/my-listings' element={<ProtectedRoute><MyListings /></ProtectedRoute>} />
-              <Route path='/profil' element={<ProtectedRoute><Profile /></ProtectedRoute>} />
 
               <Route path='*' element={<NotFound />} />
             </Routes>

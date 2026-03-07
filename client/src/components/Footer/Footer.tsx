@@ -17,7 +17,7 @@ const Footer = () => (
       <div className={styles['footer-links']}>
         <p className={styles['footer-links-heading']}>Konto</p>
         <a href="/">Hjem</a>
-        <a href="/min-konto">Konto</a>
+        <a href="/account">Konto</a>
       </div>
     </div>
   </footer>

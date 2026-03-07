@@ -8,8 +8,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import styles from './NewAnnonce.module.css';
 
-import { getCroppedImage } from '../../utils/cropImage';
-import { dataURLtoFile } from '../../utils/dataURltoFile';
+import { compressListingImage } from '../../utils/compressImage';
 import { instanceAxs } from '../../lib/axios';
 import { useFindCommuneByPostnumber } from '../../hooks/useNorwayGeo';
 import { useDebounce } from '../../hooks/useDebounce';
@@ -57,8 +56,10 @@ const NewListing = () => {
     const fd = new FormData();
     for (const image of imageArray) {
       if (!image.data) continue;
-      const canvas = await getCroppedImage(image.data);
-      fd.append('listingImages', dataURLtoFile(canvas.toDataURL('image/jpeg'), image.name));
+      const blob = await compressListingImage(image.data);
+      const ext = image.name.replace(/.*\./, '');
+      const filename = image.name.replace(`.${ext}`, '.jpg');
+      fd.append('listingImages', new File([blob], filename, { type: 'image/jpeg' }));
     }
     return fd;
   };
@@ -160,7 +161,12 @@ const NewListing = () => {
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
+    const MAX_RAW_SIZE = 15 * 1024 * 1024; // 15 MB raw limit (compressed later)
     Array.from(e.target.files).forEach(file => {
+      if (file.size > MAX_RAW_SIZE) {
+        toast.error(`${file.name} er for stor (maks 15 MB)`);
+        return;
+      }
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.addEventListener('load', () => {
@@ -254,8 +260,8 @@ const NewListing = () => {
         </Modal.Header>
         <Modal.Body>
           <p>Du må verifisere e-postadressen din før du kan legge ut en annonse.</p>
-          <a href="/profil">
-            <Button variant="primary">Gå til min profil</Button>
+          <a href="/account">
+            <Button variant="primary">Gå til min konto</Button>
           </a>
         </Modal.Body>
       </Modal>

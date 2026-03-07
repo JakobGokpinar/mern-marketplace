@@ -6,7 +6,7 @@ import { s3, BUCKET_NAME } from '../services/s3';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB per file
 
-const ALLOWED_MIMES = ['image/jpeg', 'image/jpg', 'image/png'];
+const ALLOWED_MIMES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
 const sanitizeFilename = (original: string) => {
   const ext = path.extname(original).toLowerCase();
@@ -17,7 +17,7 @@ const fileFilter = (_req: any, file: Express.Multer.File, cb: multer.FileFilterC
   if (ALLOWED_MIMES.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error('Bare JPEG og PNG er tillatt'));
+    cb(new Error('Bare JPEG, PNG og WebP er tillatt'));
   }
 };
 

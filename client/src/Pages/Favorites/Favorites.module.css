@@ -1,8 +1,17 @@
 .favorites-container {
+    max-width: 1400px;
+    margin: 0 auto;
     width: 100%;
     display: flex;
     flex-direction: column;
-    padding: var(--space-lg) 5%;
+    padding: var(--space-xl) 5%;
+}
+
+.favorites-heading {
+    font-size: var(--fs-h2);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--space-lg);
 }
 
 .favorites-content {
@@ -30,7 +39,7 @@
 
 @media (max-width: 576px) {
     .favorites-container {
-        padding: var(--space-md) var(--space-md);
+        padding: var(--space-lg) var(--space-md);
     }
 
     .favorites-content {

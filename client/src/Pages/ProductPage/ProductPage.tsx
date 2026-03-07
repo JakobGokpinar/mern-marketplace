@@ -90,7 +90,7 @@ function ProductPage() {
             <Carousel variant="dark" className={styles['pp__carousel']}>
               {(listing.images || []).map((item) => (
                 <Carousel.Item key={item.location}>
-                  <img src={item.location} alt={listing.title} className={styles['pp__carousel-img']} />
+                  <img src={item.location} alt={listing.title} className={styles['pp__carousel-img']} loading="lazy" />
                   {item.description && (
                     <Carousel.Caption className={styles['pp__carousel-caption']}>
                       <span>{item.description}</span>
@@ -176,7 +176,7 @@ function ProductPage() {
           <div className={styles['pp__seller-card']}>
             <div className={styles['pp__seller-avatar-wrapper']}>
               {seller?.profilePicture ? (
-                <img src={seller.profilePicture} alt={seller?.fullName} className={styles['pp__seller-avatar']} />
+                <img src={seller.profilePicture} alt={seller?.fullName} className={styles['pp__seller-avatar']} loading="lazy" />
               ) : (
                 <div className={`${styles['pp__seller-avatar']} ${styles['pp__seller-avatar--placeholder']}`}>
                   <i className="fa-solid fa-user" />
