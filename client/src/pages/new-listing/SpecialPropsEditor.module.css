@@ -20,6 +20,13 @@
 .backdrop-panel {
   border-radius: var(--radius-md);
   width: 500px;
+  max-width: calc(100vw - 32px);
   background-color: var(--color-surface);
   padding: 30px;
+}
+
+@media (max-width: 576px) {
+  .backdrop-panel {
+    padding: 20px;
+  }
 }

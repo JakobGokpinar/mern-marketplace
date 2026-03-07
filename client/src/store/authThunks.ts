@@ -18,6 +18,7 @@ export const sendSignUpRequest = (userData: { fullName: string; email: string; p
   try {
     const { message, user } = await signupApi(userData);
     if (user) {
+      clearCsrfToken(); // session changed after signup
       dispatch(userActions.login(user));
       toast.success(`Velkommen, ${user.fullName}! Bekreftelsesmail sendt. Sjekk innboksen eller søppelpost.`);
     } else {
@@ -33,6 +34,7 @@ export const sendLoginRequest = (credentials: { email: string; password: string 
   try {
     const { user } = await loginApi(credentials);
     if (user) {
+      clearCsrfToken(); // session changed after login
       dispatch(userActions.login(user));
       toast.success(`Velkommen tilbake, ${user.fullName}`);
     }

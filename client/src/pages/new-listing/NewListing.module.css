@@ -53,3 +53,17 @@
   position: sticky;
   top: 16px;
 }
+
+@media (max-width: 767px) {
+  .page {
+    padding: var(--space-lg) var(--space-md) 80px;
+  }
+
+  .form-col {
+    padding-right: 0;
+  }
+
+  .page-title {
+    font-size: var(--fs-h2);
+  }
+}

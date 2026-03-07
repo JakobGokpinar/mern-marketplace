@@ -182,6 +182,12 @@
     font-size: 16px;
 }
 
+.navbar-icon-label {
+    display: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+
 /* Unread message indicator */
 .navbar-unread-dot {
     position: absolute;
@@ -350,28 +356,33 @@
 @media (max-width: 991px) {
     .navbar-center {
         width: 100%;
-        margin: 8px 0;
+        margin: 12px 0;
     }
 
     .navbar-actions {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
+        align-items: stretch;
+        gap: 4px;
         padding: 12px 0;
     }
 
     .navbar-new-listing {
         width: 100%;
         text-align: center;
+        margin-bottom: 4px;
     }
 
     .navbar-icon-link {
-        width: auto;
+        width: 100%;
         height: auto;
         border-radius: var(--radius-sm);
-        padding: 8px 12px !important;
+        padding: 10px 12px !important;
         justify-content: flex-start;
-        gap: 8px;
+        gap: 10px;
+    }
+
+    .navbar-icon-label {
+        display: inline;
     }
 
     .navbar-user-dropdown {

@@ -60,3 +60,9 @@
   color: white;
   transform: translateY(-1px);
 }
+
+@media (max-width: 576px) {
+  .not-found-code {
+    font-size: 80px;
+  }
+}

@@ -92,9 +92,11 @@ const Navigation = () => {
               </Nav.Link>
               <Nav.Link href="/chat" className={styles['navbar-icon-link']}>
                 <Icon name="message-outline" />
+                <span className={styles['navbar-icon-label']}>Meldinger</span>
               </Nav.Link>
               <Nav.Link href="/favorites" className={styles['navbar-icon-link']}>
                 <Icon name="heart-outline" />
+                <span className={styles['navbar-icon-label']}>Favoritter</span>
               </Nav.Link>
               <Dropdown align="end" className={styles['navbar-user-dropdown']}>
                 <Dropdown.Toggle variant="light" className={styles['navbar-user-toggle']}>

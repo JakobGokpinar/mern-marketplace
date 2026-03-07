@@ -23,12 +23,15 @@ import {
 import { resendVerificationEmailApi } from '../../services/emailService';
 import toast from 'react-hot-toast';
 import { userActions } from '../../store/userSlice';
+import { logoutRequest } from '../../store/authThunks';
 import { useFormValidation } from '../../hooks/useFormValidation';
 import { profileSchema } from '../../schemas/profile.schema';
+import { useNavigate } from 'react-router-dom';
 
 const Account = () => {
   const user = useAppSelector(state => state.user.user) as User;
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const hiddenFileInput = useRef<HTMLInputElement>(null);
 
   const [editingName, setEditingName] = useState(false);
@@ -339,6 +342,18 @@ const Account = () => {
           <span className={styles['row-label']}>Mørk modus</span>
           <Form.Check type="switch" className={styles['theme-switch']} disabled />
         </div>
+      </div>
+
+      {/* ---- Logout ---- */}
+      <div className={styles['section']}>
+        <Button
+          variant="outline-secondary"
+          className={styles['logout-btn']}
+          onClick={() => { navigate('/'); dispatch(logoutRequest()); }}
+        >
+          <Icon name="arrow-right-from-bracket" style={{ marginRight: 8 }} />
+          Logg ut
+        </Button>
       </div>
 
       {/* ---- Danger zone ---- */}

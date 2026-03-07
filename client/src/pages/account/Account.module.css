@@ -223,6 +223,12 @@
   border-color: var(--color-danger-light);
 }
 
+.logout-btn {
+  width: 100%;
+  padding: 10px;
+  font-weight: 500;
+}
+
 .section-danger .section-title {
   color: var(--color-danger);
   border-bottom-color: var(--color-danger-light);

@@ -36,9 +36,12 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
     if (err) return next(err);
     if (!user) return res.status(400).json(info);
 
-    createTokenAndSendEmail(user._id, user.email, user.fullName)
-      .catch(err => logger.error('Verification email failed:', err));
-    res.status(200).json({ success: true, user, message: 'user created' });
+    req.logIn(user, function (loginErr: any) {
+      if (loginErr) return next(loginErr);
+      createTokenAndSendEmail(user._id, user.email, user.fullName)
+        .catch(err => logger.error('Verification email failed:', err));
+      res.status(200).json({ success: true, user, message: 'user created' });
+    });
   })(req, res, next);
 };
 

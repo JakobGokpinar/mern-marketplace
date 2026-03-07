@@ -372,17 +372,37 @@
     position: static;
     max-width: 100%;
     flex-direction: row;
+    flex-wrap: wrap;
     padding: 20px 24px;
-    gap: 20px;
+    gap: 16px;
     text-align: left;
+    align-items: center;
   }
 
   .pp__seller-avatar-wrapper {
     margin-bottom: 0;
   }
 
+  .pp__seller-avatar {
+    width: 56px;
+    height: 56px;
+  }
+
+  .pp__seller-name {
+    margin: 0;
+  }
+
+  .pp__seller-since {
+    margin: 0;
+  }
+
+  .pp__seller-status {
+    margin: 0;
+  }
+
   .pp__seller-msg-btn {
     width: auto;
+    margin-left: auto;
   }
 }
 
@@ -408,5 +428,16 @@
   .pp__seller-card {
     flex-direction: column;
     text-align: center;
+    align-items: center;
+  }
+
+  .pp__seller-avatar {
+    width: 64px;
+    height: 64px;
+  }
+
+  .pp__seller-msg-btn {
+    width: 100%;
+    margin-left: 0;
   }
 }
