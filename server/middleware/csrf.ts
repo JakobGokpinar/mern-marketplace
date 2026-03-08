@@ -2,7 +2,7 @@ import { doubleCsrf } from 'csrf-csrf';
 
 const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
   getSecret: () => process.env.CSRF_SECRET || process.env.SESSION_SECRET!,
-  getSessionIdentifier: (req: any) => req.session?.id || '',
+  getSessionIdentifier: () => '',
   cookieName: '__csrf',
   cookieOptions: {
     httpOnly: true,
