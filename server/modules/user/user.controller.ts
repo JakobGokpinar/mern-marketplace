@@ -151,7 +151,7 @@ export const changeEmail = async (req: Request, res: Response) => {
 
     const token = randomUUID();
     await TokenModel.create({ userId, token });
-    const verifyUrl = `${process.env.CLIENT_URL}/emailVerify?t=${token}`;
+    const verifyUrl = `${process.env.CLIENT_URL}/verify-email?t=${token}`;
     sendVerificationEmail(newEmail, user!.fullName, verifyUrl)
       .catch(err => logger.error('Verification email failed for %s: %s', newEmail, err));
     sendEmailChangedNotification(oldEmail, user!.fullName, newEmail)

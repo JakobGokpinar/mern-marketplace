@@ -10,7 +10,7 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
-import EmailVerify from './pages/email-verify/EmailVerify';
+import VerifyEmail from './pages/verify-email/VerifyEmail';
 import NotFound from './pages/not-found/NotFound';
 import ProtectedRoute from './components/protected-route/ProtectedRoute';
 import ErrorBoundary from './components/error-boundary/ErrorBoundary';
@@ -79,7 +79,7 @@ const AppContent = () => {
               <Route path='/' element={<Home />} />
               <Route path='/search' element={<SearchResult />} />
               <Route path='/l/:id' element={<ListingPage />} />
-              <Route path='/emailverify' element={<EmailVerify />} />
+              <Route path='/verify-email' element={<VerifyEmail />} />
 
               <Route path='/new-listing' element={<ProtectedRoute><NewListing /></ProtectedRoute>} />
               <Route path='/chat' element={<ProtectedRoute><Chat /></ProtectedRoute>} />

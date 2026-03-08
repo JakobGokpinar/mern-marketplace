@@ -6,8 +6,8 @@ interface EmailResponse {
   user?: import('../types/user').User;
 }
 
-export const verifyEmailApi = async (userId: string, token: string): Promise<EmailResponse> => {
-  const res = await instanceAxs.post<EmailResponse>('/auth/email/verify', { userId, token });
+export const verifyEmailApi = async (token: string): Promise<EmailResponse> => {
+  const res = await instanceAxs.post<EmailResponse>('/auth/email/verify', { token });
   return res.data;
 };
 

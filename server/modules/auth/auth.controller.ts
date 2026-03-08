@@ -11,7 +11,7 @@ import logger from '../../config/logger';
 const ObjectId = mongoose.Types.ObjectId;
 
 function buildVerifyUrl(token: string) {
-  return `${process.env.CLIENT_URL}/emailVerify?t=${token}`;
+  return `${process.env.CLIENT_URL}/verify-email?t=${token}`;
 }
 
 async function createTokenAndSendEmail(userId: string, email: string, name: string) {
@@ -56,30 +56,28 @@ export const logout = (req: Request, res: Response) => {
 
 export const verifyEmailHandler = async (req: Request, res: Response) => {
   try {
-    const userId = req.body.userId;
-    if (userId !== req.user!._id.toString()) {
-      return res.status(403).json({ success: false, message: 'Vennligst logg deg inn med egen mailadresse for konto verifikasjon.' });
+    const { token } = req.body;
+
+    // Look up userId from the token — no auth required
+    const tokenDoc = await TokenModel.findOne({ token, type: 'email' });
+    if (!tokenDoc) {
+      return res.json({ success: false, message: 'Lenken er ugyldig eller utløpt. Be om en ny bekreftelsesmail.' });
     }
-    const token = req.body.token;
-    const tokens = await TokenModel.find({ userId });
-    if (!tokens || tokens.length === 0) {
-      return res.json({ success: false, message: 'The session has expired. Please try again later' });
-    }
-    const last_token = tokens[tokens.length - 1];
-    if (last_token.token !== token) {
-      return res.json({ success: false, message: 'The session has expired. Please try again later' });
-    }
-    // TTL index auto-deletes tokens after 600s, so if we found one it's still valid
-    const data = await UserModel.findOneAndUpdate(
-      { _id: new ObjectId(userId) },
+
+    const user = await UserModel.findOneAndUpdate(
+      { _id: tokenDoc.userId },
       { isEmailVerified: true },
       { new: true }
     );
-    await TokenModel.deleteMany({ userId });
-    return res.status(200).json({ success: true, user: data, message: 'Your email has been verified' });
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Bruker ikke funnet' });
+    }
+
+    await TokenModel.deleteMany({ userId: tokenDoc.userId, type: 'email' });
+    return res.status(200).json({ success: true, user, message: 'E-postadressen din er bekreftet!' });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ success: false, message: 'A problem occured while verifying the email' });
+    return res.status(500).json({ success: false, message: 'Noe gikk galt under verifiseringen' });
   }
 };
 
