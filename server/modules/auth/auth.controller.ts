@@ -85,7 +85,7 @@ export const resendVerificationEmail = async (req: Request, res: Response) => {
   try {
     const user = req.user!;
     await createTokenAndSendEmail(user._id.toString(), user.email, user.fullName);
-    return res.status(200).json({ success: true, message: 'Bekreftelsesmail sendt. Sjekk innboksen eller søppelpost.' });
+    return res.status(200).json({ success: true, message: 'Bekreftelsesmail sendt! Sjekk innboksen' });
   } catch (error) {
     logger.error('Resend verification email failed: %O', error);
     return res.status(500).json({ success: false, message: 'Kunne ikke sende bekreftelsesmail' });
@@ -126,7 +126,7 @@ export const resetPassword = async (req: Request, res: Response) => {
     if (!user) return res.status(404).json({ success: false, message: 'Bruker ikke funnet' });
 
     const isSame = await bcrypt.compare(newPassword, user.password);
-    if (isSame) return res.status(400).json({ success: false, message: 'Nytt passord kan ikke være det samme som nåværende' });
+    if (isSame) return res.status(400).json({ success: false, message: 'Velg et annet passord enn det nåværende' });
 
     user.password = newPassword;
     await user.save();
@@ -135,7 +135,7 @@ export const resetPassword = async (req: Request, res: Response) => {
     sendPasswordChangedEmail(user.email, user.fullName)
       .catch(err => logger.error('Password changed notification failed for %s: %s', user.email, err));
 
-    return res.json({ success: true, message: 'Passordet er oppdatert. Du kan nå logge inn.' });
+    return res.json({ success: true, message: 'Passord oppdatert! Logg inn med det nye passordet' });
   } catch (error) {
     logger.error(error);
     return res.status(500).json({ success: false, message: 'Kunne ikke tilbakestille passord' });

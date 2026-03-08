@@ -116,7 +116,7 @@ export const changePassword = async (req: Request, res: Response) => {
     const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) return res.status(400).json({ success: false, message: 'Nåværende passord er feil' });
 
-    if (currentPassword === newPassword) return res.status(400).json({ success: false, message: 'Nytt passord kan ikke være det samme som nåværende' });
+    if (currentPassword === newPassword) return res.status(400).json({ success: false, message: 'Velg et annet passord enn det nåværende' });
 
     user.password = newPassword;
     await user.save();
@@ -157,7 +157,7 @@ export const changeEmail = async (req: Request, res: Response) => {
     sendEmailChangedNotification(oldEmail, user!.fullName, newEmail)
       .catch(err => logger.error('Email change notification failed for %s: %s', oldEmail, err));
 
-    return res.json({ success: true, user, message: 'E-post oppdatert. Bekreftelsesmail sendt. Sjekk innboksen eller søppelpost.' });
+    return res.json({ success: true, user, message: 'E-post oppdatert! Sjekk innboksen for bekreftelse' });
   } catch (error) {
     logger.error(error);
     return res.status(500).json({ success: false, message: 'Kunne ikke endre e-post' });
@@ -238,24 +238,24 @@ export const addToFavorites = async (req: Request, res: Response) => {
 
   try {
     const listing = await ListingModel.findOne({ _id: new ObjectId(listingId) });
-    if (!listing) return res.json({ message: 'Listing not found' });
+    if (!listing) return res.json({ message: 'Annonsen ble ikke funnet' });
     if (listing.sellerId!.toString() === userId.toString()) {
-      return res.json({ message: 'Du kan ikke favorisere din egen annonse' });
+      return res.json({ message: 'Du kan ikke lagre din egen annonse' });
     }
 
     const user = await UserModel.findOne({ _id: new ObjectId(userId) });
     const alreadyFavorited = user!.favorites.some((fav: mongoose.Types.ObjectId) => fav.toString() === listingId.toString());
-    if (alreadyFavorited) return res.json({ message: 'The listing is already saved to Favorites' });
+    if (alreadyFavorited) return res.json({ message: 'Annonsen er allerede lagret' });
 
     const result = await UserModel.findByIdAndUpdate(
       { _id: userId },
       { $push: { favorites: listing._id } },
       { new: true }
     );
-    return res.status(200).json({ user: result, message: 'Listing saved to Favorites' });
+    return res.status(200).json({ user: result, message: 'Lagt til i favoritter' });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ message: 'Listing could not be saved to Favorites' });
+    return res.status(500).json({ message: 'Kunne ikke lagre favoritt' });
   }
 };
 
@@ -269,10 +269,10 @@ export const removeFromFavorites = async (req: Request, res: Response) => {
       { $pull: { favorites: new ObjectId(listingId) } },
       { new: true }
     );
-    return res.json({ user: result, message: 'Listing removed from favorites' });
+    return res.json({ user: result, message: 'Fjernet fra favoritter' });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ message: 'Error removing favorite' });
+    return res.status(500).json({ message: 'Kunne ikke fjerne favoritt' });
   }
 };
 
@@ -287,8 +287,7 @@ export const getFavorites = async (req: Request, res: Response) => {
     }
 
     const productArray = await ListingModel.find({ _id: { $in: favoritesArray } }).lean();
-    const markedArray = productArray.map(item => ({ ...item, isFavorite: true }));
-    return res.json({ productArray: markedArray, message: 'Items fetched' });
+    return res.json({ productArray, message: 'Items fetched' });
   } catch (error) {
     logger.error(error);
     return res.status(500).json({ message: 'Error occurred while fetching favorites' });

@@ -16,7 +16,7 @@ passport.use('local-signin', new Strategy({ usernameField: 'email' }, async (ema
     if (!isMatch) return done(null, false, { message: 'Feil passord' });
     return done(null, user);
   } catch (err) {
-    return done(null, false, { message: err instanceof Error ? err.message : 'Login error' });
+    return done(null, false, { message: err instanceof Error ? err.message : 'Innlogging feilet' });
   }
 }));
 
@@ -24,7 +24,7 @@ passport.use('local-signin', new Strategy({ usernameField: 'email' }, async (ema
 passport.use('local-signup', new Strategy({ usernameField: 'email', passReqToCallback: true }, async (req, email, password, done) => {
   try {
     if (!validator.isEmail(email)) {
-      return done(null, false, { message: 'Vennligst oppgi en gyldig e-post' });
+      return done(null, false, { message: 'Ugyldig e-postadresse' });
     }
 
     const passwordSchema = new PasswordValidator();
@@ -34,12 +34,12 @@ passport.use('local-signup', new Strategy({ usernameField: 'email', passReqToCal
     passwordSchema.has().digits(1);
 
     if (!passwordSchema.validate(password)) {
-      return done(null, false, { message: 'Password must contain at least one letter and one digit, and be between 6 and 32 characters' });
+      return done(null, false, { message: 'Bruk minst 6 tegn, med både bokstaver og tall' });
     }
 
     const userExists = await UserModel.findOne({ email });
     if (userExists) {
-      return done(null, false, { message: 'Denne e-postadressen er allerede registrert i systemet.' });
+      return done(null, false, { message: 'Denne e-posten er allerede i bruk' });
     }
 
     const { fullName } = req.body;

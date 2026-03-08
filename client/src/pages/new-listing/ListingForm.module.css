@@ -124,7 +124,7 @@
   background: var(--color-primary-lightest);
 }
 
-.upload-label i {
+.upload-label svg {
   font-size: 1rem;
 }
 
@@ -194,7 +194,7 @@
   font-weight: 500;
 }
 
-.postnumber-place i {
+.postnumber-place svg {
   font-size: 0.85rem;
 }
 

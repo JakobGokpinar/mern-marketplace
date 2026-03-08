@@ -54,7 +54,7 @@
   padding: var(--space-lg);
 }
 
-.empty-state i {
+.empty-state svg {
   font-size: 2.5rem;
   color: var(--color-border);
   margin-bottom: var(--space-sm);
@@ -83,7 +83,7 @@
   text-align: center;
 }
 
-.sidebar-empty i {
+.sidebar-empty svg {
   font-size: 1.8rem;
   color: var(--color-border);
   margin-bottom: var(--space-xs);

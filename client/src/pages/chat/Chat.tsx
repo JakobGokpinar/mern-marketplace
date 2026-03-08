@@ -119,7 +119,7 @@ const Chat = () => {
           <div className={styles['empty-state']}>
             <Icon name="message" />
             <p>Velg en samtale</p>
-            <span>Velg en samtale fra listen til venstre</span>
+            <span>Velg en samtale</span>
           </div>
         ) : (
           <>

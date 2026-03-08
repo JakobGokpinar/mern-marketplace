@@ -31,7 +31,7 @@ export interface Product {
   sellerId?: string;
   specialProps?: SpecialProp[];
   specialProperties?: SpecialProp[];
-  isFavorite?: boolean;
+
   createdAt: string;
   updatedAt: string;
 }

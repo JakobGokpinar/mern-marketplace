@@ -135,8 +135,8 @@ const SearchResult = () => {
               <option value="">Mest relevant</option>
               <option value="newest">Nyeste først</option>
               <option value="oldest">Eldste først</option>
-              <option value="price_asc">Pris lav til høy</option>
-              <option value="price_desc">Pris høy til lav</option>
+              <option value="price_asc">Laveste pris</option>
+              <option value="price_desc">Høyeste pris</option>
             </Form.Select>
           </div>
 
@@ -161,7 +161,6 @@ const SearchResult = () => {
                   price={product.price}
                   id={product._id}
                   location={product.location}
-                  isFavorite={product.isFavorite}
                   sellerId={product.sellerId}
                 />
               </div>

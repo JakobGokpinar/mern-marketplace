@@ -46,7 +46,6 @@ const Menu = () => {
                 id={product._id}
                 location={product.location}
                 description={product.description}
-                isFavorite={product.isFavorite}
                 sellerId={product.sellerId}
               />
             ))}

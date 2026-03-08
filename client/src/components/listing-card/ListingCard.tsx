@@ -21,7 +21,6 @@ interface ListingCardProps {
   price?: number | string;
   id?: string | null;
   description?: string;
-  isFavorite?: boolean;
   sellerId?: string;
 }
 
@@ -31,7 +30,6 @@ function ListingCard({
   location = "",
   price = "0",
   id = null,
-  isFavorite = false,
   sellerId,
 }: ListingCardProps) {
 
@@ -39,8 +37,10 @@ function ListingCard({
   const user = useAppSelector(state => state.user.user);
   const navigate = useNavigate();
 
-  const { toggleFavorite, isLoading } = useFavorites();
+  const { toggleFavorite, isLoading, isInFavorites } = useFavorites();
   const [showModal, setShowModal] = useState(false);
+
+  const saved = id ? isInFavorites(id) : false;
 
   const handleToggleFavorite = () => {
     if (!id) return;
@@ -48,7 +48,7 @@ function ListingCard({
       toast.error('Logg inn for å lagre favoritter');
       return;
     }
-    toggleFavorite(id, isFavorite);
+    toggleFavorite(id, saved);
   };
 
   const handleSendMessage = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -85,14 +85,14 @@ function ListingCard({
 
         {user?._id !== sellerId && (
           <button
-            className={styles['product-card__favorite'] + (isFavorite ? ` ${styles['product-card__favorite--active']}` : '')}
+            className={styles['product-card__favorite'] + (saved ? ` ${styles['product-card__favorite--active']}` : '')}
             onClick={handleToggleFavorite}
             disabled={isLoading}
           >
             {isLoading ? (
               <Spinner size="sm" animation="border" className={styles['product-card__favorite-spinner']} />
             ) : (
-              <Icon name={isFavorite ? "heart" : "heart-outline"} />
+              <Icon name={saved ? "heart" : "heart-outline"} />
             )}
           </button>
         )}

@@ -25,7 +25,7 @@ import type { User } from "../../types/user";
 import Icon from '../../components/icons/Icon';
 
 interface ProductPageData {
-  product: Product & { isFavorite?: boolean };
+  product: Product;
   seller: User & { lastActiveAt?: string; userCreatedAt?: string; _id: string };
 }
 
@@ -36,7 +36,8 @@ function ProductPage() {
 
   const user = useAppSelector(state => state.user.user);
   const [showShareModal, setShowShareModal] = useState(false);
-  const { toggleFavorite, isLoading: isFavLoading } = useFavorites();
+  const { toggleFavorite, isLoading: isFavLoading, isInFavorites } = useFavorites();
+  const saved = id ? isInFavorites(id) : false;
 
   const { data, isPending } = useQuery<ProductPageData>({
     queryKey: queryKeys.products.detail(id ?? ''),
@@ -112,23 +113,13 @@ function ProductPage() {
             </div>
             <div className={styles['pp__actions']}>
               {user?._id !== seller?._id && (
-                listing.isFavorite ? (
-                  <button
-                    className={`${styles['pp__action-btn']} ${styles['pp__action-btn--fav-active']}`}
-                    onClick={() => id && toggleFavorite(id, true)}
-                    disabled={isFavLoading}
-                  >
-                    {isFavLoading ? <Spinner size="sm" /> : <><Icon name="heart" /> Favoritt</>}
-                  </button>
-                ) : (
-                  <button
-                    className={styles['pp__action-btn']}
-                    onClick={() => id && toggleFavorite(id, false)}
-                    disabled={isFavLoading}
-                  >
-                    {isFavLoading ? <Spinner size="sm" /> : <><Icon name="heart-outline" /> Favoritt</>}
-                  </button>
-                )
+                <button
+                  className={`${styles['pp__action-btn']}${saved ? ` ${styles['pp__action-btn--fav-active']}` : ''}`}
+                  onClick={() => id && toggleFavorite(id, saved)}
+                  disabled={isFavLoading}
+                >
+                  {isFavLoading ? <Spinner size="sm" /> : <><Icon name={saved ? "heart" : "heart-outline"} /> Favoritt</>}
+                </button>
               )}
               <button className={styles['pp__action-btn']} onClick={() => setShowShareModal(true)}>
                 <Icon name="arrow-up-from-bracket" /> Del

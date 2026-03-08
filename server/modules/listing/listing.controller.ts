@@ -19,26 +19,6 @@ function parsePagination(query: Record<string, unknown>) {
   return { page, limit, skip: (page - 1) * limit };
 }
 
-async function getFavoritesArray(req: Request) {
-  if (!req.isAuthenticated()) return [];
-  try {
-    const user = await UserModel.findOne({ _id: req.user._id }).select('favorites');
-    return user?.favorites || [];
-  } catch (error) {
-    logger.error(error);
-    return [];
-  }
-}
-
-function markFavorites(items: Record<string, unknown>[], favoritesArray: mongoose.Types.ObjectId[]) {
-  if (favoritesArray.length === 0) return items;
-  return items.map(item => {
-    if (favoritesArray.some(fav => fav.toString() === (item._id as mongoose.Types.ObjectId).toString())) {
-      item.isFavorite = true;
-    }
-    return item;
-  });
-}
 
 // --- CRUD ---
 
@@ -145,16 +125,6 @@ export const updateListing = async (req: Request, res: Response) => {
 
 export const findProduct = async (req: Request, res: Response) => {
   const productId = req.params.id as string;
-  let favoritesArray: mongoose.Types.ObjectId[] = [];
-
-  if (req.isAuthenticated()) {
-    try {
-      const user = await UserModel.findOne({ _id: req.user._id });
-      favoritesArray = user!.favorites;
-    } catch (error) {
-      logger.error(error);
-    }
-  }
 
   try {
     const result = await ListingModel.findOne({ _id: new ObjectId(productId) }).lean();
@@ -164,10 +134,7 @@ export const findProduct = async (req: Request, res: Response) => {
       .select('fullName profilePicture lastActiveAt userCreatedAt')
       .lean();
 
-    const isFavorite = favoritesArray.some(favId => favId.toString() === result._id.toString());
-    const product = isFavorite ? { ...result, isFavorite: true } : result;
-
-    return res.status(200).json({ product, seller, message: 'Product is found' });
+    return res.status(200).json({ product: result, seller, message: 'Product is found' });
   } catch (error) {
     logger.error(error);
     return res.status(500).json({ message: 'Error occured while getting the listing' });
@@ -177,7 +144,6 @@ export const findProduct = async (req: Request, res: Response) => {
 export const getItems = async (req: Request, res: Response) => {
   try {
     const { page, limit, skip } = parsePagination(req.query);
-    const favoritesArray = await getFavoritesArray(req);
 
     const [productArray, totalCount] = await Promise.all([
       ListingModel.find().sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
@@ -185,7 +151,7 @@ export const getItems = async (req: Request, res: Response) => {
     ]);
 
     return res.json({
-      productArray: markFavorites(productArray, favoritesArray),
+      productArray,
       totalCount,
       page,
       totalPages: Math.ceil(totalCount / limit),
@@ -270,7 +236,6 @@ export const findProducts = async (req: Request, res: Response) => {
 
   const { page, limit, skip } = parsePagination(req.body);
   const sort = parseSort(queryParams['sort'], hasTextSearch);
-  const favoritesArray = await getFavoritesArray(req);
 
   try {
     const findQuery = ListingModel.find(queryObject);
@@ -288,7 +253,7 @@ export const findProducts = async (req: Request, res: Response) => {
     });
 
     res.status(200).json({
-      productArray: markFavorites(result, favoritesArray),
+      productArray: result,
       categories: catArr,
       subCategories: subArr,
       totalCount,

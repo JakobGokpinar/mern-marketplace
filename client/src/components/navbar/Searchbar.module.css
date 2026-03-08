@@ -108,7 +108,7 @@
   transition: background var(--transition-fast);
 }
 
-.suggestion-search-link i {
+.suggestion-search-link svg {
   font-size: 12px;
   color: var(--color-text-muted);
   flex-shrink: 0;
@@ -156,7 +156,7 @@
   transition: background var(--transition-fast);
 }
 
-.suggestion-category i {
+.suggestion-category svg {
   font-size: 11px;
   color: var(--color-text-muted);
   flex-shrink: 0;

@@ -308,7 +308,7 @@
   justify-content: center;
 }
 
-.pp__seller-avatar--placeholder i {
+.pp__seller-avatar--placeholder svg {
   font-size: 32px;
   color: var(--color-primary);
 }

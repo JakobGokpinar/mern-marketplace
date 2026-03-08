@@ -115,7 +115,7 @@ const NewListing = () => {
       }
     },
     onError: () => {
-      toast.error('Kunne ikke publisere annonsen. Prøv igjen.');
+      toast.error('Kunne ikke publisere annonsen');
     },
   });
 
@@ -267,10 +267,10 @@ const NewListing = () => {
     return (
       <Modal show>
         <Modal.Header>
-          <Modal.Title>Verifiser din konto</Modal.Title>
+          <Modal.Title>Bekreft kontoen din</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Verifiser e-postadressen din for å legge ut annonser.</p>
+          <p>Bekreft e-posten din for å legge ut annonser</p>
           <a href="/account">
             <Button variant="primary">Gå til min konto</Button>
           </a>

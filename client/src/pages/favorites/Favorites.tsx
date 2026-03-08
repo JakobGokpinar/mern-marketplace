@@ -28,12 +28,11 @@ const Favorites = () => {
                 price={product.price}
                 id={product._id}
                 location={product.location}
-                isFavorite={product.isFavorite}
                 sellerId={product.sellerId}
               />
             </div>
           )) : (
-            <p>Du har ingen favoritte annonser</p>
+            <p>Ingen favoritter ennå</p>
           )}
         </div>
       )}

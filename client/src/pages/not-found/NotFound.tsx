@@ -9,7 +9,7 @@ const NotFound = () => {
       <div className={styles['not-found-content']}>
         <p className={styles['not-found-code']}>404</p>
         <h1>Side ikke funnet</h1>
-        <p><strong>{location.pathname}</strong> eksisterer ikke</p>
+        <p>Denne siden finnes ikke</p>
         <a href="/">Gå tilbake til hovedsiden</a>
       </div>
     </div>
