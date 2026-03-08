@@ -5,7 +5,8 @@ import 'dotenv/config';
 const connectToDatabase = async (mongoUrl: string) => {
   const connectionType = process.env.NODE_ENV === 'development' ? 'dev' : 'prod';
   try {
-    await mongoose.connect(mongoUrl);
+    const isProduction = process.env.NODE_ENV === 'production';
+    await mongoose.connect(mongoUrl, { autoIndex: !isProduction });
     logger.info(`MongoDB connected to ${connectionType} server`);
   } catch (err) {
     logger.fatal(err, 'MongoDB connection failed');
