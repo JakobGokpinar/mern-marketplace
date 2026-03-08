@@ -14,19 +14,24 @@ const SpecialPropertySchema = new mongoose.Schema({
 const ListingSchema = new mongoose.Schema({
   title: { type: String, required: true },
   price: { type: Number, required: true, min: 0 },
-  pricePeriod: { type: String },
+  pricePeriod: { type: String, required: true },
   category: { type: String, required: true, index: true },
-  subCategory: { type: String },
+  subCategory: { type: String, required: true },
+  subSubCategory: { type: String, required: true },
   images: [ImageSchema],
-  description: { type: String },
-  status: { type: String },
+  description: { type: String, required: true },
+  status: { type: String, enum: ['nytt', 'brukt'], required: true },
   specialProperties: [SpecialPropertySchema],
-  fylke: { type: String },
   kommune: { type: String },
-  location: { type: String },
-  postnumber: { type: String },
+  location: { type: String, required: true },
+  postnumber: { type: String, required: true },
   sellerId: { type: mongoose.Schema.Types.ObjectId, required: true, index: true, ref: 'User' },
 }, { timestamps: true });
+
+ListingSchema.index(
+  { title: 'text', description: 'text' },
+  { weights: { title: 10, description: 1 }, default_language: 'none' },
+);
 
 const ListingModel = mongoose.model('Listing', ListingSchema);
 

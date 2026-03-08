@@ -11,12 +11,12 @@ const ListingCardSkeleton = () => (
   </div>
 );
 
-export const ListingGridSkeleton = ({ count = 8 }: { count?: number }) => (
-  <div className={styles['skeleton-grid']}>
+export const ListingCardSkeletons = ({ count = 4 }: { count?: number }) => (
+  <>
     {Array.from({ length: count }, (_, i) => (
       <ListingCardSkeleton key={i} />
     ))}
-  </div>
+  </>
 );
 
 export default ListingCardSkeleton;

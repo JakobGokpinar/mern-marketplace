@@ -51,6 +51,17 @@
   margin: 0;
 }
 
+.footer-portfolio {
+  font-size: var(--fs-xs);
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.footer-portfolio:hover {
+  color: white;
+}
+
 .footer-copy {
   font-size: var(--fs-xs);
   color: rgba(255, 255, 255, 0.45);

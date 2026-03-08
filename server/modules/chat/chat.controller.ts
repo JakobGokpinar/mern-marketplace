@@ -135,6 +135,13 @@ export const resetUnread = async (req: Request, res: Response) => {
       { _id: roomId },
       { $set: isBuyer ? { unreadBuyer: 0 } : { unreadSeller: 0 } },
     );
+
+    // Mark messages from the other party as read
+    await MessageModel.updateMany(
+      { conversationId: new ObjectId(roomId), sender: { $ne: new ObjectId(userId) }, readAt: null },
+      { $set: { readAt: new Date() } },
+    );
+
     res.status(200).json({ message: 'Unread messages reset' });
   } catch (error) {
     return res.status(500).json({ message: 'Error occured' });

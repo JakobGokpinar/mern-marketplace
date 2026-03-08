@@ -40,7 +40,7 @@ export const useChat = () => {
   const [currentFriendStatus, setCurrentFriendStatus] = useState<string | null>(null);
   const [messageInput, setMessageInput] = useState('');
 
-  const { arrivalMessage, isFriendTyping, emitSendMessage } = useChatSocket({
+  const { arrivalMessage, isFriendTyping, emitSendMessage, readReceiptEvent, emitMessagesRead } = useChatSocket({
     friendId: friend?._id,
     userId,
     messageInput,
@@ -98,11 +98,13 @@ export const useChat = () => {
             : null
         );
         await resetUnreadApi(currentChat._id);
+        emitMessagesRead(currentChat._id, friendId);
       } catch {
         toast.error('Kunne ikke laste chat');
       }
     };
     void loadChatData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentChat, userId]);
 
   // Load product for current chat
@@ -117,8 +119,21 @@ export const useChat = () => {
   useEffect(() => {
     if (!arrivalMessage || arrivalMessage.sender !== friend?._id) return;
     setMessagesArray((prev) => [...prev, arrivalMessage]);
-    if (currentChat?._id) void resetUnreadApi(currentChat._id);
+    if (currentChat?._id && friend?._id) {
+      void resetUnreadApi(currentChat._id);
+      emitMessagesRead(currentChat._id, friend._id);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [arrivalMessage, friend, currentChat]);
+
+  // Handle read receipt from friend (they read our messages)
+  useEffect(() => {
+    if (!readReceiptEvent || readReceiptEvent.roomId !== currentChat?._id) return;
+    const now = new Date();
+    setMessagesArray(prev =>
+      prev.map(msg => msg.sender === userId && !msg.readAt ? { ...msg, readAt: now } : msg)
+    );
+  }, [readReceiptEvent, currentChat, userId]);
 
   const loadOlderMessages = useCallback(async () => {
     if (!currentChat || !hasMoreMessages || isLoadingMore) return;

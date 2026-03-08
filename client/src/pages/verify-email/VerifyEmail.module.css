@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-primary-lightest);
+  background-color: var(--color-bg-subtle);
   padding: var(--space-lg);
 }
 
@@ -30,6 +30,10 @@
   align-items: center;
   justify-content: center;
   margin-bottom: var(--space-md);
+}
+
+:global([data-theme="dark"]) .icon-circle {
+  background: rgba(47, 201, 98, 0.18);
 }
 
 .title {

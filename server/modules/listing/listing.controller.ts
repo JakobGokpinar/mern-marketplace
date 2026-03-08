@@ -208,11 +208,9 @@ export const getUserListings = async (req: Request, res: Response) => {
 
 // --- Search/filter helpers ---
 
-function escapeRegex(str: string) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-function getTitle(value: string) {
-  return { title: { $regex: escapeRegex(value), $options: 'i' } };
+function getTextQuery(value: string | undefined) {
+  if (!value?.trim()) return;
+  return { $text: { $search: value } };
 }
 function getLocation(kommuneArr: string[] | undefined) {
   if (!kommuneArr) return;
@@ -244,19 +242,25 @@ function getDate(value: string | undefined) {
 }
 function getStatus(value: string | undefined) {
   if (!value) return;
-  let v = value.toString().toLowerCase();
-  v = v.charAt(0).toUpperCase() + v.slice(1);
-  return { status: v };
+  return { status: value };
+}
+
+function parseSort(value: string | undefined, hasTextSearch: boolean): Record<string, 1 | -1 | { $meta: string }> {
+  switch (value) {
+    case 'price_asc': return { price: 1 };
+    case 'price_desc': return { price: -1 };
+    case 'oldest': return { createdAt: 1 };
+    case 'newest': return { createdAt: -1 };
+    default: return hasTextSearch ? { score: { $meta: 'textScore' } } : { createdAt: -1 };
+  }
 }
 
 export const findProducts = async (req: Request, res: Response) => {
   const queryObject: Record<string, unknown> = {};
   const queryParams = req.body;
+  const hasTextSearch = !!queryParams['q']?.trim();
 
-  for (const param in queryParams) {
-    if (param === 'q') Object.assign(queryObject, getTitle(queryParams[param]));
-  }
-
+  Object.assign(queryObject, getTextQuery(queryParams['q']));
   Object.assign(queryObject, getMainCategory(queryParams['category']));
   Object.assign(queryObject, getSubCategory(queryParams['subcategory']));
   Object.assign(queryObject, getPrice(queryParams['min_price'], queryParams['max_price']));
@@ -265,11 +269,14 @@ export const findProducts = async (req: Request, res: Response) => {
   Object.assign(queryObject, getLocation(queryParams['kommune']));
 
   const { page, limit, skip } = parsePagination(req.body);
+  const sort = parseSort(queryParams['sort'], hasTextSearch);
   const favoritesArray = await getFavoritesArray(req);
 
   try {
+    const findQuery = ListingModel.find(queryObject);
+    if (hasTextSearch) findQuery.select({ score: { $meta: 'textScore' } });
     const [result, totalCount] = await Promise.all([
-      ListingModel.find(queryObject).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
+      findQuery.sort(sort).skip(skip).limit(limit).lean(),
       ListingModel.countDocuments(queryObject),
     ]);
 

@@ -22,6 +22,9 @@ export const useFormValidation = <T>(schema: ZodSchema<T>) => {
   }, [schema]);
 
   const clearErrors = useCallback(() => setErrors({}), []);
+  const setFieldError = useCallback((field: string, message: string) => {
+    setErrors(prev => ({ ...prev, [field]: message }));
+  }, []);
 
-  return { errors, validate, clearErrors };
+  return { errors, validate, clearErrors, setFieldError };
 };

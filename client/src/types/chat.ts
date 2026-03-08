@@ -3,6 +3,7 @@ export interface Message {
   sender: string;
   msg: string;
   sentAt: string | Date;
+  readAt?: string | Date | null;
 }
 
 export interface ChatRoom {

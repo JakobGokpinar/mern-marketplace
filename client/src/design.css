@@ -354,6 +354,13 @@ a:hover {
   color: var(--color-text);
 }
 
+[data-theme="dark"] .btn-light:active,
+[data-theme="dark"] .btn-light.show {
+  background-color: var(--color-surface) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
 [data-theme="dark"] .card {
   background-color: var(--color-surface);
   border-color: var(--color-border);

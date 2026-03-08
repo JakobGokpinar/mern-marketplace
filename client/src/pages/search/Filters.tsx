@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { InputGroup } from 'react-bootstrap';
 import styles from './Filters.module.css';
 
@@ -23,14 +23,19 @@ interface FiltersProps {
   handleFilterChange: (key: string, value: string) => void;
   removeSelectedFilter: (key: string, value?: string) => void;
   searchParams: URLSearchParams;
-  counties: County[] | false;
-  categories?: { categories: string[]; subCategories: string[] } | false;
+  counties: County[];
 }
 
 const Filters = ({ handleFilterChange, removeSelectedFilter, searchParams, counties }: FiltersProps) => {
     // Price inputs need local state since user types then submits
     const [minPrice, setMinPrice] = useState<string>(searchParams.get('min_price') || '');
     const [maxPrice, setMaxPrice] = useState<string>(searchParams.get('max_price') || '');
+
+    // Sync price inputs when URL params change (e.g. reset filters)
+    useEffect(() => {
+      setMinPrice(searchParams.get('min_price') || '');
+      setMaxPrice(searchParams.get('max_price') || '');
+    }, [searchParams]);
 
     // Derive all values directly from URL params
     const selectedFylke = searchParams.get('fylke') || '';
@@ -41,7 +46,7 @@ const Filters = ({ handleFilterChange, removeSelectedFilter, searchParams, count
     const productStatus = searchParams.get('status') || '';
 
     // Derive communes from selected county
-    const selectedCounty = counties !== false ? counties.find((c: County) => c.fylkesnummer === selectedFylke) : undefined;
+    const selectedCounty = counties.find((c: County) => c.fylkesnummer === selectedFylke);
     const communes = selectedCounty?.kommuner ?? [];
 
     // Derive main category object from URL (handles subcategory-only case too)
@@ -90,14 +95,20 @@ const Filters = ({ handleFilterChange, removeSelectedFilter, searchParams, count
         if (maxPrice !== '') handleFilterChange('max_price', maxPrice);
     };
 
-    const handleDateChange = (e: React.FormEvent<HTMLFormElement>) => {
-        const target = e.target as HTMLInputElement;
-        handleFilterChange('date', target.value);
+    const handleDateChange = (value: string) => {
+        if (value === productDate) {
+            removeSelectedFilter('date');
+        } else {
+            handleFilterChange('date', value);
+        }
     };
 
-    const handleStatusChange = (e: React.FormEvent<HTMLFormElement>) => {
-        const target = e.target as HTMLInputElement;
-        handleFilterChange('status', target.value);
+    const handleStatusChange = (value: string) => {
+        if (value === productStatus) {
+            removeSelectedFilter('status');
+        } else {
+            handleFilterChange('status', value);
+        }
     };
 
   return (
@@ -107,13 +118,13 @@ const Filters = ({ handleFilterChange, removeSelectedFilter, searchParams, count
           <Accordion.Header>Lokasjon</Accordion.Header>
           <Accordion.Body>
             <Form.Select
-              aria-label="state-selection"
+              aria-label="Velg fylke"
               className="mb-2"
               onChange={handleStateChange}
               value={selectedFylke}
             >
-              <option value="">Velg en Fylke</option>
-              {counties !== false && counties.length > 0 &&
+              <option value="">Velg fylke</option>
+              {counties.length > 0 &&
                 counties.map((county: County) => (
                   <option key={county.fylkesnummer} value={county.fylkesnummer}>
                     {county.fylkesnavn}
@@ -143,12 +154,12 @@ const Filters = ({ handleFilterChange, removeSelectedFilter, searchParams, count
           <Accordion.Header>Kategori</Accordion.Header>
           <Accordion.Body>
             <Form.Select
-              aria-label="maincategory-selection"
+              aria-label="Velg hovedkategori"
               className="mb-2"
               onChange={handleCategoryChange}
               value={mainCategory !== '' ? JSON.stringify(mainCategory) : JSON.stringify('')}
             >
-              <option value={JSON.stringify('')}>Velg en hovedkategori</option>
+              <option value={JSON.stringify('')}>Velg hovedkategori</option>
               {categoryObject.categories.map((item) => (
                 <option value={JSON.stringify(item)} key={item.maincategory}>
                   {item.maincategory}
@@ -157,11 +168,11 @@ const Filters = ({ handleFilterChange, removeSelectedFilter, searchParams, count
             </Form.Select>
             {mainCategory !== '' &&
               <Form.Select
-                aria-label="subcategory-selection"
+                aria-label="Velg underkategori"
                 onChange={handleSubCategoryChange}
                 value={selectedSubcategory}
               >
-                <option value="">Velg en under kategori</option>
+                <option value="">Velg underkategori</option>
                 {mainCategory.subcategories.map(item => (
                   <option value={item.name} key={item.name}>{item.name}</option>
                 ))}
@@ -178,7 +189,7 @@ const Filters = ({ handleFilterChange, removeSelectedFilter, searchParams, count
             <InputGroup className="mb-3">
               <Form.Control
                 type="number"
-                placeholder="min. pris"
+                placeholder="Min. pris"
                 onChange={(e) => setMinPrice(e.target.value)}
                 value={minPrice}
               />
@@ -187,13 +198,13 @@ const Filters = ({ handleFilterChange, removeSelectedFilter, searchParams, count
             <InputGroup className="mb-3">
               <Form.Control
                 type="number"
-                placeholder="max. pris"
+                placeholder="Maks. pris"
                 onChange={(e) => setMaxPrice(e.target.value)}
                 value={maxPrice}
               />
               <InputGroup.Text>kr</InputGroup.Text>
             </InputGroup>
-            <Button variant="primary" type="button" onClick={handlePriceSubmit}>Search</Button>
+            <Button variant="primary" type="button" onClick={handlePriceSubmit}>Filtrer</Button>
           </Accordion.Body>
         </Accordion.Item>
       </Accordion>
@@ -202,10 +213,10 @@ const Filters = ({ handleFilterChange, removeSelectedFilter, searchParams, count
         <Accordion.Item eventKey="4">
           <Accordion.Header>Dato</Accordion.Header>
           <Accordion.Body>
-            <Form onChange={handleDateChange}>
-              <Form.Check type="radio" name="date" label="Siste 24 timer" value="today" checked={productDate === 'today'} onChange={() => {}} />
-              <Form.Check type="radio" name="date" label="I uke" value="this week" checked={productDate === 'this week'} onChange={() => {}} />
-              <Form.Check type="radio" name="date" label="I month" value="this month" checked={productDate === 'this month'} onChange={() => {}} />
+            <Form>
+              <Form.Check type="radio" name="date" label="Siste 24 timer" value="today" checked={productDate === 'today'} onChange={() => handleDateChange('today')} />
+              <Form.Check type="radio" name="date" label="Siste uken" value="this week" checked={productDate === 'this week'} onChange={() => handleDateChange('this week')} />
+              <Form.Check type="radio" name="date" label="Siste måneden" value="this month" checked={productDate === 'this month'} onChange={() => handleDateChange('this month')} />
             </Form>
           </Accordion.Body>
         </Accordion.Item>
@@ -213,11 +224,11 @@ const Filters = ({ handleFilterChange, removeSelectedFilter, searchParams, count
 
       <Accordion className={styles['filter-accordion']}>
         <Accordion.Item eventKey="0">
-          <Accordion.Header>Status</Accordion.Header>
+          <Accordion.Header>Stand</Accordion.Header>
           <Accordion.Body>
-            <Form onChange={handleStatusChange}>
-              <Form.Check type="radio" value="nytt" name="status" label="Nytt" checked={productStatus === 'nytt'} onChange={() => {}} />
-              <Form.Check type="radio" value="brukt" name="status" label="Brukt" checked={productStatus === 'brukt'} onChange={() => {}} />
+            <Form>
+              <Form.Check type="radio" value="nytt" name="status" label="Nytt" checked={productStatus === 'nytt'} onChange={() => handleStatusChange('nytt')} />
+              <Form.Check type="radio" value="brukt" name="status" label="Brukt" checked={productStatus === 'brukt'} onChange={() => handleStatusChange('brukt')} />
             </Form>
           </Accordion.Body>
         </Accordion.Item>

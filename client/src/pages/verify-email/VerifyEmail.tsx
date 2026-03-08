@@ -19,15 +19,17 @@ const VerifyEmail = () => {
   const dispatch = useAppDispatch();
 
   const token = queryParams.get('t') || '';
+  const alreadyVerified = user?.isEmailVerified === true;
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
 
   useEffect(() => {
+    if (alreadyVerified) return;
     if (!token) {
       setStatus('error');
       setMessage('Ugyldig lenke — token mangler.');
     }
-  }, [token]);
+  }, [token, alreadyVerified]);
 
   const verify = async () => {
     setStatus('loading');
@@ -54,16 +56,23 @@ const VerifyEmail = () => {
       <div className={styles['card']}>
         <div className={styles['icon-circle']}>
           <Icon
-            name={status === 'success' ? 'circle-check' : 'envelope'}
+            name={alreadyVerified || status === 'success' ? 'circle-check' : 'envelope'}
             size={28}
           />
         </div>
 
         <h1 className={styles['title']}>
-          {status === 'success' ? 'E-post bekreftet!' : 'Bekreft e-postadressen din'}
+          {alreadyVerified || status === 'success' ? 'E-post bekreftet!' : 'Bekreft e-postadressen din'}
         </h1>
 
-        {status === 'success' ? (
+        {alreadyVerified ? (
+          <>
+            <p className={styles['description']}>E-postadressen din er allerede bekreftet.</p>
+            <Button variant="primary" className={styles['btn']} onClick={() => navigate('/account')}>
+              Gå til min konto
+            </Button>
+          </>
+        ) : status === 'success' ? (
           <>
             <p className={styles['description']}>{message}</p>
             {user ? (

@@ -245,10 +245,12 @@
 
 .navigation .navbar-user-toggle:global(.btn):hover,
 .navigation .navbar-user-toggle:global(.btn):focus,
+.navigation .navbar-user-toggle:global(.btn):active,
 .navigation .navbar-user-toggle:global(.btn.show) {
     background: var(--color-primary-lightest) !important;
     border-color: var(--color-primary-light) !important;
     box-shadow: none !important;
+    color: var(--color-text) !important;
 }
 
 .navbar-user-toggle .navbar-username {

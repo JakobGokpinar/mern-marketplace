@@ -188,6 +188,12 @@ io.on('connection', (socket) => {
     io.to(friend.socketId).emit('getStoppedTyping', { typer, receiver });
   });
 
+  socket.on('messagesRead', ({ roomId, receiver }: { roomId: string; receiver: string }) => {
+    const friend = findUser(receiver);
+    if (!friend) return;
+    io.to(friend.socketId).emit('getMessagesRead', { roomId });
+  });
+
   socket.on('logout', async () => {
     const user = connectedUsers.find(u => u.socketId === socket.id);
     removeUser(socket.id);

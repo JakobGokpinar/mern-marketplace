@@ -93,7 +93,13 @@ const Chat = () => {
       <div className={`${styles['sidebar']} ${!mobilePanelOpen ? styles['sidebar--visible'] : ''}`}>
         <div className={styles['sidebar-header']}>Meldinger</div>
         <div className={styles['sidebar-list']}>
-          {conversations.map((conv, i) => (
+          {conversations.length === 0 ? (
+            <div className={styles['sidebar-empty']}>
+              <Icon name="comments" />
+              <p>Ingen meldinger</p>
+              <span>Start en samtale fra en annonse</span>
+            </div>
+          ) : conversations.map((conv, i) => (
             <div key={conv._id ?? i} onClick={() => handleSelectConversation(conv)}>
               <Conversations
                 productId={conv.productId}
@@ -110,7 +116,11 @@ const Chat = () => {
       {/* Main panel */}
       <div className={`${styles['panel']} ${!mobilePanelOpen ? styles['panel--hidden'] : ''}`}>
         {!currentChat ? (
-          <div className={styles['empty-state']}>Velg en samtale</div>
+          <div className={styles['empty-state']}>
+            <Icon name="message" />
+            <p>Velg en samtale</p>
+            <span>Velg en samtale fra listen til venstre</span>
+          </div>
         ) : (
           <>
             {/* Header */}

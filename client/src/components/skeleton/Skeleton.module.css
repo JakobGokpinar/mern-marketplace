@@ -4,7 +4,7 @@
 }
 
 .skeleton {
-  background: linear-gradient(90deg, #eee 25%, #ddd 50%, #eee 75%);
+  background: linear-gradient(90deg, var(--color-border-light) 25%, var(--color-border) 50%, var(--color-border-light) 75%);
   background-size: 800px 100%;
   animation: shimmer 1.5s infinite ease-in-out;
   border-radius: var(--radius-sm);
@@ -43,21 +43,4 @@
   height: 20px;
   width: 35%;
   margin-top: 4px;
-}
-
-/* Grid layout matching homepage */
-.skeleton-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-  gap: var(--space-lg);
-  justify-items: center;
-  padding: var(--space-lg) 5%;
-}
-
-@media (max-width: 768px) {
-  .skeleton-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-md);
-    padding: var(--space-md);
-  }
 }

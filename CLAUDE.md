@@ -67,6 +67,5 @@ MERN (MongoDB, Express, React 18, Node.js). Vite + TypeScript frontend.
 ## Env Vars (client/.env)
 ```
 VITE_API_URL=http://localhost:3080       # backend URL
-VITE_SITE_URL=https://rego.jakobg.tech  # frontend URL (used for share links)
-VITE_GEONAMES_USER=goksoft              # geonames.org username for postnumber lookup
+VITE_SITE_URL=http://localhost:3000      # frontend URL (used for share links; https://rego.jakobg.tech in production)
 ```

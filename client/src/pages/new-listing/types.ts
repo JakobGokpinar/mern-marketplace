@@ -32,6 +32,5 @@ export interface ListingPropertyObject {
   status: string;
   postnumber: string;
   location: string;
-  fylke?: string;
   kommune?: string;
 }

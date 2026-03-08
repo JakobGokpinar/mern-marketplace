@@ -77,7 +77,7 @@ export const sendVerificationEmail = async (to: string, name: string, verifyUrl:
     ${button('Bekreft e-postadresse', verifyUrl)}
     ${smallText('Hvis knappen ikke fungerer, kopier og lim inn denne lenken i nettleseren din:')}
     <p style="font-size:12px;word-break:break-all;margin:4px 0 0"><a href="${verifyUrl}" style="color:${BRAND_COLOR};text-decoration:none">${verifyUrl}</a></p>
-    ${smallText('Denne lenken utloper om 10 minutter.')}
+    ${smallText('Denne lenken utløper om 15 minutter.')}
   `;
 
   await transporter.sendMail({
@@ -127,7 +127,7 @@ export const sendPasswordResetEmail = async (to: string, name: string, resetUrl:
     ${button('Tilbakestill passord', resetUrl)}
     ${smallText('Hvis knappen ikke fungerer, kopier og lim inn denne lenken i nettleseren din:')}
     <p style="font-size:12px;word-break:break-all;margin:4px 0 0"><a href="${resetUrl}" style="color:${BRAND_COLOR};text-decoration:none">${resetUrl}</a></p>
-    ${smallText('Denne lenken utloper om 10 minutter. Hvis du ikke ba om dette, kan du trygt ignorere denne e-posten.')}
+    ${smallText('Denne lenken utløper om 15 minutter. Hvis du ikke ba om dette, kan du trygt ignorere denne e-posten.')}
   `;
 
   await transporter.sendMail({

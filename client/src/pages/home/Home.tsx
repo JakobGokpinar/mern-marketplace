@@ -7,7 +7,7 @@ import { queryKeys } from '../../lib/queryKeys';
 import { fetchProductsApi } from '../../services/productService';
 import Spinner from 'react-bootstrap/Spinner';
 import Button from 'react-bootstrap/Button';
-import { ListingGridSkeleton } from '../../components/skeleton/ListingCardSkeleton';
+import { ListingCardSkeletons } from '../../components/skeleton/ListingCardSkeleton';
 import type { Product } from '../../types/product';
 
 const Menu = () => {
@@ -26,13 +26,15 @@ const Menu = () => {
   const totalPages = data?.totalPages ?? 1;
   const hasMore = page < totalPages;
 
-  if (isPending && page === 1) {
-    return <ListingGridSkeleton />;
-  }
+  const isInitialLoad = isPending && page === 1;
 
   return (
     <div className={styles['homepage']}>
-      {allProducts.length > 0 ? (
+      {isInitialLoad ? (
+        <div className={styles['homepage-grid']}>
+          <ListingCardSkeletons count={4} />
+        </div>
+      ) : allProducts.length > 0 ? (
         <>
           <div className={styles['homepage-grid']}>
             {allProducts.map((product) => (

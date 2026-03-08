@@ -12,6 +12,7 @@ const Footer = () => (
           <span className={styles['footer-brand-name']}>Rego</span>
         </div>
         <p className={styles['footer-tagline']}>Kjøp og selg lokalt</p>
+        <a href="https://jakobg.tech" target="_blank" rel="noopener noreferrer" className={styles['footer-portfolio']}>jakobg.tech</a>
         <p className={styles['footer-copy']}>&copy; {new Date().getFullYear()}</p>
       </div>
 

@@ -45,8 +45,21 @@
 }
 
 .timestamp {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-size: 0.68rem;
   color: var(--color-text-muted);
   margin-top: 2px;
   padding: 0 4px;
+}
+
+.read-receipt {
+  font-size: 0.72rem;
+  letter-spacing: -2px;
+  color: var(--color-text-muted);
+}
+
+.read-receipt--read {
+  color: var(--color-primary);
 }

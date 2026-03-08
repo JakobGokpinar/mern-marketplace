@@ -53,6 +53,12 @@
   flex-direction: column;
 }
 
+.field-error {
+  font-size: 0.875em;
+  color: var(--color-danger);
+  margin-top: 4px;
+}
+
 /* ── Status toggle ─────────────────────────────── */
 
 .status-toggle {
@@ -137,7 +143,7 @@
 .price-row {
   display: flex;
   gap: var(--space-sm);
-  align-items: center;
+  align-items: flex-start;
 }
 
 .price-input-wrapper {
@@ -153,15 +159,18 @@
 .price-currency {
   position: absolute;
   right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 10px;
   font-size: var(--fs-sm);
   color: var(--color-text-secondary);
   pointer-events: none;
 }
 
-.price-period {
+.price-period-wrapper {
   flex: 1;
+}
+
+.price-period {
+  width: 100%;
 }
 
 /* ── Postnumber row ────────────────────────────── */

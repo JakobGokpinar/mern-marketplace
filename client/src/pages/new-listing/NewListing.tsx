@@ -10,7 +10,6 @@ import styles from './NewListing.module.css';
 
 import { compressListingImage } from '../../utils/compressImage';
 import { instanceAxs } from '../../lib/axios';
-import { useFindCommuneByPostnumber } from '../../hooks/useNorwayGeo';
 import { useDebounce } from '../../hooks/useDebounce';
 import categoryData from '../../categories.json';
 import toast from 'react-hot-toast';
@@ -37,7 +36,6 @@ const EMPTY_LISTING: ListingPropertyObject = {
 
 const NewListing = () => {
   const user = useAppSelector(state => state.user.user);
-  const communeFinder = useFindCommuneByPostnumber();
   const navigate = useNavigate();
   const routerLocation = useLocation();
 
@@ -49,7 +47,7 @@ const NewListing = () => {
   const [specPropArray, setSpecPropArray] = useState<SpecProp[]>([]);
   const [postAddress, setPostAddress] = useState('');
 
-  const { errors: formErrors, validate } = useFormValidation(listingSchema);
+  const { errors: formErrors, validate, setFieldError } = useFormValidation(listingSchema);
   const debouncedPostnumber = useDebounce(listing.postnumber, 400);
 
   const buildFormData = async (): Promise<FormData> => {
@@ -208,35 +206,47 @@ const NewListing = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!validate(listing)) return;
+    const isValid = validate(listing);
+    let hasExtra = false;
     if (imageArray.length === 0) {
-      toast.error('Legg til minst ett bilde');
-      return;
+      setFieldError('images', 'Minst ett bilde påkrevd');
+      hasExtra = true;
     }
+    if (listing.postnumber && !postAddress) {
+      setFieldError('postnumber', 'Ugyldig postnummer');
+      hasExtra = true;
+    }
+    if (!isValid || hasExtra) return;
     submitMutation.mutate();
   };
 
   useEffect(() => {
-    if (!debouncedPostnumber) return;
-    const geonamesUser = import.meta.env.VITE_GEONAMES_USER as string;
-    fetch(`https://secure.geonames.org/postalCodeLookupJSON?postalcode=${debouncedPostnumber}&country=no&username=${geonamesUser}`)
+    if (!debouncedPostnumber || !/^\d{4}$/.test(debouncedPostnumber)) {
+      setPostAddress('');
+      setListing(prev => ({ ...prev, location: '', kommune: '' }));
+      return;
+    }
+    fetch(`https://ws.geonorge.no/adresser/v1/sok?postnummer=${debouncedPostnumber}&treffPerSide=1`)
       .then(r => r.json())
-      .then(geoData => {
-        const place = geoData.postalcodes[0];
-        if (!place) { setPostAddress(''); return; }
-        const placeProperties = communeFinder(place.adminCode2);
-        if (placeProperties) {
-          setListing(prev => ({
-            ...prev,
-            fylke: placeProperties.fylkesNavn,
-            kommune: placeProperties.kommuneNavn,
-            location: place.placeName,
-          }));
+      .then(data => {
+        const hit = data.adresser?.[0];
+        if (!hit) {
+          setPostAddress('');
+          setListing(prev => ({ ...prev, location: '', kommune: '' }));
+          return;
         }
-        setPostAddress(place.placeName);
+        setListing(prev => ({
+          ...prev,
+          location: hit.poststed,
+          kommune: hit.kommunenavn,
+        }));
+        setPostAddress(hit.poststed);
       })
-      .catch(() => { setPostAddress(''); });
-  }, [debouncedPostnumber, communeFinder]);
+      .catch(() => {
+        setPostAddress('');
+        setListing(prev => ({ ...prev, location: '', kommune: '' }));
+      });
+  }, [debouncedPostnumber]);
 
   useEffect(() => {
     const state = routerLocation.state;

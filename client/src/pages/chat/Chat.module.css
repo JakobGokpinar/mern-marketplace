@@ -1,9 +1,10 @@
 .container {
   display: flex;
-  height: calc(100vh - 140px);
+  height: calc(100vh - 62px - var(--space-xl) * 2);
   min-height: 500px;
+  margin: var(--space-xl) var(--space-lg);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   background: var(--color-surface);
   box-shadow: var(--shadow-sm);
@@ -41,14 +42,62 @@
   overflow: hidden;
 }
 
-/* ── Empty state ── */
+/* ── Empty states ── */
 .empty-state {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: var(--space-sm);
   color: var(--color-text-muted);
-  font-size: 0.95rem;
+  padding: var(--space-lg);
+}
+
+.empty-state i {
+  font-size: 2.5rem;
+  color: var(--color-border);
+  margin-bottom: var(--space-sm);
+}
+
+.empty-state p {
+  font-size: var(--fs-base);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.empty-state span {
+  font-size: var(--fs-sm);
+}
+
+.sidebar-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: var(--space-lg);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.sidebar-empty i {
+  font-size: 1.8rem;
+  color: var(--color-border);
+  margin-bottom: var(--space-xs);
+}
+
+.sidebar-empty p {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.sidebar-empty span {
+  font-size: var(--fs-xs);
 }
 
 /* ── Header ── */

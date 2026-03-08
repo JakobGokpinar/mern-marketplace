@@ -97,12 +97,14 @@ const ListingForm = ({
             value={listing.subSubCategory ?? ''}
             onChange={onPropertyChange}
             disabled={isPublishing}
+            isInvalid={!!errors.subSubCategory}
           >
             <option value="">Velg type</option>
             {selectedSubCat.subsubcategories.map((item) => (
               <option value={item} key={item}>{item}</option>
             ))}
           </Form.Select>
+          <Form.Control.Feedback type="invalid">{errors.subSubCategory}</Form.Control.Feedback>
         </Form.Group>
       )}
     </section>
@@ -124,8 +126,10 @@ const ListingForm = ({
             className={styles['upload-input']}
           />
         </label>
-        {imageArray.length > 0 && (
+        {imageArray.length > 0 ? (
           <p className={styles['upload-hint']}>{imageArray.length} bilde{imageArray.length !== 1 ? 'r' : ''} valgt — dra for å sortere</p>
+        ) : errors.images && (
+          <div className={styles['field-error']}>{errors.images}</div>
         )}
       </Form.Group>
 
@@ -193,6 +197,7 @@ const ListingForm = ({
             Brukt
           </button>
         </div>
+        {errors.status && <div className={styles['field-error']}>{errors.status}</div>}
       </Form.Group>
     </section>
 
@@ -217,22 +222,24 @@ const ListingForm = ({
             <Form.Control.Feedback type="invalid">{errors.price}</Form.Control.Feedback>
             <span className={styles['price-currency']}>kr</span>
           </div>
-          <Form.Select
-            id="pricePeriod"
-            value={listing.pricePeriod}
-            onChange={onPropertyChange}
-            required
-            disabled={isPublishing}
-            isInvalid={!!errors.pricePeriod}
-            className={styles['price-period']}
-          >
-            <option value="">Velg periode</option>
-            <option value="totalt">Total pris</option>
-            <option value="per dag">Per dag</option>
-            <option value="per uke">Per uke</option>
-            <option value="per måned">Per måned</option>
-          </Form.Select>
-          <Form.Control.Feedback type="invalid">{errors.pricePeriod}</Form.Control.Feedback>
+          <div className={styles['price-period-wrapper']}>
+            <Form.Select
+              id="pricePeriod"
+              value={listing.pricePeriod}
+              onChange={onPropertyChange}
+              required
+              disabled={isPublishing}
+              isInvalid={!!errors.pricePeriod}
+              className={styles['price-period']}
+            >
+              <option value="">Velg periode</option>
+              <option value="totalt">Total pris</option>
+              <option value="per dag">Per dag</option>
+              <option value="per uke">Per uke</option>
+              <option value="per måned">Per måned</option>
+            </Form.Select>
+            <Form.Control.Feedback type="invalid">{errors.pricePeriod}</Form.Control.Feedback>
+          </div>
         </div>
       </Form.Group>
     </section>

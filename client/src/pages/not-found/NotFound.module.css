@@ -3,11 +3,7 @@
   align-items: center;
   justify-content: center;
   min-height: calc(100vh - 62px);
-  background: linear-gradient(
-    180deg,
-    var(--color-primary-lightest) 0%,
-    var(--color-bg) 100%
-  );
+  background-color: var(--color-bg-subtle);
   padding: var(--space-lg);
 }
 

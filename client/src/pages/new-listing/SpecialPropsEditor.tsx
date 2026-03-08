@@ -2,8 +2,6 @@ import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
 import Icon from '../../components/icons/Icon';
 import styles from './SpecialPropsEditor.module.css';
 
@@ -38,12 +36,6 @@ const SpecialPropsEditor = ({ isPublishing, onAdd }: SpecialPropsEditorProps) =>
       >
         <Icon name="plus" style={{ margin: '0 8px' }} /> Legg til ny nokkelinfo
       </Button>
-      <OverlayTrigger
-        placement="right"
-        overlay={<Tooltip>Legg til raske fakta om produktet ditt.</Tooltip>}
-      >
-        <Icon name="circle-question" style={{ margin: '0 16px' }} />
-      </OverlayTrigger>
 
       {showBackdrop && (
         <div className={styles['backdrop']} onClick={() => setShowBackdrop(false)}>

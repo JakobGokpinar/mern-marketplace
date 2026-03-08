@@ -11,9 +11,10 @@ import Form from 'react-bootstrap/Form';
 import Button from "react-bootstrap/Button";
 import FilterBadge from "./FilterBadge";
 import Spinner from "react-bootstrap/Spinner";
+import Icon from "../../components/icons/Icon";
 
 import ListingCard from "../../components/listing-card/ListingCard";
-import { ListingGridSkeleton } from "../../components/skeleton/ListingCardSkeleton";
+import { ListingCardSkeletons } from "../../components/skeleton/ListingCardSkeleton";
 import { queryKeys } from "../../lib/queryKeys";
 import { searchProductsApi } from "../../services/productService";
 import { useNorwayGeo } from "../../hooks/useNorwayGeo";
@@ -31,6 +32,7 @@ const SearchResult = () => {
     const queryObject: Record<string, string | string[]> = {};
     const kommuneArr: string[] = [];
     for (const [key, value] of searchParams.entries()) {
+      if (key === 'fylke') continue; // UI-only, not sent to backend
       if (key === 'kommune') {
         kommuneArr.push(value);
         queryObject["kommune"] = kommuneArr;
@@ -41,10 +43,8 @@ const SearchResult = () => {
     return queryObject;
   };
 
-  const paramsKey = Object.fromEntries(searchParams.entries());
-
   const { data, isPending, isFetching } = useQuery({
-    queryKey: queryKeys.products.search(paramsKey, page),
+    queryKey: queryKeys.products.search(searchParams.toString(), page),
     queryFn: async () => {
       const res = await searchProductsApi(createQueryObject(), page);
       setAllProducts(prev => page === 1 ? res.productArray : [...prev, ...res.productArray]);
@@ -62,14 +62,6 @@ const SearchResult = () => {
   const totalCount = data?.totalCount ?? 0;
   const hasMore = page < totalPages;
 
-  const [sortedProducts, setSortedProducts] = useState<Product[] | null>(null);
-  const displayProducts = sortedProducts || allProducts;
-
-  // Reset sorting when products change
-  useEffect(() => {
-    setSortedProducts(null);
-  }, [allProducts]);
-
   const handleFilterChange = (key: string, value: string) => {
     const params = searchParams;
     if (key !== 'kommune') params.delete(key);
@@ -83,12 +75,12 @@ const SearchResult = () => {
       params.delete(key);
       params.delete('kommune');
     } else if (key === 'kommune') {
-      const kommuneArr = [];
+      const kommuneArr: string[] = [];
       for (const [queryKey, queryValue] of params.entries()) {
         if (queryKey === 'kommune' && queryValue !== value) kommuneArr.push(queryValue);
       }
       params.delete('kommune');
-      kommuneArr.map(item => params.append('kommune', item));
+      kommuneArr.forEach(item => params.append('kommune', item));
     } else {
       params.delete(key);
     }
@@ -105,62 +97,63 @@ const SearchResult = () => {
   };
 
   const handleSorting = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    e.preventDefault();
     const value = e.target.value;
-    const products = [...allProducts];
-    switch (value) {
-      case "price_asc":
-        products.sort((a, b) => a.price - b.price);
-        break;
-      case "price_desc":
-        products.sort((a, b) => b.price - a.price);
-        break;
-      case "published-first":
-        products.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        break;
-      case "published-last":
-        products.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-        break;
-      default:
-        setSortedProducts(null);
-        return;
+    const params = searchParams;
+    if (!value) {
+      params.delete('sort');
+    } else {
+      params.set('sort', value);
     }
-    setSortedProducts(products);
+    setSearchParams(params);
   };
+
+  const hasActiveFilters = Array.from(searchParams.entries()).some(([key]) => key !== 'q' && key !== 'sort');
 
   return (
     <Container fluid className={styles['search-result-container']}>
       <Row className={styles['result-row']}>
         <Col lg={3} className="filters-column">
-          <Button variant="outline-danger" className="w-100 mb-4" onClick={resetFilters}>Reset Filters</Button>
+          {hasActiveFilters && (
+            <Button variant="outline-danger" className="w-100 mb-4" onClick={resetFilters}>Nullstill filtre</Button>
+          )}
           <Filters
             handleFilterChange={handleFilterChange}
             removeSelectedFilter={removeSelectedFilter}
             searchParams={searchParams}
-            counties={counties.length > 0 && counties}
+            counties={counties}
           />
         </Col>
 
         <Col className="products-column" lg={8}>
           <div className={styles['top-row']}>
             <p>{totalCount} treff</p>
-            <Form.Select style={{ maxWidth: 200 }} onChange={handleSorting}>
-              <option value="mest-relevant">Mest Relevant</option>
-              <option value="published-first">Eldste først</option>
-              <option value="published-last">Nyeste først</option>
+            <Form.Select
+              className={styles['sort-select']}
+              onChange={handleSorting}
+              value={searchParams.get('sort') || ''}
+            >
+              <option value="">Mest relevant</option>
+              <option value="newest">Nyeste først</option>
+              <option value="oldest">Eldste først</option>
               <option value="price_asc">Pris lav til høy</option>
               <option value="price_desc">Pris høy til lav</option>
             </Form.Select>
           </div>
 
           <div className={styles['middle-row']}>
-            <FilterBadge searchParams={searchParams} removeSelectedFilter={removeSelectedFilter} counties={counties.length > 0 && counties} />
+            <FilterBadge searchParams={searchParams} removeSelectedFilter={removeSelectedFilter} counties={counties} />
           </div>
 
           <div className={styles['bottom-row']}>
             {isPending && page === 1 ? (
-              <ListingGridSkeleton count={6} />
-            ) : displayProducts.map((product) => (
+              <ListingCardSkeletons count={3} />
+            ) : allProducts.length === 0 ? (
+              <div className={styles['empty-state']}>
+                <Icon name="magnifying-glass" />
+                <p>Ingen treff</p>
+                <span>Prøv å endre søkeord eller fjern filtre</span>
+              </div>
+            ) : allProducts.map((product) => (
               <div key={product._id}>
                 <ListingCard
                   images={product.images}

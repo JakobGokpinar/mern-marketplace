@@ -80,11 +80,11 @@ describe('profile schema', () => {
 });
 
 describe('user schema', () => {
-  it('accepts valid userId query', () => {
-    expect(() => findUserQuery.parse({ userId: validId })).not.toThrow();
+  it('accepts valid id param', () => {
+    expect(() => findUserQuery.parse({ id: validId })).not.toThrow();
   });
 
-  it('rejects invalid userId', () => {
-    expect(() => findUserQuery.parse({ userId: '123' })).toThrow();
+  it('rejects invalid id', () => {
+    expect(() => findUserQuery.parse({ id: '123' })).toThrow();
   });
 });

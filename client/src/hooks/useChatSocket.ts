@@ -11,6 +11,7 @@ interface UseChatSocketOptions {
 export const useChatSocket = ({ friendId, userId, messageInput }: UseChatSocketOptions) => {
   const [arrivalMessage, setArrivalMessage] = useState<Message | null>(null);
   const [isFriendTyping, setIsFriendTyping] = useState(false);
+  const [readReceiptEvent, setReadReceiptEvent] = useState<{ roomId: string; at: number } | null>(null);
 
   // Incoming message
   useEffect(() => {
@@ -20,6 +21,15 @@ export const useChatSocket = ({ friendId, userId, messageInput }: UseChatSocketO
     };
     socket.on('getMessage', handler);
     return () => { socket.off('getMessage', handler); };
+  }, []);
+
+  // Read receipts
+  useEffect(() => {
+    const handler = ({ roomId }: { roomId: string }) => {
+      setReadReceiptEvent({ roomId, at: Date.now() });
+    };
+    socket.on('getMessagesRead', handler);
+    return () => { socket.off('getMessagesRead', handler); };
   }, []);
 
   // Typing indicators
@@ -52,5 +62,9 @@ export const useChatSocket = ({ friendId, userId, messageInput }: UseChatSocketO
     socket.emit('sendMessage', { msg, sentAt, sender, receiver });
   };
 
-  return { arrivalMessage, isFriendTyping, emitSendMessage };
+  const emitMessagesRead = (roomId: string, receiver: string) => {
+    socket.emit('messagesRead', { roomId, receiver });
+  };
+
+  return { arrivalMessage, isFriendTyping, emitSendMessage, readReceiptEvent, emitMessagesRead };
 };
