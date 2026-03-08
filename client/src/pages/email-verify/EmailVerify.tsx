@@ -28,7 +28,7 @@ const EmailVerify = () => {
   useEffect(() => {
     if (!user) return navigate('/');
     setToken(queryParams.get("t") || "");
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps — run once on mount to read query params
   }, []);
 
   const verify = async (e: React.MouseEvent<HTMLButtonElement>) => {

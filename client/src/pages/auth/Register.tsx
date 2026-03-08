@@ -21,7 +21,7 @@ function Register() {
 
   useEffect(() => {
     if (isLoggedIn) navigate("/");
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps — navigate is a stable ref, only react to login state
   }, [isLoggedIn]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {

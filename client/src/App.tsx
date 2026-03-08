@@ -61,7 +61,7 @@ const AppContent = () => {
     if (isLoggedIn && user) {
       dispatch(userActions.login(user));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps — run once on mount to restore session from localStorage
   }, []);
 
   return (

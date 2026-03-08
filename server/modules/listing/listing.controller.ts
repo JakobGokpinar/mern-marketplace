@@ -13,16 +13,16 @@ const DEFAULT_LIMIT = 20;
 
 // --- Helpers ---
 
-function parsePagination(query: any) {
-  const page = Math.max(1, parseInt(query.page) || 1);
-  const limit = Math.min(100, Math.max(1, parseInt(query.limit) || DEFAULT_LIMIT));
+function parsePagination(query: Record<string, unknown>) {
+  const page = Math.max(1, parseInt(query.page as string) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(query.limit as string) || DEFAULT_LIMIT));
   return { page, limit, skip: (page - 1) * limit };
 }
 
 async function getFavoritesArray(req: Request) {
   if (!req.isAuthenticated()) return [];
   try {
-    const user = await UserModel.findOne({ _id: new ObjectId((req.user as any)._id) }).select('favorites');
+    const user = await UserModel.findOne({ _id: req.user._id }).select('favorites');
     return user?.favorites || [];
   } catch (error) {
     logger.error(error);
@@ -30,10 +30,10 @@ async function getFavoritesArray(req: Request) {
   }
 }
 
-function markFavorites(items: any[], favoritesArray: any[]) {
+function markFavorites(items: Record<string, unknown>[], favoritesArray: mongoose.Types.ObjectId[]) {
   if (favoritesArray.length === 0) return items;
   return items.map(item => {
-    if (favoritesArray.some(fav => fav.toString() === item._id.toString())) {
+    if (favoritesArray.some(fav => fav.toString() === (item._id as mongoose.Types.ObjectId).toString())) {
       item.isFavorite = true;
     }
     return item;
@@ -43,21 +43,21 @@ function markFavorites(items: any[], favoritesArray: any[]) {
 // --- CRUD ---
 
 export const uploadImagesToAws = (req: Request, res: Response) => {
-  const user = req.user as any;
+  const user = req.user!;
   const listingId = (req.query.listingId as string) || new ObjectId().toString();
   const keyPrefix = getEnvFolder() + '/' + user.email + '/listing-' + listingId;
   const upload = createListingUpload(keyPrefix);
 
-  upload(req as any, res as any, (err: any) => {
+  upload(req as Parameters<typeof upload>[0], res as Parameters<typeof upload>[1], (err: unknown) => {
     if (err) {
       return res.status(400).json({ message: 'Kunne ikke laste opp bilder' });
     }
-    res.status(200).json({ files: (req as any).files, message: 'images uploaded', listingId });
+    res.status(200).json({ files: (req as Request & { files?: unknown }).files, message: 'images uploaded', listingId });
   });
 };
 
 export const saveListingToDatabase = async (req: Request, res: Response) => {
-  const user = req.user as any;
+  const user = req.user!;
   const listingProps = req.body.listingProperties;
   const images = req.body.imageLocations;
   const listingId = req.body.listingId;
@@ -78,12 +78,12 @@ export const saveListingToDatabase = async (req: Request, res: Response) => {
 };
 
 export const removeListing = async (req: Request, res: Response) => {
-  const email = (req.user as any).email;
+  const email = req.user!.email;
   const listingId = req.params.id as string;
 
   const listing = await ListingModel.findById(new ObjectId(listingId));
   if (!listing) return res.status(404).json({ message: 'Listing not found' });
-  if (listing.sellerId!.toString() !== (req.user as any)._id.toString()) {
+  if (listing.sellerId!.toString() !== req.user!._id.toString()) {
     return res.status(403).json({ message: 'Forbidden' });
   }
 
@@ -108,7 +108,7 @@ export const removeListing = async (req: Request, res: Response) => {
 
 export const removeListingImagesFromAWS = async (req: Request, res: Response) => {
   try {
-    const userEmail = (req.user as any).email;
+    const userEmail = req.user!.email;
     const listingId = req.params.id as string;
     await deleteObjectsByPrefix(getEnvFolder() + '/' + userEmail + '/listing-' + listingId + '/');
     return res.status(200).json({ message: 'listing images deleted successfully' });
@@ -119,7 +119,7 @@ export const removeListingImagesFromAWS = async (req: Request, res: Response) =>
 };
 
 export const updateListing = async (req: Request, res: Response) => {
-  const userId = (req.user as any).id;
+  const userId = req.user!._id;
   const listingId = req.params.id as string;
   const images = req.body.images;
   const listingProperties = req.body.listingProperties;
@@ -145,11 +145,11 @@ export const updateListing = async (req: Request, res: Response) => {
 
 export const findProduct = async (req: Request, res: Response) => {
   const productId = req.params.id as string;
-  let favoritesArray: any[] = [];
+  let favoritesArray: mongoose.Types.ObjectId[] = [];
 
   if (req.isAuthenticated()) {
     try {
-      const user = await UserModel.findOne({ _id: new ObjectId((req.user as any)._id) });
+      const user = await UserModel.findOne({ _id: req.user._id });
       favoritesArray = user!.favorites;
     } catch (error) {
       logger.error(error);
@@ -158,14 +158,16 @@ export const findProduct = async (req: Request, res: Response) => {
 
   try {
     const result = await ListingModel.findOne({ _id: new ObjectId(productId) }).lean();
-    const seller = await UserModel.findOne({ _id: new ObjectId((result as any).sellerId) })
+    if (!result) return res.status(404).json({ message: 'Listing not found' });
+
+    const seller = await UserModel.findOne({ _id: new ObjectId(result.sellerId) })
       .select('fullName profilePicture lastActiveAt userCreatedAt')
       .lean();
 
-    const isFavorite = favoritesArray.some(favId => favId.toString() === (result as any)._id.toString());
-    if (isFavorite) (result as any).isFavorite = true;
+    const isFavorite = favoritesArray.some(favId => favId.toString() === result._id.toString());
+    const product = isFavorite ? { ...result, isFavorite: true } : result;
 
-    return res.status(200).json({ product: result, seller, message: 'Product is found' });
+    return res.status(200).json({ product, seller, message: 'Product is found' });
   } catch (error) {
     logger.error(error);
     return res.status(500).json({ message: 'Error occured while getting the listing' });
@@ -196,7 +198,7 @@ export const getItems = async (req: Request, res: Response) => {
 
 export const getUserListings = async (req: Request, res: Response) => {
   try {
-    const userId = (req.user as any)._id;
+    const userId = req.user!._id;
     const result = await ListingModel.find({ sellerId: new ObjectId(userId) });
     return res.status(200).json({ productArray: result });
   } catch (err) {
@@ -248,7 +250,7 @@ function getStatus(value: string | undefined) {
 }
 
 export const findProducts = async (req: Request, res: Response) => {
-  const queryObject: any = {};
+  const queryObject: Record<string, unknown> = {};
   const queryParams = req.body;
 
   for (const param in queryParams) {
@@ -273,9 +275,9 @@ export const findProducts = async (req: Request, res: Response) => {
 
     const catArr: string[] = [];
     const subArr: string[] = [];
-    result.forEach((item: any) => {
-      if (catArr.indexOf(item.category) === -1) catArr.push(item.category);
-      if (subArr.indexOf(item.subCategory) === -1) subArr.push(item.subCategory);
+    result.forEach((item) => {
+      if (item.category && catArr.indexOf(item.category) === -1) catArr.push(item.category);
+      if (item.subCategory && subArr.indexOf(item.subCategory) === -1) subArr.push(item.subCategory);
     });
 
     res.status(200).json({

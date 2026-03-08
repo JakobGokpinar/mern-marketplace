@@ -21,10 +21,10 @@ async function createTokenAndSendEmail(userId: string, email: string, name: stri
 }
 
 export const signin = async (req: Request, res: Response, next: NextFunction) => {
-  passport.authenticate('local-signin', function (err: any, user: any, info: any) {
+  passport.authenticate('local-signin', function (err: Error | null, user: Express.User | false, info: { message: string }) {
     if (err) return next(err);
     if (!user) return res.status(401).json(info);
-    req.logIn(user, function (err: any) {
+    req.logIn(user, function (err: Error | null) {
       if (err) return next(err);
       return res.status(200).json({ user, message: 'user logged in' });
     });
@@ -32,14 +32,14 @@ export const signin = async (req: Request, res: Response, next: NextFunction) =>
 };
 
 export const signup = async (req: Request, res: Response, next: NextFunction) => {
-  passport.authenticate('local-signup', async function (err: any, user: any, info: any) {
+  passport.authenticate('local-signup', async function (err: Error | null, user: Express.User | false, info: { message: string }) {
     if (err) return next(err);
     if (!user) return res.status(400).json(info);
 
-    req.logIn(user, function (loginErr: any) {
+    req.logIn(user, function (loginErr: Error | null) {
       if (loginErr) return next(loginErr);
-      createTokenAndSendEmail(user._id, user.email, user.fullName)
-        .catch(err => logger.error('Verification email failed:', err));
+      createTokenAndSendEmail(user._id.toString(), user.email, user.fullName)
+        .catch(err => logger.error('Verification email failed for %s: %s', user.email, err));
       res.status(200).json({ success: true, user, message: 'user created' });
     });
   })(req, res, next);
@@ -47,7 +47,7 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
 
 export const logout = (req: Request, res: Response) => {
   if (!req.isAuthenticated()) return res.json({ message: 'Not logged in' });
-  req.logout(function (err: any) {
+  req.logout(function (err: Error | null) {
     if (err) return res.status(500).json({ message: 'Logout failed' });
     req.session.destroy(() => {});
     res.json({ message: 'user logged out' });
@@ -57,7 +57,7 @@ export const logout = (req: Request, res: Response) => {
 export const verifyEmailHandler = async (req: Request, res: Response) => {
   try {
     const userId = req.body.userId;
-    if (userId !== (req.user as any).id) {
+    if (userId !== req.user!._id.toString()) {
       return res.status(403).json({ success: false, message: 'Vennligst logg deg inn med egen mailadresse for konto verifikasjon.' });
     }
     const token = req.body.token;
@@ -85,11 +85,11 @@ export const verifyEmailHandler = async (req: Request, res: Response) => {
 
 export const resendVerificationEmail = async (req: Request, res: Response) => {
   try {
-    const user = req.user as any;
-    await createTokenAndSendEmail(user._id, user.email, user.fullName);
+    const user = req.user!;
+    await createTokenAndSendEmail(user._id.toString(), user.email, user.fullName);
     return res.status(200).json({ success: true, message: 'Bekreftelsesmail sendt. Sjekk innboksen eller søppelpost.' });
-  } catch (error: any) {
-    logger.error(error);
+  } catch (error) {
+    logger.error('Resend verification email failed: %O', error);
     return res.status(500).json({ success: false, message: 'Kunne ikke sende bekreftelsesmail' });
   }
 };
@@ -134,7 +134,8 @@ export const resetPassword = async (req: Request, res: Response) => {
     await user.save();
 
     await TokenModel.deleteMany({ userId: user._id, type: 'password-reset' });
-    sendPasswordChangedEmail(user.email, user.fullName).catch(err => logger.error(err));
+    sendPasswordChangedEmail(user.email, user.fullName)
+      .catch(err => logger.error('Password changed notification failed for %s: %s', user.email, err));
 
     return res.json({ success: true, message: 'Passordet er oppdatert. Du kan nå logge inn.' });
   } catch (error) {

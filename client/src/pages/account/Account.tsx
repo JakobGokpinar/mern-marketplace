@@ -22,6 +22,7 @@ import {
   deleteAccountApi,
 } from '../../services/profileService';
 import { resendVerificationEmailApi } from '../../services/emailService';
+import { isAxiosError } from 'axios';
 import toast from 'react-hot-toast';
 import { userActions } from '../../store/userSlice';
 import { logoutRequest } from '../../store/authThunks';
@@ -117,9 +118,9 @@ const Account = () => {
       setCurrentPassword('');
       setNewPassword('');
     },
-    onError: (error: any) => {
-      const msg = error?.response?.data?.message || 'Kunne ikke endre passord';
-      toast.error(msg);
+    onError: (error) => {
+      const msg = isAxiosError(error) ? error.response?.data?.message : undefined;
+      toast.error(msg || 'Kunne ikke endre passord');
     },
   });
 
@@ -131,9 +132,9 @@ const Account = () => {
       setEditingEmail(false);
       setNewEmail('');
     },
-    onError: (error: any) => {
-      const msg = error?.response?.data?.message || 'Kunne ikke endre e-post';
-      toast.error(msg);
+    onError: (error) => {
+      const msg = isAxiosError(error) ? error.response?.data?.message : undefined;
+      toast.error(msg || 'Kunne ikke endre e-post');
     },
   });
 

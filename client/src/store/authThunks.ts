@@ -49,6 +49,6 @@ export const logoutRequest = () => async (dispatch: AppDispatch) => {
   dispatch(userActions.logout());
   clearCsrfToken();
   toast('Du har logget ut');
-  // Best-effort server-side session invalidation
-  logoutApi().catch(() => {});
+  // Best-effort server-side session invalidation — failure is non-critical
+  logoutApi().catch(() => { /* session expires on its own */ });
 };

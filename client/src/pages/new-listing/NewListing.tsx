@@ -235,7 +235,7 @@ const NewListing = () => {
         }
         setPostAddress(place.placeName);
       })
-      .catch(() => {});
+      .catch(() => { setPostAddress(''); });
   }, [debouncedPostnumber, communeFinder]);
 
   useEffect(() => {
@@ -250,7 +250,7 @@ const NewListing = () => {
     setImageArray(stateListing.images);
     setSelectedMainCat(foundCategory ?? '');
     setSelectedSubCat(foundSubCat);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps — run once on mount to populate form from router state
   }, []);
 
   if (!user?.isEmailVerified) {

@@ -4,6 +4,7 @@ import { Button, Form, Spinner } from 'react-bootstrap';
 import styles from './Login.module.css';
 import accountStyles from '../account/Account.module.css';
 import { useMutation } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import { resetPasswordApi } from '../../services/authService';
 import toast from 'react-hot-toast';
 import Icon from '../../components/icons/Icon';
@@ -23,9 +24,9 @@ const ResetPassword = () => {
       toast.success(data.message);
       setDone(true);
     },
-    onError: (error: any) => {
-      const msg = error?.response?.data?.message || 'Kunne ikke tilbakestille passord';
-      toast.error(msg);
+    onError: (error) => {
+      const msg = isAxiosError(error) ? error.response?.data?.message : undefined;
+      toast.error(msg || 'Kunne ikke tilbakestille passord');
     },
   });
 

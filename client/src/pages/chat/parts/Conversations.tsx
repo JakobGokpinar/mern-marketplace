@@ -37,14 +37,14 @@ const Conversations = ({ productId, conversation, loggedUser, isActive, findFrie
     if (!friendId) return;
     instanceAxs.get(`/users/${friendId}`)
       .then(r => setFriend(r.data.user))
-      .catch(() => {});
+      .catch(() => { /* friend may have been deleted */ });
   }, [conversation, loggedUser]);
 
   useEffect(() => {
     if (!productId) return;
     instanceAxs.get(`/listings/${productId}`)
       .then(r => setProduct(r.data.product))
-      .catch(() => {});
+      .catch(() => { /* listing may have been deleted */ });
   }, [productId]);
 
   const isBuyer = loggedUser?._id === conversation.buyer;

@@ -74,7 +74,7 @@ export const useChat = () => {
       }
     };
     void openOrCreateRoom();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps — only re-run when location changes (refetchConversations is stable)
   }, [location]);
 
   // Load friend + messages when chat changes

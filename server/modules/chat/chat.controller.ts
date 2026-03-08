@@ -7,7 +7,7 @@ const ObjectId = mongoose.Types.ObjectId;
 const MESSAGES_PER_PAGE = 50;
 
 export const createRoom = async (req: Request, res: Response) => {
-  if (req.body.buyer !== (req.user as any).id) {
+  if (req.body.buyer !== req.user!._id.toString()) {
     return res.status(403).json({ message: 'Forbidden' });
   }
 
@@ -25,7 +25,7 @@ export const createRoom = async (req: Request, res: Response) => {
 };
 
 export const getRooms = async (req: Request, res: Response) => {
-  const userId = (req.user as any)._id;
+  const userId = req.user!._id;
   try {
     const response = await ConversationModel.find({
       $or: [
@@ -48,12 +48,12 @@ export const getMessages = async (req: Request, res: Response) => {
     const room = await ConversationModel.findById(new ObjectId(roomId)).select('buyer seller').lean();
     if (!room) return res.status(404).json({ message: 'Room not found' });
 
-    const userId = (req.user as any)._id.toString();
+    const userId = req.user!._id.toString();
     if (room.buyer!.toString() !== userId && room.seller!.toString() !== userId) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
-    const query: any = { conversationId: new ObjectId(roomId) };
+    const query: Record<string, unknown> = { conversationId: new ObjectId(roomId) };
     if (before) {
       query.sentAt = { $lt: new Date(before) };
     }
@@ -94,7 +94,7 @@ export const newMessage = async (req: Request, res: Response) => {
 
   const room = await ConversationModel.findById(roomId);
   if (!room) return res.status(404).json({ message: 'Room not found' });
-  const userId = (req.user as any)._id.toString();
+  const userId = req.user!._id.toString();
   if (room.buyer!.toString() !== userId && room.seller!.toString() !== userId) {
     return res.status(403).json({ message: 'Forbidden' });
   }
@@ -124,7 +124,7 @@ export const resetUnread = async (req: Request, res: Response) => {
 
   const room = await ConversationModel.findById(roomId);
   if (!room) return res.status(404).json({ message: 'Room not found' });
-  const userId = (req.user as any)._id.toString();
+  const userId = req.user!._id.toString();
   if (room.buyer!.toString() !== userId && room.seller!.toString() !== userId) {
     return res.status(403).json({ message: 'Forbidden' });
   }

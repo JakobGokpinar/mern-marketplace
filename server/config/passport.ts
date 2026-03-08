@@ -15,8 +15,8 @@ passport.use('local-signin', new Strategy({ usernameField: 'email' }, async (ema
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return done(null, false, { message: 'Feil passord' });
     return done(null, user);
-  } catch (err: any) {
-    return done(null, false, { message: err.message || 'Login error' });
+  } catch (err) {
+    return done(null, false, { message: err instanceof Error ? err.message : 'Login error' });
   }
 }));
 
@@ -28,12 +28,12 @@ passport.use('local-signup', new Strategy({ usernameField: 'email', passReqToCal
     }
 
     const passwordSchema = new PasswordValidator();
-    (passwordSchema as any).is().min(6);
-    (passwordSchema as any).is().max(32);
-    (passwordSchema as any).has().letters();
-    (passwordSchema as any).has().digits(1);
+    passwordSchema.is().min(6);
+    passwordSchema.is().max(32);
+    passwordSchema.has().letters();
+    passwordSchema.has().digits(1);
 
-    if (!(passwordSchema as any).validate(password)) {
+    if (!passwordSchema.validate(password)) {
       return done(null, false, { message: 'Password must contain at least one letter and one digit, and be between 6 and 32 characters' });
     }
 
@@ -55,7 +55,7 @@ passport.use('local-signup', new Strategy({ usernameField: 'email', passReqToCal
   }
 }));
 
-passport.serializeUser((user: any, done) => {
+passport.serializeUser((user: Express.User, done) => {
   done(null, user.id);
 });
 

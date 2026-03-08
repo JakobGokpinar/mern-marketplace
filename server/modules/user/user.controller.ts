@@ -18,7 +18,7 @@ const ObjectId = mongoose.Types.ObjectId;
 
 export const fetchUser = async (req: Request, res: Response) => {
   try {
-    const response = await UserModel.findOne({ _id: new ObjectId((req.user as any).id) });
+    const response = await UserModel.findOne({ _id: req.user!._id });
     return res.status(200).json({ user: response });
   } catch (error) {
     return res.status(500).json({ message: 'Error occured while fetching user' });
@@ -49,17 +49,17 @@ export const findSeller = async (req: Request, res: Response) => {
 // --- Profile ---
 
 export const uploadImageToAws = (req: Request, res: Response) => {
-  const user = req.user as any;
+  const user = req.user!;
   const keyPrefix = getEnvFolder() + '/' + user.email;
   const userId = user._id;
   const upload = createProfileUpload(keyPrefix);
 
-  upload(req as any, res as any, async (err: any) => {
+  upload(req as Parameters<typeof upload>[0], res as Parameters<typeof upload>[1], async (err: unknown) => {
     if (err) return res.status(400).json({ message: 'Kunne ikke laste opp bildet' });
     try {
       const result = await UserModel.findByIdAndUpdate(
         { _id: new ObjectId(userId) },
-        { profilePicture: (req as any).file.location },
+        { profilePicture: (req as Request & { file?: { location: string } }).file?.location },
         { new: true }
       );
       res.json({ user: result, message: 'profile picture uploaded' });
@@ -71,13 +71,13 @@ export const uploadImageToAws = (req: Request, res: Response) => {
 };
 
 export const removeProfileImage = async (req: Request, res: Response) => {
-  const userId = (req.user as any)._id;
+  const userId = req.user!._id;
 
   try {
     const existing = await UserModel.findById(userId).select('profilePicture');
     if (existing?.profilePicture) {
       const key = extractKeyFromUrl(existing.profilePicture);
-      if (key) await deleteObject(key).catch(err => logger.error(err));
+      if (key) await deleteObject(key).catch(err => logger.error('Failed to delete S3 object: %s', err));
     }
 
     const result = await UserModel.findByIdAndUpdate({ _id: new ObjectId(userId) }, {
@@ -92,7 +92,7 @@ export const removeProfileImage = async (req: Request, res: Response) => {
 
 export const updateUserInfoHandler = async (req: Request, res: Response) => {
   const { fullName } = req.body;
-  const userId = (req.user as any)._id;
+  const userId = req.user!._id;
 
   try {
     const result = await UserModel.findByIdAndUpdate({ _id: new ObjectId(userId) }, {
@@ -106,7 +106,7 @@ export const updateUserInfoHandler = async (req: Request, res: Response) => {
 };
 
 export const changePassword = async (req: Request, res: Response) => {
-  const userId = (req.user as any)._id;
+  const userId = req.user!._id;
   const { currentPassword, newPassword } = req.body;
 
   try {
@@ -121,7 +121,8 @@ export const changePassword = async (req: Request, res: Response) => {
     user.password = newPassword;
     await user.save();
 
-    sendPasswordChangedEmail(user.email, user.fullName).catch(err => logger.error(err));
+    sendPasswordChangedEmail(user.email, user.fullName)
+      .catch(err => logger.error('Password changed notification failed for %s: %s', user.email, err));
 
     return res.json({ success: true, message: 'Passordet er oppdatert' });
   } catch (error) {
@@ -131,7 +132,7 @@ export const changePassword = async (req: Request, res: Response) => {
 };
 
 export const changeEmail = async (req: Request, res: Response) => {
-  const userId = (req.user as any)._id;
+  const userId = req.user!._id;
   const { newEmail } = req.body;
 
   try {
@@ -151,8 +152,10 @@ export const changeEmail = async (req: Request, res: Response) => {
     const token = randomUUID();
     await TokenModel.create({ userId, token });
     const verifyUrl = `${process.env.CLIENT_URL}/emailVerify?t=${token}`;
-    sendVerificationEmail(newEmail, user!.fullName, verifyUrl).catch(err => logger.error(err));
-    sendEmailChangedNotification(oldEmail, user!.fullName, newEmail).catch(err => logger.error(err));
+    sendVerificationEmail(newEmail, user!.fullName, verifyUrl)
+      .catch(err => logger.error('Verification email failed for %s: %s', newEmail, err));
+    sendEmailChangedNotification(oldEmail, user!.fullName, newEmail)
+      .catch(err => logger.error('Email change notification failed for %s: %s', oldEmail, err));
 
     return res.json({ success: true, user, message: 'E-post oppdatert. Bekreftelsesmail sendt. Sjekk innboksen eller søppelpost.' });
   } catch (error) {
@@ -162,7 +165,7 @@ export const changeEmail = async (req: Request, res: Response) => {
 };
 
 export const getProfileImage = async (req: Request, res: Response) => {
-  const userId = (req.user as any)._id;
+  const userId = req.user!._id;
 
   try {
     const dbUser = await UserModel.findById(userId).select('profilePicture');
@@ -182,7 +185,7 @@ export const getProfileImage = async (req: Request, res: Response) => {
 };
 
 export const deleteAccount = async (req: Request, res: Response) => {
-  const user = req.user as any;
+  const user = req.user!;
   const userId = user._id;
   const email = user.email;
 
@@ -193,7 +196,7 @@ export const deleteAccount = async (req: Request, res: Response) => {
     for (const listing of userListings) {
       try {
         await deleteObjectsByPrefix(getEnvFolder() + '/' + email + '/listing-' + listing._id + '/');
-      } catch (err) { /* continue */ }
+      } catch (err) { /* continue — best-effort S3 cleanup */ }
     }
 
     await ListingModel.deleteMany({ sellerId: new ObjectId(userId) });
@@ -212,12 +215,12 @@ export const deleteAccount = async (req: Request, res: Response) => {
     const dbUser = await UserModel.findById(userId).select('profilePicture');
     if (dbUser?.profilePicture) {
       const key = extractKeyFromUrl(dbUser.profilePicture);
-      if (key) await deleteObject(key).catch(() => {});
+      if (key) await deleteObject(key).catch(() => { /* best-effort S3 cleanup */ });
     }
 
     await UserModel.deleteOne({ _id: new ObjectId(userId) });
 
-    req.logout(function (err: any) {
+    req.logout(function (err: Error | null) {
       if (err) return res.status(500).json({ message: 'Kunne ikke logge ut' });
       return res.status(200).json({ message: 'Account deleted' });
     });
@@ -230,7 +233,7 @@ export const deleteAccount = async (req: Request, res: Response) => {
 // --- Favorites ---
 
 export const addToFavorites = async (req: Request, res: Response) => {
-  const userId = (req.user as any).id;
+  const userId = req.user!._id;
   const listingId = req.body.id;
 
   try {
@@ -241,7 +244,7 @@ export const addToFavorites = async (req: Request, res: Response) => {
     }
 
     const user = await UserModel.findOne({ _id: new ObjectId(userId) });
-    const alreadyFavorited = user!.favorites.some((fav: any) => fav.toString() === listingId.toString());
+    const alreadyFavorited = user!.favorites.some((fav: mongoose.Types.ObjectId) => fav.toString() === listingId.toString());
     if (alreadyFavorited) return res.json({ message: 'The listing is already saved to Favorites' });
 
     const result = await UserModel.findByIdAndUpdate(
@@ -257,7 +260,7 @@ export const addToFavorites = async (req: Request, res: Response) => {
 };
 
 export const removeFromFavorites = async (req: Request, res: Response) => {
-  const userId = (req.user as any).id;
+  const userId = req.user!._id;
   const listingId = req.params.id as string;
 
   try {
@@ -274,7 +277,7 @@ export const removeFromFavorites = async (req: Request, res: Response) => {
 };
 
 export const getFavorites = async (req: Request, res: Response) => {
-  const userId = (req.user as any).id;
+  const userId = req.user!._id;
 
   try {
     const user = await UserModel.findOne({ _id: new ObjectId(userId) });
@@ -284,10 +287,8 @@ export const getFavorites = async (req: Request, res: Response) => {
     }
 
     const productArray = await ListingModel.find({ _id: { $in: favoritesArray } }).lean();
-    for (const item of productArray) {
-      (item as any).isFavorite = true;
-    }
-    return res.json({ productArray, message: 'Items fetched' });
+    const markedArray = productArray.map(item => ({ ...item, isFavorite: true }));
+    return res.json({ productArray: markedArray, message: 'Items fetched' });
   } catch (error) {
     logger.error(error);
     return res.status(500).json({ message: 'Error occurred while fetching favorites' });

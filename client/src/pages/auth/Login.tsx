@@ -22,7 +22,7 @@ const Login = () => {
       const from = location.state?.from?.pathname || '/';
       navigate(from, { replace: true });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps — navigate/location are stable refs, only react to login state
   }, [isLoggedIn]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {

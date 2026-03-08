@@ -138,6 +138,18 @@ interface ConnectedUser {
   socketId: string;
 }
 
+interface SendMessagePayload {
+  msg: string;
+  sentAt: string;
+  sender: string;
+  receiver: string;
+}
+
+interface TypingPayload {
+  typer: string;
+  receiver: string;
+}
+
 let connectedUsers: ConnectedUser[] = [];
 
 const addUser = (userId: string, socketId: string) => {
@@ -158,19 +170,19 @@ io.on('connection', (socket) => {
     io.emit('getUsers', connectedUsers);
   });
 
-  socket.on('sendMessage', ({ msg, sentAt, sender, receiver }: any) => {
+  socket.on('sendMessage', ({ msg, sentAt, sender, receiver }: SendMessagePayload) => {
     const friend = findUser(receiver);
     if (!friend) return;
     io.to(friend.socketId).emit('getMessage', { sender, msg, sentAt });
   });
 
-  socket.on('userTyping', ({ typer, receiver }: any) => {
+  socket.on('userTyping', ({ typer, receiver }: TypingPayload) => {
     const friend = findUser(receiver);
     if (!friend) return;
     io.to(friend.socketId).emit('getTyping', { typer, receiver });
   });
 
-  socket.on('stoppedTyping', ({ typer, receiver }: any) => {
+  socket.on('stoppedTyping', ({ typer, receiver }: TypingPayload) => {
     const friend = findUser(receiver);
     if (!friend) return;
     io.to(friend.socketId).emit('getStoppedTyping', { typer, receiver });
@@ -180,7 +192,11 @@ io.on('connection', (socket) => {
     const user = connectedUsers.find(u => u.socketId === socket.id);
     removeUser(socket.id);
     if (!user) return;
-    await UserModel.updateOne({ _id: new ObjectId(user.userId) }, { $set: { lastActiveAt: Date.now() } });
+    try {
+      await UserModel.updateOne({ _id: new ObjectId(user.userId) }, { $set: { lastActiveAt: Date.now() } });
+    } catch (err) {
+      logger.error('Socket logout — failed to update lastActiveAt: %s', err);
+    }
   });
 
   socket.on('disconnect', async () => {
@@ -188,11 +204,15 @@ io.on('connection', (socket) => {
     if (!user) return;
     removeUser(socket.id);
     io.emit('getUsers', connectedUsers);
-    await UserModel.updateOne({ _id: new ObjectId(user.userId) }, { $set: { lastActiveAt: Date.now() } });
+    try {
+      await UserModel.updateOne({ _id: new ObjectId(user.userId) }, { $set: { lastActiveAt: Date.now() } });
+    } catch (err) {
+      logger.error('Socket disconnect — failed to update lastActiveAt: %s', err);
+    }
   });
 });
 
-app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+app.use((err: Error & { status?: number }, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   logger.error(err);
   res.status(err.status || 500).json({
     message: err.message || 'Internal server error',
