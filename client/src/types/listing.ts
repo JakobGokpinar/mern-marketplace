@@ -1,4 +1,4 @@
-export interface ProductImage {
+export interface ListingImage {
   url: string;
   description?: string;
 }
@@ -9,13 +9,13 @@ export interface SpecialProp {
 }
 
 export interface PaginatedResponse {
-  productArray: Product[];
+  productArray: Listing[];
   totalCount: number;
   page: number;
   totalPages: number;
 }
 
-export interface Product {
+export interface Listing {
   _id: string;
   title: string;
   description: string;

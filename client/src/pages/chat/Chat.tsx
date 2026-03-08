@@ -39,7 +39,7 @@ const Chat = () => {
     isLoadingMore,
     loadOlderMessages,
     friend,
-    currentProduct,
+    currentListing,
     currentFriendStatus,
     isFriendTyping,
     messageInput,
@@ -145,17 +145,17 @@ const Chat = () => {
                   <div className={styles['header-status']}>Sist aktiv {currentFriendStatus}</div>
                 )}
               </div>
-              {currentProduct && (
+              {currentListing && (
                 <Link
-                  to={`/l/${currentProduct._id}`}
+                  to={`/l/${currentListing._id}`}
                   target="_blank"
                   className={styles['header-product']}
                 >
-                  <span className={styles['header-product-title']}>{currentProduct.title}</span>
-                  {currentProduct.images?.[0]?.location && (
+                  <span className={styles['header-product-title']}>{currentListing.title}</span>
+                  {currentListing.images?.[0]?.location && (
                     <img
-                      src={currentProduct.images[0].location}
-                      alt={currentProduct.title}
+                      src={currentListing.images[0].location}
+                      alt={currentListing.title}
                       className={styles['header-product-img']}
                     />
                   )}

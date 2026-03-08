@@ -1,9 +1,6 @@
-import { useLocation } from 'react-router-dom';
 import styles from './NotFound.module.css';
 
 const NotFound = () => {
-  const location = useLocation();
-
   return (
     <div className={styles['not-found-container']}>
       <div className={styles['not-found-content']}>

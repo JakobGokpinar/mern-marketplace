@@ -11,14 +11,14 @@ import {
   resetUnreadApi,
 } from '../services/chatService';
 import { fetchUserByIdApi } from '../services/authService';
-import { fetchProductApi } from '../services/productService';
+import { fetchListingApi } from '../services/productService';
 import { queryKeys } from '../lib/queryKeys';
 import toast from 'react-hot-toast';
 import { useAppSelector } from '../store/hooks';
 import { useChatSocket } from './useChatSocket';
 import type { ChatRoom, Message } from '../types/chat';
 import type { User } from '../types/user';
-import type { Product } from '../types/product';
+import type { Listing } from '../types/listing';
 
 const findFriendId = (buyer: string, seller: string, userId: string): string | null => {
   if (userId === buyer) return seller;
@@ -36,7 +36,7 @@ export const useChat = () => {
   const [hasMoreMessages, setHasMoreMessages] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [friend, setFriend] = useState<User | null>(null);
-  const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
+  const [currentListing, setCurrentListing] = useState<Listing | null>(null);
   const [currentFriendStatus, setCurrentFriendStatus] = useState<string | null>(null);
   const [messageInput, setMessageInput] = useState('');
 
@@ -52,7 +52,7 @@ export const useChat = () => {
     enabled: !!userId,
   });
 
-  // Open chat from navigation state (e.g. from ProductPage)
+  // Open chat from navigation state (e.g. from ListingPage)
   useEffect(() => {
     const buyer = location.state?.buyer as string | undefined;
     const seller = location.state?.seller as string | undefined;
@@ -110,8 +110,8 @@ export const useChat = () => {
   // Load product for current chat
   useEffect(() => {
     if (!currentChat?.productId) return;
-    fetchProductApi(currentChat.productId)
-      .then(setCurrentProduct)
+    fetchListingApi(currentChat.productId)
+      .then(setCurrentListing)
       .catch(() => { toast.error('Kunne ikke laste produkt'); });
   }, [currentChat]);
 
@@ -177,7 +177,7 @@ export const useChat = () => {
     isLoadingMore,
     loadOlderMessages,
     friend,
-    currentProduct,
+    currentListing,
     currentFriendStatus,
     isFriendTyping,
     messageInput,

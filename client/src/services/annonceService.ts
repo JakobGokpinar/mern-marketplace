@@ -1,5 +1,5 @@
 import { instanceAxs } from '../lib/axios';
-import type { Product, SpecialProp } from '../types/product';
+import type { Listing, SpecialProp } from '../types/listing';
 
 interface ListingProperties {
   title: string;
@@ -15,7 +15,7 @@ interface ListingProperties {
 
 interface CreateListingResponse {
   message: string;
-  listing?: Product;
+  listing?: Listing;
 }
 
 export const uploadListingImagesApi = async (formData: FormData, listingId?: string): Promise<string[]> => {

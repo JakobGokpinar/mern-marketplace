@@ -8,21 +8,21 @@ import Form from 'react-bootstrap/Form';
 import Spinner from 'react-bootstrap/Spinner';
 
 import { removeListingApi } from '../../services/profileService';
-import { fetchMyProductsApi } from '../../services/productService';
+import { fetchMyListingsApi } from '../../services/productService';
 import { queryKeys } from '../../lib/queryKeys';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-import type { Product } from '../../types/product';
+import type { Listing } from '../../types/listing';
 
 const MyListings = () => {
   const navigate = useNavigate();
   const queryClientHook = useQueryClient();
   const [showRemoveModal, setShowRemoveModal] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<Product | null>(null);
+  const [selectedItem, setSelectedItem] = useState<Listing | null>(null);
 
   const { data: listingArray = [], isPending } = useQuery({
     queryKey: queryKeys.products.mine(),
-    queryFn: fetchMyProductsApi,
+    queryFn: fetchMyListingsApi,
   });
 
   const removeMutation = useMutation({

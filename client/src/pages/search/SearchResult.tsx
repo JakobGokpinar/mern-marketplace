@@ -16,9 +16,9 @@ import Icon from "../../components/icons/Icon";
 import ListingCard from "../../components/listing-card/ListingCard";
 import { ListingCardSkeletons } from "../../components/skeleton/ListingCardSkeleton";
 import { queryKeys } from "../../lib/queryKeys";
-import { searchProductsApi } from "../../services/productService";
+import { searchListingsApi } from "../../services/productService";
 import { useNorwayGeo } from "../../hooks/useNorwayGeo";
-import type { Product } from "../../types/product";
+import type { Listing } from "../../types/listing";
 
 const SearchResult = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -26,7 +26,7 @@ const SearchResult = () => {
   const counties = geoData?.districts || [];
 
   const [page, setPage] = useState(1);
-  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [allListings, setAllListings] = useState<Listing[]>([]);
 
   const createQueryObject = () => {
     const queryObject: Record<string, string | string[]> = {};
@@ -46,8 +46,8 @@ const SearchResult = () => {
   const { data, isPending, isFetching } = useQuery({
     queryKey: queryKeys.products.search(searchParams.toString(), page),
     queryFn: async () => {
-      const res = await searchProductsApi(createQueryObject(), page);
-      setAllProducts(prev => page === 1 ? res.productArray : [...prev, ...res.productArray]);
+      const res = await searchListingsApi(createQueryObject(), page);
+      setAllListings(prev => page === 1 ? res.productArray : [...prev, ...res.productArray]);
       return res;
     },
   });
@@ -55,7 +55,7 @@ const SearchResult = () => {
   // Reset to page 1 when search params change
   useEffect(() => {
     setPage(1);
-    setAllProducts([]);
+    setAllListings([]);
   }, [searchParams]);
 
   const totalPages = data?.totalPages ?? 1;
@@ -147,13 +147,13 @@ const SearchResult = () => {
           <div className={styles['bottom-row']}>
             {isPending && page === 1 ? (
               <ListingCardSkeletons count={3} />
-            ) : allProducts.length === 0 ? (
+            ) : allListings.length === 0 ? (
               <div className={styles['empty-state']}>
                 <Icon name="magnifying-glass" />
                 <p>Ingen treff</p>
                 <span>Prøv å endre søkeord eller fjern filtre</span>
               </div>
-            ) : allProducts.map((product) => (
+            ) : allListings.map((product) => (
               <div key={product._id}>
                 <ListingCard
                   images={product.images}

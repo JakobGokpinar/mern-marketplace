@@ -20,12 +20,12 @@ import { instanceAxs } from "../../lib/axios";
 import { queryKeys } from "../../lib/queryKeys";
 import { timeago } from "../../utils/timeago";
 import { formatPrice } from "../../utils/formatPrice";
-import type { Product } from "../../types/product";
+import type { Listing } from "../../types/listing";
 import type { User } from "../../types/user";
 import Icon from '../../components/icons/Icon';
 
 interface ProductPageData {
-  product: Product;
+  product: Listing;
   seller: User & { lastActiveAt?: string; userCreatedAt?: string; _id: string };
 }
 

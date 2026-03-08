@@ -1,6 +1,6 @@
 import { instanceAxs } from '../lib/axios';
 import type { User } from '../types/user';
-import type { Product } from '../types/product';
+import type { Listing } from '../types/listing';
 
 interface FavoriteResponse {
   message: string;
@@ -17,7 +17,7 @@ export const removeFromFavoritesApi = async (listingId: string): Promise<Favorit
   return res.data;
 };
 
-export const getFavoritesApi = async (): Promise<Product[]> => {
-  const res = await instanceAxs.get<{ productArray: Product[] }>('/user/me/favorites');
+export const getFavoritesApi = async (): Promise<Listing[]> => {
+  const res = await instanceAxs.get<{ productArray: Listing[] }>('/user/me/favorites');
   return res.data.productArray;
 };

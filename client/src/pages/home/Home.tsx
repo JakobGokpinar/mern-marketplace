@@ -4,21 +4,21 @@ import ListingCard from '../../components/listing-card/ListingCard';
 import Icon from '../../components/icons/Icon';
 import styles from "./Home.module.css";
 import { queryKeys } from '../../lib/queryKeys';
-import { fetchProductsApi } from '../../services/productService';
+import { fetchListingsApi } from '../../services/productService';
 import Spinner from 'react-bootstrap/Spinner';
 import Button from 'react-bootstrap/Button';
 import { ListingCardSkeletons } from '../../components/skeleton/ListingCardSkeleton';
-import type { Product } from '../../types/product';
+import type { Listing } from '../../types/listing';
 
 const Menu = () => {
   const [page, setPage] = useState(1);
-  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [allListings, setAllListings] = useState<Listing[]>([]);
 
   const { data, isPending, isFetching } = useQuery({
     queryKey: queryKeys.products.list(page),
     queryFn: async () => {
-      const res = await fetchProductsApi(page);
-      setAllProducts(prev => page === 1 ? res.productArray : [...prev, ...res.productArray]);
+      const res = await fetchListingsApi(page);
+      setAllListings(prev => page === 1 ? res.productArray : [...prev, ...res.productArray]);
       return res;
     },
   });
@@ -34,10 +34,10 @@ const Menu = () => {
         <div className={styles['homepage-grid']}>
           <ListingCardSkeletons count={4} />
         </div>
-      ) : allProducts.length > 0 ? (
+      ) : allListings.length > 0 ? (
         <>
           <div className={styles['homepage-grid']}>
-            {allProducts.map((product) => (
+            {allListings.map((product) => (
               <ListingCard
                 key={product._id}
                 images={product.images}
