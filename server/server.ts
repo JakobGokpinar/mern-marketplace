@@ -145,15 +145,15 @@ interface TypingPayload {
 let connectedUsers: ConnectedUser[] = [];
 
 const addUser = (userId: string, socketId: string) => {
-  if (!connectedUsers.some(user => user.userId === userId)) {
+  if (!connectedUsers.some(u => u.socketId === socketId)) {
     connectedUsers.push({ userId, socketId });
   }
 };
 const removeUser = (socketId: string) => {
-  connectedUsers = connectedUsers.filter(user => user.socketId !== socketId);
+  connectedUsers = connectedUsers.filter(u => u.socketId !== socketId);
 };
-const findUser = (userId: string) => {
-  return connectedUsers.find(user => user.userId === userId);
+const findUserSockets = (userId: string) => {
+  return connectedUsers.filter(u => u.userId === userId);
 };
 
 io.on('connection', (socket) => {
@@ -163,27 +163,27 @@ io.on('connection', (socket) => {
   });
 
   socket.on('sendMessage', ({ msg, sentAt, sender, senderName, receiver }: SendMessagePayload) => {
-    const friend = findUser(receiver);
-    if (!friend) return;
-    io.to(friend.socketId).emit('getMessage', { sender, senderName, msg, sentAt });
+    for (const s of findUserSockets(receiver)) {
+      io.to(s.socketId).emit('getMessage', { sender, senderName, msg, sentAt });
+    }
   });
 
   socket.on('userTyping', ({ typer, receiver }: TypingPayload) => {
-    const friend = findUser(receiver);
-    if (!friend) return;
-    io.to(friend.socketId).emit('getTyping', { typer, receiver });
+    for (const s of findUserSockets(receiver)) {
+      io.to(s.socketId).emit('getTyping', { typer, receiver });
+    }
   });
 
   socket.on('stoppedTyping', ({ typer, receiver }: TypingPayload) => {
-    const friend = findUser(receiver);
-    if (!friend) return;
-    io.to(friend.socketId).emit('getStoppedTyping', { typer, receiver });
+    for (const s of findUserSockets(receiver)) {
+      io.to(s.socketId).emit('getStoppedTyping', { typer, receiver });
+    }
   });
 
   socket.on('messagesRead', ({ roomId, receiver }: { roomId: string; receiver: string }) => {
-    const friend = findUser(receiver);
-    if (!friend) return;
-    io.to(friend.socketId).emit('getMessagesRead', { roomId });
+    for (const s of findUserSockets(receiver)) {
+      io.to(s.socketId).emit('getMessagesRead', { roomId });
+    }
   });
 
   socket.on('logout', async () => {
