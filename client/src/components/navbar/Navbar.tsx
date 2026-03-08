@@ -8,10 +8,14 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Dropdown from 'react-bootstrap/Dropdown';
 
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Searchbar from "./Searchbar";
 import Icon from "../icons/Icon";
 import { logoutRequest } from "../../store/authThunks";
 import { useTheme } from "../../hooks/useTheme";
+import { getChatRoomsApi } from "../../services/chatService";
+import { queryKeys } from "../../lib/queryKeys";
+import socket from "../../lib/socket";
 
 const CATEGORIES = [
   { label: 'Elektronikk',     icon: 'laptop',   slug: 'Elektronikk' },
@@ -33,6 +37,30 @@ const Navigation = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
+  const queryClient = useQueryClient();
+
+  // Refetch chat rooms instantly when a message arrives via socket
+  useEffect(() => {
+    if (!isLoggedIn || !user?._id) return;
+    const handler = () => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.chat.rooms(user._id) });
+    };
+    socket.on('getMessage', handler);
+    return () => { socket.off('getMessage', handler); };
+  }, [isLoggedIn, user?._id, queryClient]);
+
+  const { data: chatRooms = [] } = useQuery({
+    queryKey: queryKeys.chat.rooms(user?._id ?? ''),
+    queryFn: getChatRoomsApi,
+    enabled: isLoggedIn && !!user?._id,
+    refetchInterval: 30_000,
+  });
+
+  const hasUnread = chatRooms.some(room => {
+    if (!user?._id) return false;
+    const isBuyer = room.buyer === user._id;
+    return isBuyer ? room.unreadBuyer > 0 : room.unreadSeller > 0;
+  });
 
   useEffect(() => {
     const SCROLL_THRESHOLD = 80;
@@ -94,6 +122,7 @@ const Navigation = () => {
               </Nav.Link>
               <Nav.Link href="/chat" className={styles['navbar-icon-link']}>
                 <Icon name="message-outline" />
+                {hasUnread && <span className={styles['navbar-unread-dot']} />}
                 <span className={styles['navbar-icon-label']}>Meldinger</span>
               </Nav.Link>
               <Nav.Link href="/favorites" className={styles['navbar-icon-link']}>

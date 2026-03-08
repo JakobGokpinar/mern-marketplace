@@ -11,13 +11,18 @@ export const createRoom = async (req: Request, res: Response) => {
     return res.status(403).json({ message: 'Forbidden' });
   }
 
-  const conversation = new ConversationModel({
+  const filter = {
     seller: new ObjectId(req.body.seller),
     buyer: new ObjectId(req.body.buyer),
     productId: new ObjectId(req.body.product_id),
-  });
+  };
+
   try {
-    const response = await conversation.save();
+    const response = await ConversationModel.findOneAndUpdate(
+      filter,
+      { $setOnInsert: filter },
+      { upsert: true, new: true }
+    );
     return res.status(200).json({ message: 'Room created', response });
   } catch (error) {
     return res.status(500).json({ message: 'Could not create room' });

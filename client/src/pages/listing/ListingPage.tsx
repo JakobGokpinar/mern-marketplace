@@ -23,6 +23,7 @@ import { formatPrice } from "../../utils/formatPrice";
 import type { Listing } from "../../types/listing";
 import type { User } from "../../types/user";
 import Icon from '../../components/icons/Icon';
+import { autoLink } from '../../utils/autoLink';
 
 interface ProductPageData {
   product: Listing;
@@ -39,13 +40,14 @@ function ProductPage() {
   const { toggleFavorite, isLoading: isFavLoading, isInFavorites } = useFavorites();
   const saved = id ? isInFavorites(id) : false;
 
-  const { data, isPending } = useQuery<ProductPageData>({
+  const { data, isPending, isError } = useQuery<ProductPageData>({
     queryKey: queryKeys.products.detail(id ?? ''),
     queryFn: async () => {
       const res = await instanceAxs.get(`/listings/${id}`);
       return res.data as ProductPageData;
     },
     enabled: !!id,
+    retry: false,
   });
 
   const listing = data?.product;
@@ -70,10 +72,21 @@ function ProductPage() {
     setShowShareModal(false);
   };
 
-  if (isPending || !listing) {
+  if (isPending) {
     return (
       <div className={styles['pp__empty']}>
         <Spinner animation="border" variant="secondary" />
+      </div>
+    );
+  }
+
+  if (isError || !listing) {
+    return (
+      <div className={styles['pp__empty']}>
+        <Icon name="circle-exclamation" />
+        <h2 className={styles['pp__empty-title']}>Annonsen ble ikke funnet</h2>
+        <p className={styles['pp__empty-text']}>Den kan ha blitt fjernet, eller lenken er ugyldig.</p>
+        <Button variant="primary" onClick={() => navigate('/')}>Tilbake til forsiden</Button>
       </div>
     );
   }
@@ -131,7 +144,7 @@ function ProductPage() {
 
           <div className={styles['pp__section']}>
             <h3 className={styles['pp__section-title']}>Beskrivelse</h3>
-            <p className={styles['pp__description']}>{listing.description}</p>
+            <p className={styles['pp__description']}>{autoLink(listing.description)}</p>
           </div>
 
           <div className={styles['pp__section']}>

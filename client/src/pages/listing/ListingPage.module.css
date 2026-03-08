@@ -27,9 +27,30 @@
 
 .pp__empty {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   height: 60vh;
+  color: var(--color-text-muted);
+}
+
+.pp__empty svg {
+  font-size: 2rem;
+  margin-bottom: 4px;
+}
+
+.pp__empty-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.pp__empty-text {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  margin: 0 0 8px;
 }
 
 /* ============================================

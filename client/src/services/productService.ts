@@ -9,8 +9,8 @@ export const fetchListingsApi = async (page = 1): Promise<PaginatedResponse> => 
 };
 
 export const fetchListingApi = async (id: string): Promise<Listing> => {
-  const res = await instanceAxs.get<Listing>('/listings/' + id);
-  return res.data;
+  const res = await instanceAxs.get<{ product: Listing }>('/listings/' + id);
+  return res.data.product;
 };
 
 export const fetchMyListingsApi = async (): Promise<Listing[]> => {

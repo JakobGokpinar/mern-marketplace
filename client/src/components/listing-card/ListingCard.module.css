@@ -174,45 +174,46 @@
 }
 
 /* Carousel — constrain height so controls position correctly */
-.product-card .carousel,
-.product-card .carousel-inner,
-.product-card .carousel-item {
+.product-card :global(.carousel),
+.product-card :global(.carousel-inner),
+.product-card :global(.carousel-item) {
   height: 100%;
 }
 
-/* Carousel arrows */
-.product-card .carousel-control-prev,
-.product-card .carousel-control-next {
-  width: 28px;
-  height: 28px;
-  bottom: auto;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 50%;
+/* Carousel arrows — frosted pill buttons */
+.product-card :global(.carousel-control-prev),
+.product-card :global(.carousel-control-next) {
+  width: 30px;
+  height: 30px;
   top: 50%;
+  bottom: auto;
   transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(4px);
+  border-radius: 50%;
   opacity: 0;
   transition: opacity var(--transition-fast);
   z-index: 3;
-  pointer-events: auto;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
 }
 
-.product-card:hover .carousel-control-prev,
-.product-card:hover .carousel-control-next {
+.product-card :global(.carousel-control-prev) {
+  left: 6px;
+}
+
+.product-card :global(.carousel-control-next) {
+  right: 6px;
+}
+
+.product-card:hover :global(.carousel-control-prev),
+.product-card:hover :global(.carousel-control-next) {
   opacity: 1;
 }
 
-.product-card .carousel-control-prev {
-  left: 8px;
-}
-
-.product-card .carousel-control-next {
-  right: 8px;
-}
-
-.product-card .carousel-control-prev-icon,
-.product-card .carousel-control-next-icon {
-  width: 14px;
-  height: 14px;
+.product-card :global(.carousel-control-prev-icon),
+.product-card :global(.carousel-control-next-icon) {
+  width: 12px;
+  height: 12px;
   filter: invert(1) brightness(0);
 }
 

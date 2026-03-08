@@ -14,12 +14,12 @@ export const getChatRoomApi = async (buyer: string, seller: string, productId: s
 };
 
 export const createChatRoomApi = async (buyer: string, seller: string, productId: string): Promise<ChatRoom> => {
-  const res = await instanceAxs.post<ChatRoom>('/chat/rooms', {
+  const res = await instanceAxs.post<{ response: ChatRoom }>('/chat/rooms', {
     buyer,
     seller,
     product_id: productId,
   });
-  return res.data;
+  return res.data.response;
 };
 
 export const sendMessageApi = async (sender: string, msg: string, roomId: string): Promise<Message> => {

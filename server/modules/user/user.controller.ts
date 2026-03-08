@@ -222,6 +222,7 @@ export const deleteAccount = async (req: Request, res: Response) => {
 
     req.logout(function (err: Error | null) {
       if (err) return res.status(500).json({ message: 'Kunne ikke logge ut' });
+      req.session.destroy(() => {});
       return res.status(200).json({ message: 'Account deleted' });
     });
   } catch (error) {

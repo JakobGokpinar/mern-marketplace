@@ -98,6 +98,7 @@ export const useChat = () => {
             : null
         );
         await resetUnreadApi(currentChat._id);
+        void refetchConversations();
         emitMessagesRead(currentChat._id, friendId);
       } catch {
         toast.error('Kunne ikke laste chat');
@@ -119,6 +120,7 @@ export const useChat = () => {
   useEffect(() => {
     if (!arrivalMessage || arrivalMessage.sender !== friend?._id) return;
     setMessagesArray((prev) => [...prev, arrivalMessage]);
+    void refetchConversations();
     if (currentChat?._id && friend?._id) {
       void resetUnreadApi(currentChat._id);
       emitMessagesRead(currentChat._id, friend._id);
