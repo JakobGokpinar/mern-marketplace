@@ -133,6 +133,7 @@ interface SendMessagePayload {
   msg: string;
   sentAt: string;
   sender: string;
+  senderName?: string;
   receiver: string;
 }
 
@@ -161,10 +162,10 @@ io.on('connection', (socket) => {
     io.emit('getUsers', connectedUsers);
   });
 
-  socket.on('sendMessage', ({ msg, sentAt, sender, receiver }: SendMessagePayload) => {
+  socket.on('sendMessage', ({ msg, sentAt, sender, senderName, receiver }: SendMessagePayload) => {
     const friend = findUser(receiver);
     if (!friend) return;
-    io.to(friend.socketId).emit('getMessage', { sender, msg, sentAt });
+    io.to(friend.socketId).emit('getMessage', { sender, senderName, msg, sentAt });
   });
 
   socket.on('userTyping', ({ typer, receiver }: TypingPayload) => {

@@ -6,8 +6,7 @@ import { useAppSelector } from '../../store/hooks';
 import { useChat } from '../../hooks/useChat';
 import Conversations from './parts/Conversations';
 import Messages from './parts/Messages';
-import type { Message } from '../../types/chat';
-import type { ChatRoom } from '../../types/chat';
+import type { Message, ChatRoom } from '../../types/chat';
 import Icon from '../../components/icons/Icon';
 
 const groupMessagesBySender = (messages: Message[]): Message[][] =>
@@ -18,14 +17,9 @@ const groupMessagesBySender = (messages: Message[]): Message[][] =>
     return groups;
   }, []);
 
-interface LoggedUser {
-  _id: string;
-  fullName?: string;
-  profilePicture?: string;
-}
-
 const Chat = () => {
   const user = useAppSelector(state => state.user.user);
+  const userId = user?._id ?? '';
   const messageListRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [mobilePanelOpen, setMobilePanelOpen] = useState(false);
@@ -46,13 +40,7 @@ const Chat = () => {
     setMessageInput,
     sendMessage,
     isSending,
-    findFriendId,
   } = useChat();
-
-  const loggedUser = user ? (user as LoggedUser) : null;
-
-  const findFriendWrapper = (buyer: string, seller: string, lu: LoggedUser | null) =>
-    lu ? findFriendId(buyer, seller, lu._id) : null;
 
   const groupedMessages = groupMessagesBySender(messagesArray ?? []);
 
@@ -102,11 +90,9 @@ const Chat = () => {
           ) : conversations.map((conv, i) => (
             <div key={conv._id ?? i} onClick={() => handleSelectConversation(conv)}>
               <Conversations
-                productId={conv.productId}
                 conversation={conv}
-                loggedUser={loggedUser}
+                userId={userId}
                 isActive={conv._id === currentChat?._id}
-                findFriend={findFriendWrapper}
               />
             </div>
           ))}
@@ -181,7 +167,7 @@ const Chat = () => {
                 <Messages
                   key={i}
                   messageArr={group}
-                  direction={group[0].sender === loggedUser?._id ? 'outgoing' : 'incoming'}
+                  direction={group[0].sender === userId ? 'outgoing' : 'incoming'}
                 />
               ))}
               {isFriendTyping && (

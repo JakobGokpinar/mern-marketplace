@@ -126,6 +126,10 @@ export const updateListing = async (req: Request, res: Response) => {
 export const findProduct = async (req: Request, res: Response) => {
   const productId = req.params.id as string;
 
+  if (!ObjectId.isValid(productId)) {
+    return res.status(404).json({ message: 'Listing not found' });
+  }
+
   try {
     const result = await ListingModel.findOne({ _id: new ObjectId(productId) }).lean();
     if (!result) return res.status(404).json({ message: 'Listing not found' });

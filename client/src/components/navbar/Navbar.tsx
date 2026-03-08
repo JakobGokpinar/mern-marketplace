@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
+import toast from "react-hot-toast";
 import styles from "./Navbar.module.css";
 
 import Container from 'react-bootstrap/Container';
@@ -36,14 +37,24 @@ const Navigation = () => {
   const user = useAppSelector(state => state.user.user);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const pathnameRef = useRef(location.pathname);
+  pathnameRef.current = location.pathname;
   const { theme, toggleTheme } = useTheme();
   const queryClient = useQueryClient();
 
-  // Refetch chat rooms instantly when a message arrives via socket
+  // Refetch chat rooms + show toast when a message arrives via socket
   useEffect(() => {
     if (!isLoggedIn || !user?._id) return;
-    const handler = () => {
+    const handler = ({ senderName, msg }: { senderName?: string; msg?: string }) => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.chat.rooms(user._id) });
+      if (pathnameRef.current !== '/chat') {
+        const preview = msg && msg.length > 50 ? msg.slice(0, 50) + '...' : msg;
+        toast.success(senderName ? `${senderName}: ${preview}` : 'Ny melding', {
+          duration: 4000,
+          position: 'top-right',
+        });
+      }
     };
     socket.on('getMessage', handler);
     return () => { socket.off('getMessage', handler); };

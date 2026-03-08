@@ -32,12 +32,37 @@ export const createRoom = async (req: Request, res: Response) => {
 export const getRooms = async (req: Request, res: Response) => {
   const userId = req.user!._id;
   try {
-    const response = await ConversationModel.find({
+    const rooms = await ConversationModel.find({
       $or: [
         { buyer: new ObjectId(userId) },
         { seller: new ObjectId(userId) },
       ],
-    }).lean();
+    })
+      .populate('buyer', 'fullName profilePicture')
+      .populate('seller', 'fullName profilePicture')
+      .populate('productId', 'title images')
+      .lean();
+
+    const response = rooms.map((room: any) => {
+      const isBuyer = room.buyer?._id?.toString() === userId.toString();
+      const friendDoc = isBuyer ? room.seller : room.buyer;
+      const listingDoc = room.productId;
+
+      return {
+        _id: room._id,
+        buyer: room.buyer?._id ?? room.buyer,
+        seller: room.seller?._id ?? room.seller,
+        productId: listingDoc?._id ?? room.productId,
+        unreadBuyer: room.unreadBuyer,
+        unreadSeller: room.unreadSeller,
+        roomCreatedAt: room.roomCreatedAt,
+        friendName: friendDoc?.fullName ?? null,
+        friendPicture: friendDoc?.profilePicture ?? null,
+        listingTitle: listingDoc?.title ?? null,
+        listingImage: listingDoc?.images?.[0]?.location ?? null,
+      };
+    });
+
     return res.status(200).json(response);
   } catch (error) {
     return res.status(500).json({ message: 'Could not fetch rooms' });
@@ -63,15 +88,18 @@ export const getMessages = async (req: Request, res: Response) => {
       query.sentAt = { $lt: new Date(before) };
     }
 
-    const totalCount = await MessageModel.countDocuments(query);
+    // Fetch limit+1 to determine hasMore without a separate countDocuments call
     const messages = await MessageModel.find(query)
       .sort({ sentAt: -1 })
-      .limit(limit)
+      .limit(limit + 1)
       .lean();
+
+    const hasMore = messages.length > limit;
+    if (hasMore) messages.pop();
 
     return res.status(200).json({
       messages: messages.reverse(),
-      hasMore: totalCount > limit,
+      hasMore,
     });
   } catch (error) {
     return res.status(500).json({ message: 'Could not fetch messages' });

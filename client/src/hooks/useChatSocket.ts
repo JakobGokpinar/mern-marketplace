@@ -15,8 +15,8 @@ export const useChatSocket = ({ friendId, userId, messageInput }: UseChatSocketO
 
   // Incoming message
   useEffect(() => {
-    const handler = ({ sender, msg, sentAt }: Message) => {
-      setArrivalMessage({ sender, msg, sentAt });
+    const handler = ({ sender, senderName, msg, sentAt }: Message & { senderName?: string }) => {
+      setArrivalMessage({ sender, senderName, msg, sentAt });
       setIsFriendTyping(false);
     };
     socket.on('getMessage', handler);
@@ -48,18 +48,22 @@ export const useChatSocket = ({ friendId, userId, messageInput }: UseChatSocketO
     };
   }, [friendId]);
 
-  // Emit typing status
+  // Emit typing status (debounced stop)
   useEffect(() => {
     if (!friendId || !userId) return;
     if (messageInput !== '') {
       socket.emit('userTyping', { typer: userId, receiver: friendId });
+      const timeout = setTimeout(() => {
+        socket.emit('stoppedTyping', { typer: userId, receiver: friendId });
+      }, 2000);
+      return () => clearTimeout(timeout);
     } else {
       socket.emit('stoppedTyping', { typer: userId, receiver: friendId });
     }
   }, [messageInput, friendId, userId]);
 
-  const emitSendMessage = (msg: string, sentAt: Date, sender: string, receiver: string) => {
-    socket.emit('sendMessage', { msg, sentAt, sender, receiver });
+  const emitSendMessage = (msg: string, sentAt: Date, sender: string, senderName: string, receiver: string) => {
+    socket.emit('sendMessage', { msg, sentAt, sender, senderName, receiver });
   };
 
   const emitMessagesRead = (roomId: string, receiver: string) => {

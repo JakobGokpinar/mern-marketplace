@@ -77,7 +77,7 @@ export const useChat = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps — only re-run when location changes (refetchConversations is stable)
   }, [location]);
 
-  // Load friend + messages when chat changes
+  // Load friend + messages + listing when chat changes
   useEffect(() => {
     if (!currentChat || !userId) return;
     const friendId = findFriendId(currentChat.buyer, currentChat.seller, userId);
@@ -85,20 +85,24 @@ export const useChat = () => {
 
     const loadChatData = async () => {
       try {
-        const [friendData, messageData] = await Promise.all([
+        const [friendData, messageData, listingData] = await Promise.all([
           fetchUserByIdApi(friendId),
           getMessagesApi(currentChat._id),
+          currentChat.productId
+            ? fetchListingApi(currentChat.productId).catch(() => null)
+            : Promise.resolve(null),
         ]);
         setFriend(friendData);
         setMessagesArray(messageData.messages);
         setHasMoreMessages(messageData.hasMore);
+        setCurrentListing(listingData);
         setCurrentFriendStatus(
           (friendData as User & { lastActiveAt?: string }).lastActiveAt
             ? timeago((friendData as User & { lastActiveAt?: string }).lastActiveAt!)
             : null
         );
-        await resetUnreadApi(currentChat._id);
-        void refetchConversations();
+        // Fire-and-forget: don't block UI on unread reset
+        void resetUnreadApi(currentChat._id).then(() => refetchConversations());
         emitMessagesRead(currentChat._id, friendId);
       } catch {
         toast.error('Kunne ikke laste chat');
@@ -107,14 +111,6 @@ export const useChat = () => {
     void loadChatData();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentChat, userId]);
-
-  // Load product for current chat
-  useEffect(() => {
-    if (!currentChat?.productId) return;
-    fetchListingApi(currentChat.productId)
-      .then(setCurrentListing)
-      .catch(() => { toast.error('Kunne ikke laste produkt'); });
-  }, [currentChat]);
 
   // Apply arrival message
   useEffect(() => {
@@ -154,21 +150,21 @@ export const useChat = () => {
   }, [currentChat, hasMoreMessages, isLoadingMore, messagesArray]);
 
   const sendMutation = useMutation({
-    mutationFn: () => sendMessageApi(userId, messageInput, currentChat!._id),
-    onSuccess: () => {
-      setMessagesArray((prev) => [...prev, { sender: userId, msg: messageInput, sentAt: new Date() }]);
-      emitSendMessage(messageInput, new Date(), userId, friend!._id);
-      setMessageInput('');
-    },
+    mutationFn: (msg: string) => sendMessageApi(userId, msg, currentChat!._id),
     onError: () => {
       toast.error('Kunne ikke sende meldingen');
     },
   });
 
   const sendMessage = useCallback(() => {
-    if (!messageInput.trim() || !currentChat || !friend) return;
-    sendMutation.mutate();
-  }, [messageInput, currentChat, friend, sendMutation]);
+    const msg = messageInput.trim();
+    if (!msg || !currentChat || !friend) return;
+    // Optimistic: update UI immediately, send in background
+    setMessagesArray((prev) => [...prev, { sender: userId, msg, sentAt: new Date() }]);
+    emitSendMessage(msg, new Date(), userId, user?.fullName ?? '', friend._id);
+    setMessageInput('');
+    sendMutation.mutate(msg);
+  }, [messageInput, currentChat, friend, userId, user?.fullName, emitSendMessage, sendMutation, setMessageInput]);
 
   return {
     conversations,
@@ -186,6 +182,5 @@ export const useChat = () => {
     setMessageInput,
     sendMessage,
     isSending: sendMutation.isPending,
-    findFriendId,
   };
 };

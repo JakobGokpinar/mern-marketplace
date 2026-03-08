@@ -26,6 +26,9 @@ export const fetchUser = async (req: Request, res: Response) => {
 };
 
 export const findUser = async (req: Request, res: Response) => {
+  if (!ObjectId.isValid(req.params.id)) {
+    return res.status(404).json({ message: 'User not found' });
+  }
   try {
     const response = await UserModel.findOne({ _id: new ObjectId(req.params.id as string) });
     return res.status(200).json({ user: response });
@@ -36,6 +39,9 @@ export const findUser = async (req: Request, res: Response) => {
 };
 
 export const findSeller = async (req: Request, res: Response) => {
+  if (!ObjectId.isValid(req.params.id)) {
+    return res.status(404).json({ message: 'Seller not found' });
+  }
   try {
     const response = await UserModel.findOne({ _id: new ObjectId(req.params.id as string) })
       .select('fullName profilePicture');

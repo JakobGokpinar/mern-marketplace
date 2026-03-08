@@ -10,16 +10,20 @@ export const useSocket = () => {
     if (isLoggedIn && user?._id) {
       socket.connect();
       socket.emit('addUser', user._id);
+
+      const onReconnect = () => {
+        socket.emit('addUser', user._id);
+      };
+      socket.on('connect', onReconnect);
+
+      return () => {
+        socket.off('connect', onReconnect);
+      };
     } else {
       socket.emit('logout');
       socket.disconnect();
+      return;
     }
-
-    return () => {
-      if (!isLoggedIn) {
-        socket.disconnect();
-      }
-    };
   }, [isLoggedIn, user]);
 
   return socket;

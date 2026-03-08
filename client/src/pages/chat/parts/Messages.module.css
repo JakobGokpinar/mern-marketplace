@@ -27,12 +27,36 @@
   background: var(--color-primary);
   color: white;
   border-bottom-right-radius: 4px;
+  animation: slideInRight 0.25s ease-out both;
 }
 
 .group--incoming .bubble {
   background: var(--color-bg-subtle);
   color: var(--color-text);
   border-bottom-left-radius: 4px;
+  animation: slideInLeft 0.25s ease-out both;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
 }
 
 /* First/last bubble rounding adjustments */
