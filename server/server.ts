@@ -1,3 +1,6 @@
+// Must be first import — sets NODE_ENV before other modules evaluate
+import './config/env';
+
 import express from 'express';
 import session from 'express-session';
 import passport from 'passport';
@@ -12,7 +15,6 @@ import mongoose from 'mongoose';
 import connectToDatabase from './config/db';
 import UserModel from './models/User';
 import logger from './config/logger';
-import 'dotenv/config';
 import validateEnv from './config/validateEnv';
 
 // Initialize passport strategies (must be before routes that use passport)
@@ -25,17 +27,6 @@ import listingRouter from './modules/listing/listing.routes';
 import chatRouter from './modules/chat/chat.routes';
 
 const ObjectId = mongoose.Types.ObjectId;
-
-// Determine environment
-if (process.argv.includes('dev')) {
-  process.env.NODE_ENV = 'development';
-  process.env.CLIENT_URL = process.env.CLIENT_URL_DEV;
-  process.env.MONGODB_URL = process.env.MONGODB_DEV;
-} else if (process.argv.includes('start')) {
-  process.env.NODE_ENV = 'production';
-  process.env.CLIENT_URL = process.env.CLIENT_URL_PROD;
-  process.env.MONGODB_URL = process.env.MONGODB_PROD;
-}
 
 validateEnv();
 const isProduction = process.env.NODE_ENV === 'production';
