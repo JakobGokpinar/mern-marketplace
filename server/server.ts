@@ -211,6 +211,7 @@ io.on('connection', (socket) => {
 
 app.use((err: Error & { status?: number }, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   logger.error(err);
+  if (res.headersSent) return;
   res.status(err.status || 500).json({
     message: err.message || 'Internal server error',
   });
