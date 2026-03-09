@@ -1,10 +1,24 @@
 /**
- * db-cleanup — Delete old listings and their associated data (S3 images, conversations, favorites).
- * Connects to PRODUCTION database.
+ * purge-old-listings — Delete listings older than a cutoff date from PRODUCTION.
+ *
+ * What it does:
+ *   Finds all listings created before CUTOFF_DATE and removes them along
+ *   with their associated data: S3 images, conversations, messages, and
+ *   references in other users' favorites.
  *
  * Usage:
- *   npm run db:cleanup                # dry-run (shows what would be deleted)
- *   npm run db:cleanup -- --execute   # actually deletes
+ *   npm run db:purge-listings                # dry-run (preview what would be deleted)
+ *   npm run db:purge-listings -- --execute   # actually delete
+ *
+ * Configuration:
+ *   Edit CUTOFF_DATE below to set the threshold.
+ *
+ * Requires:
+ *   MONGODB_PROD     — production MongoDB connection string (from server/.env)
+ *   S3_BUCKET_NAME   — AWS S3 bucket name
+ *   S3_ACCESS_KEY    — AWS access key
+ *   S3_SECRET_ACCESS_KEY — AWS secret key
+ *   S3_BUCKET_REGION — AWS region
  */
 
 import { S3Client, ListObjectsV2Command, DeleteObjectsCommand } from '@aws-sdk/client-s3';

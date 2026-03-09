@@ -1,11 +1,20 @@
 /**
- * db-wipe — Drop collections from the DEV database. Refuses to run against prod.
+ * wipe-collections — Drop MongoDB collections from the DEV database.
+ *
+ * Safety: refuses to run if the connection string contains "/prod".
+ *
+ * What it does:
+ *   Drops entire collections from the local dev database. Useful for
+ *   resetting local state when you want a completely clean slate.
  *
  * Usage:
  *   npm run db:wipe                          # drop ALL collections
- *   npm run db:wipe -- users listings        # drop only these collections
- *   npm run db:wipe -- --dry-run             # show what would be dropped
- *   npm run db:wipe -- --dry-run users       # show specific collections
+ *   npm run db:wipe -- users listings        # drop only specific collections
+ *   npm run db:wipe -- --dry-run             # preview what would be dropped
+ *   npm run db:wipe -- --dry-run users       # preview for specific collections
+ *
+ * Requires:
+ *   MONGODB_DEV — local MongoDB connection string (from server/.env)
  */
 
 import mongoose from 'mongoose';
