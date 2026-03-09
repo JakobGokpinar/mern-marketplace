@@ -64,11 +64,11 @@ const NewListing = () => {
         throw new Error(result.data.message);
       }
       const returnedFiles = result.data.files as Array<{ originalname: string; location: string }>;
-      const finalImages = imageArray.flatMap(img => {
-        const jpgName = img.name.replace(/\.[^.]+$/, '.jpg');
-        const match = returnedFiles.find(f => f.originalname === jpgName);
-        return match ? [{ name: img.name, location: match.location, description: img.description }] : [];
-      });
+      const finalImages = returnedFiles.map((file, i) => ({
+        name: imageArray[i]?.name || file.originalname,
+        location: file.location,
+        description: imageArray[i]?.description || '',
+      }));
       await instanceAxs.post('/listings', {
         listingProperties,
         imageLocations: finalImages,
