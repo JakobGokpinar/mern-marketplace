@@ -67,7 +67,7 @@ const ListingPreview = ({
             <div className={styles['carousel-wrapper']}>
               <Carousel className={styles['carousel']} interval={null} variant="dark">
                 {imageArray.map((item) => (
-                  <Carousel.Item key={item.name}>
+                  <Carousel.Item key={item.id}>
                     <img
                       src={item.data ?? item.location}
                       alt="preview"

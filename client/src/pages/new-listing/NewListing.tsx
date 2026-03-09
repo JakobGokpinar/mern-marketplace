@@ -143,14 +143,14 @@ const NewListing = () => {
       reader.addEventListener('load', () => {
         setImageArray(prev => [
           ...prev,
-          { name: file.name, data: typeof reader.result === 'string' ? reader.result : undefined, description: '' },
+          { id: crypto.randomUUID(), name: file.name, data: typeof reader.result === 'string' ? reader.result : undefined, description: '' },
         ]);
       });
     });
   };
 
-  const handleImageDelete = (name: string) => setImageArray(prev => prev.filter(img => img.name !== name));
-  const handleImageDescriptionChange = (name: string, description: string) => setImageArray(prev => prev.map(img => img.name === name ? { ...img, description } : img));
+  const handleImageDelete = (id: string) => setImageArray(prev => prev.filter(img => img.id !== id));
+  const handleImageDescriptionChange = (id: string, description: string) => setImageArray(prev => prev.map(img => img.id === id ? { ...img, description } : img));
   const handleImageReorder = (images: ListingImage[]) => setImageArray(images);
 
   const handleSpecPropAdd = (title: string, value: string) => {

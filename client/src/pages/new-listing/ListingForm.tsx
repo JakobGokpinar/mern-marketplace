@@ -19,8 +19,8 @@ interface ListingFormProps {
   onPropertyChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
   onStatusChange: (value: 'nytt' | 'brukt') => void;
   onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onImageDelete: (name: string) => void;
-  onImageDescriptionChange: (name: string, description: string) => void;
+  onImageDelete: (id: string) => void;
+  onImageDescriptionChange: (id: string, description: string) => void;
   onImageReorder: (images: ListingImage[]) => void;
   onSpecPropAdd: (title: string, value: string) => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;

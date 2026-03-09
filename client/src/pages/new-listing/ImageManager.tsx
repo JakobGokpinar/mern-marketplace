@@ -5,8 +5,8 @@ import type { ListingImage } from './types';
 
 interface ImageManagerProps {
   imageArray: ListingImage[];
-  onDelete: (name: string) => void;
-  onDescriptionChange: (name: string, description: string) => void;
+  onDelete: (id: string) => void;
+  onDescriptionChange: (id: string, description: string) => void;
   onReorder: (images: ListingImage[]) => void;
 }
 
@@ -38,7 +38,7 @@ const ImageManager = ({ imageArray, onDelete, onDescriptionChange, onReorder }: 
     <ul className={styles['list']}>
       {imageArray.map((item, index) => (
         <li
-          key={item.name}
+          key={item.id}
           className={styles['item']}
           draggable
           onDragStart={e => handleDragStart(e, index)}
@@ -68,7 +68,7 @@ const ImageManager = ({ imageArray, onDelete, onDescriptionChange, onReorder }: 
               className={styles['caption-input']}
               value={item.description}
               placeholder="Valgfri bildetekst..."
-              onChange={e => onDescriptionChange(item.name, e.target.value)}
+              onChange={e => onDescriptionChange(item.id, e.target.value)}
             />
           </div>
 
@@ -76,7 +76,7 @@ const ImageManager = ({ imageArray, onDelete, onDescriptionChange, onReorder }: 
           <button
             type="button"
             className={styles['delete-btn']}
-            onClick={() => onDelete(item.name)}
+            onClick={() => onDelete(item.id)}
             title="Slett bilde"
             aria-label="Slett bilde"
           >

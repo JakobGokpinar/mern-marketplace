@@ -1,4 +1,5 @@
 export interface ListingImage {
+  id: string;
   name: string;
   data?: string;
   location?: string;
