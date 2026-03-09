@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const listingSchema = z.object({
   title: z.string().min(1, 'Tittel er påkrevd').max(200, 'Tittel kan maks være 200 tegn'),
-  price: z.string().min(1, 'Pris er påkrevd').refine(v => !isNaN(Number(v)) && Number(v) >= 0, 'Pris må være 0 eller høyere'),
+  price: z.string().min(1, 'Pris er påkrevd').refine(v => !isNaN(Number(v)) && Number(v) >= 0 && Number(v) <= 50_000_000, 'Pris må være mellom 0 og 50 000 000'),
   pricePeriod: z.string().min(1, 'Velg en prisperiode'),
   category: z.string().min(1, 'Velg en kategori'),
   subCategory: z.string().min(1, 'Velg en underkategori'),

@@ -15,7 +15,7 @@ const imageLocation = z.object({
 
 const listingProperties = z.object({
   title: z.string().min(1).max(200),
-  price: z.number().min(0),
+  price: z.number().min(0).max(50_000_000),
   pricePeriod: z.string().min(1),
   category: z.string().min(1),
   subCategory: z.string().min(1),
