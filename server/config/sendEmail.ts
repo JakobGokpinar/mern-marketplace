@@ -1,14 +1,8 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+const FROM_EMAIL = process.env.EMAIL_FROM || 'Rego <onboarding@resend.dev>';
 
 const BRAND_COLOR = '#0D9488';
 const TEXT_COLOR = '#1F2937';
@@ -81,8 +75,8 @@ export const sendVerificationEmail = async (to: string, name: string, verifyUrl:
     ${smallText('Denne lenken utløper om 15 minutter.')}
   `;
 
-  await transporter.sendMail({
-    from: process.env.SMTP_USER,
+  await resend.emails.send({
+    from: FROM_EMAIL,
     to,
     subject: 'Bekreft e-postadressen din - Rego',
     html: emailLayout(content),
@@ -96,8 +90,8 @@ export const sendPasswordChangedEmail = async (to: string, name: string) => {
     ${smallText('Denne e-posten ble sendt fordi passordet til kontoen din ble oppdatert.')}
   `;
 
-  await transporter.sendMail({
-    from: process.env.SMTP_USER,
+  await resend.emails.send({
+    from: FROM_EMAIL,
     to,
     subject: 'Passordet ditt er endret - Rego',
     html: emailLayout(content),
@@ -113,8 +107,8 @@ export const sendEmailChangedNotification = async (to: string, name: string, new
     ${smallText('Denne e-posten ble sendt til din tidligere e-postadresse som en sikkerhetsmelding.')}
   `;
 
-  await transporter.sendMail({
-    from: process.env.SMTP_USER,
+  await resend.emails.send({
+    from: FROM_EMAIL,
     to,
     subject: 'E-postadressen din er endret - Rego',
     html: emailLayout(content),
@@ -131,8 +125,8 @@ export const sendPasswordResetEmail = async (to: string, name: string, resetUrl:
     ${smallText('Denne lenken utløper om 15 minutter. Hvis du ikke ba om dette, kan du trygt ignorere denne e-posten.')}
   `;
 
-  await transporter.sendMail({
-    from: process.env.SMTP_USER,
+  await resend.emails.send({
+    from: FROM_EMAIL,
     to,
     subject: 'Tilbakestill passordet ditt - Rego',
     html: emailLayout(content),

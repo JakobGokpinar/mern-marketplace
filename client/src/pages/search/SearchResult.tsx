@@ -26,7 +26,7 @@ const SearchResult = () => {
   const counties = geoData?.districts || [];
 
   const [page, setPage] = useState(1);
-  const [allListings, setAllListings] = useState<Listing[]>([]);
+  const [pages, setPages] = useState<Record<number, Listing[]>>({});
 
   const createQueryObject = () => {
     const queryObject: Record<string, string | string[]> = {};
@@ -45,18 +45,25 @@ const SearchResult = () => {
 
   const { data, isPending, isFetching } = useQuery({
     queryKey: queryKeys.products.search(searchParams.toString(), page),
-    queryFn: async () => {
-      const res = await searchListingsApi(createQueryObject(), page);
-      setAllListings(prev => page === 1 ? res.productArray : [...prev, ...res.productArray]);
-      return res;
-    },
+    queryFn: () => searchListingsApi(createQueryObject(), page),
   });
 
-  // Reset to page 1 when search params change
+  // Accumulate pages of results
+  useEffect(() => {
+    if (data?.productArray) {
+      setPages(prev => ({ ...prev, [page]: data.productArray }));
+    }
+  }, [data, page]);
+
+  // Reset when search params change
   useEffect(() => {
     setPage(1);
-    setAllListings([]);
+    setPages({});
   }, [searchParams]);
+
+  const allListings = Object.keys(pages)
+    .sort((a, b) => Number(a) - Number(b))
+    .flatMap(k => pages[Number(k)]);
 
   const totalPages = data?.totalPages ?? 1;
   const totalCount = data?.totalCount ?? 0;
