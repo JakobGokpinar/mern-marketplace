@@ -69,7 +69,7 @@ const VerifyEmail = () => {
           <>
             <p className={styles['description']}>E-postadressen din er allerede bekreftet.</p>
             <Button variant="primary" className={styles['btn']} onClick={() => navigate('/account')}>
-              Gå til min konto
+              Gå til kontoen
             </Button>
           </>
         ) : status === 'success' ? (
@@ -77,7 +77,7 @@ const VerifyEmail = () => {
             <p className={styles['description']}>{message}</p>
             {user ? (
               <Button variant="primary" className={styles['btn']} onClick={() => navigate('/account')}>
-                Gå til min konto
+                Gå til kontoen
               </Button>
             ) : (
               <Button variant="primary" className={styles['btn']} onClick={() => navigate('/login')}>
@@ -93,7 +93,7 @@ const VerifyEmail = () => {
             </Alert>
             {user && (
               <p className={styles['description']}>
-                <a href="/account">Gå til min konto</a> for å sende en ny bekreftelsesmail.
+                <a href="/account">Gå til kontoen</a> for å sende en ny bekreftelsesmail.
               </p>
             )}
           </>

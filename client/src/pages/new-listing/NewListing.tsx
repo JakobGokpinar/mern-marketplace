@@ -272,7 +272,7 @@ const NewListing = () => {
         <Modal.Body>
           <p>Bekreft e-posten din for å legge ut annonser</p>
           <a href="/account">
-            <Button variant="primary">Gå til min konto</Button>
+            <Button variant="primary">Gå til kontoen</Button>
           </a>
         </Modal.Body>
       </Modal>

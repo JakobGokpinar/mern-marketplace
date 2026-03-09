@@ -127,7 +127,19 @@ const Navigation = () => {
 
           {isLoggedIn ? (
             <Nav className={styles['navbar-actions']}>
-              <Nav.Link href="/new-listing" className={styles['navbar-new-listing']}>
+              <Nav.Link
+                href="/new-listing"
+                className={styles['navbar-new-listing']}
+                onClick={(e) => {
+                  if (!user?.isEmailVerified) {
+                    e.preventDefault();
+                    toast('Du må bekrefte e-posten din før du kan legge ut annonser. Gå til kontoinnstillinger for å sende bekreftelsesmail.', {
+                      duration: 5000,
+                      icon: '\u26a0\ufe0f',
+                    });
+                  }
+                }}
+              >
                 <Icon name="plus" style={{ marginRight: 4 }} />
                 <span>Ny Annonse</span>
               </Nav.Link>

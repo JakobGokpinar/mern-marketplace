@@ -180,7 +180,13 @@ export const getUserListings = async (req: Request, res: Response) => {
 
 function getTextQuery(value: string | undefined) {
   if (!value?.trim()) return;
-  return { $text: { $search: value } };
+  const escaped = value.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return {
+    $or: [
+      { title: { $regex: escaped, $options: 'i' } },
+      { description: { $regex: escaped, $options: 'i' } },
+    ],
+  };
 }
 function getLocation(kommuneArr: string[] | undefined) {
   if (!kommuneArr) return;
@@ -215,20 +221,19 @@ function getStatus(value: string | undefined) {
   return { status: value };
 }
 
-function parseSort(value: string | undefined, hasTextSearch: boolean): Record<string, 1 | -1 | { $meta: string }> {
+function parseSort(value: string | undefined): Record<string, 1 | -1> {
   switch (value) {
     case 'price_asc': return { price: 1 };
     case 'price_desc': return { price: -1 };
     case 'oldest': return { createdAt: 1 };
     case 'newest': return { createdAt: -1 };
-    default: return hasTextSearch ? { score: { $meta: 'textScore' } } : { createdAt: -1 };
+    default: return { createdAt: -1 };
   }
 }
 
 export const findProducts = async (req: Request, res: Response) => {
   const queryObject: Record<string, unknown> = {};
   const queryParams = req.body;
-  const hasTextSearch = !!queryParams['q']?.trim();
 
   Object.assign(queryObject, getTextQuery(queryParams['q']));
   Object.assign(queryObject, getMainCategory(queryParams['category']));
@@ -239,11 +244,10 @@ export const findProducts = async (req: Request, res: Response) => {
   Object.assign(queryObject, getLocation(queryParams['kommune']));
 
   const { page, limit, skip } = parsePagination(req.body);
-  const sort = parseSort(queryParams['sort'], hasTextSearch);
+  const sort = parseSort(queryParams['sort']);
 
   try {
     const findQuery = ListingModel.find(queryObject);
-    if (hasTextSearch) findQuery.select({ score: { $meta: 'textScore' } });
     const [result, totalCount] = await Promise.all([
       findQuery.sort(sort).skip(skip).limit(limit).lean(),
       ListingModel.countDocuments(queryObject),
