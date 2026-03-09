@@ -8,6 +8,7 @@ import Form from 'react-bootstrap/Form';
 import { instanceAxs } from '../../lib/axios';
 import { useDebounce } from '../../hooks/useDebounce';
 import Icon from '../icons/Icon';
+import categoryData from '../../categories.json';
 
 interface ProductSuggestion {
   title: string;
@@ -22,13 +23,26 @@ interface SuggestionItem {
 export default function Searchbar() {
   const navigate = useNavigate();
   const [productObjects, setProductObjects] = useState<ProductSuggestion[]>([]);
-  const [suggestedCategories, setSuggestedCategories] = useState<string[]>([]);
   const [searchInput, setSearchInput] = useState<string>('');
   const [isShow, setIsShow] = useState<boolean>(false);
   const [focusedIndex, setFocusedIndex] = useState<number>(-1);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const debouncedSearch = useDebounce(searchInput, 350);
+
+  // Filter categories locally by matching the search phrase against category/subcategory names
+  const suggestedCategories = useMemo(() => {
+    const q = searchInput.trim().toLowerCase();
+    if (!q) return [];
+    const matches: string[] = [];
+    for (const cat of categoryData.categories) {
+      if (cat.maincategory.toLowerCase().includes(q)) matches.push(cat.maincategory);
+      for (const sub of cat.subcategories) {
+        if (sub.name.toLowerCase().includes(q)) matches.push(sub.name);
+      }
+    }
+    return matches.slice(0, 3);
+  }, [searchInput]);
 
   // Flat list of all navigable items in render order
   const allItems = useMemo<SuggestionItem[]>(() => {
@@ -49,7 +63,7 @@ export default function Searchbar() {
   useEffect(() => {
     // Reset keyboard focus when new results arrive
     setFocusedIndex(-1);
-  }, [productObjects, suggestedCategories]);
+  }, [productObjects]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -81,10 +95,8 @@ export default function Searchbar() {
           img: item.images?.[0],
           id: item._id,
         })).slice(0, 3);
-        const suggestedCat = (response.data.categories as string[]).slice(0, 3);
 
         setProductObjects(responseData);
-        setSuggestedCategories(suggestedCat);
       })
       .finally(() => setIsLoading(false));
   }, [debouncedSearch]);

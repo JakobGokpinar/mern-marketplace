@@ -6,7 +6,7 @@ A secondhand marketplace where people can list items for sale, discover what's n
 
 ![Rego homepage](docs/after-homepage.png)
 
-## The Journey
+## How It Evolved
 
 Rego started as a plain React + Express CRUD app — basic forms, no real design system, and everything held together with Create React App and raw CSS. Over time it evolved into something I'm actually proud of:
 
@@ -17,8 +17,7 @@ Rego started as a plain React + Express CRUD app — basic forms, no real design
 - **Generic look to a real design system** — built a token-based design language (`design.css`) with CSS Modules, giving the app a consistent, polished feel.
 - **Gmail SMTP to Resend** — moved transactional email to a proper provider with domain verification for reliable deliverability.
 
-<details>
-<summary>Before & After</summary>
+### Before & After
 
 | Page | Before | After |
 |------|--------|-------|
@@ -28,8 +27,6 @@ Rego started as a plain React + Express CRUD app — basic forms, no real design
 | Chat | ![](docs/before-chat.png) | ![](docs/after-chat.png) |
 | Account | ![](docs/before-account.png) | ![](docs/after-account.png) |
 | Profile | ![](docs/before-profile.png) | ![](docs/after-account.png) |
-
-</details>
 
 ## Features
 
