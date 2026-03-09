@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import ListingCard from '../../components/listing-card/ListingCard';
 import Icon from '../../components/icons/Icon';
@@ -12,16 +12,22 @@ import type { Listing } from '../../types/listing';
 
 const Menu = () => {
   const [page, setPage] = useState(1);
-  const [allListings, setAllListings] = useState<Listing[]>([]);
+  const [pages, setPages] = useState<Record<number, Listing[]>>({});
 
   const { data, isPending, isFetching } = useQuery({
     queryKey: queryKeys.products.list(page),
-    queryFn: async () => {
-      const res = await fetchListingsApi(page);
-      setAllListings(prev => page === 1 ? res.productArray : [...prev, ...res.productArray]);
-      return res;
-    },
+    queryFn: () => fetchListingsApi(page),
   });
+
+  useEffect(() => {
+    if (data?.productArray) {
+      setPages(prev => ({ ...prev, [page]: data.productArray }));
+    }
+  }, [data, page]);
+
+  const allListings = Object.keys(pages)
+    .sort((a, b) => Number(a) - Number(b))
+    .flatMap(k => pages[Number(k)]);
 
   const totalPages = data?.totalPages ?? 1;
   const hasMore = page < totalPages;
