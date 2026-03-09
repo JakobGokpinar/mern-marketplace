@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/api/:path*", "destination": "https://mern-marketplace-production-a3e2.up.railway.app/api/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
