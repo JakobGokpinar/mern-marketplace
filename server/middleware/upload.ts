@@ -33,7 +33,7 @@ const createListingUpload = (keyPrefix: string) => multer({
   }),
   fileFilter,
   limits: { fileSize: MAX_FILE_SIZE },
-}).array('listingImages', 10);
+}).array('listingImages', 25);
 
 const createProfileUpload = (keyPrefix: string) => multer({
   storage: multerS3({

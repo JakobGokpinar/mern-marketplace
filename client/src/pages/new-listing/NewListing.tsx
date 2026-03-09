@@ -123,10 +123,17 @@ const NewListing = () => {
     setListing(prev => ({ ...prev, status: value }));
   };
 
+  const MAX_IMAGES = 25;
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const MAX_RAW_SIZE = 15 * 1024 * 1024;
-    Array.from(e.target.files).forEach(file => {
+    const remaining = MAX_IMAGES - imageArray.length;
+    const files = Array.from(e.target.files).slice(0, remaining);
+    if (e.target.files.length > remaining) {
+      toast.error(`Maks ${MAX_IMAGES} bilder per annonse`);
+    }
+    files.forEach(file => {
       if (file.size > MAX_RAW_SIZE) {
         toast.error(`${file.name} er for stor (maks 15 MB)`);
         return;
