@@ -55,7 +55,12 @@ function ProductPage() {
 
   const sendMessage = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    if (user?._id === seller?._id || !user || !seller || !listing) return;
+    if (!seller || !listing) return;
+    if (!user) {
+      navigate('/login', { state: { from: { pathname: `/listing/${id}` } } });
+      return;
+    }
+    if (user._id === seller._id) return;
     navigate('/chat', {
       state: {
         buyer: user._id,
