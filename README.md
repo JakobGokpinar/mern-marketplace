@@ -4,7 +4,7 @@ A secondhand marketplace where people can list items for sale, discover what's n
 
 **Live:** [rego.jakobg.tech](https://rego.jakobg.tech)
 
-![Rego homepage](docs/homepage.png)
+![Rego homepage](docs/after-homepage.png)
 
 ## The Journey
 
