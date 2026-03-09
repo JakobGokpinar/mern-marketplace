@@ -20,16 +20,16 @@ export interface Listing {
   title: string;
   description: string;
   price: number;
-  images?: Array<{ location: string; description?: string }>;
+  images?: Array<{ name?: string; location: string; description?: string }>;
   location: string;
-  postNumber?: string;
   postnumber?: string;
+  kommune?: string;
   category: string;
-  subCategory?: string;
-  status: 'ny' | 'brukt' | 'nytt' | 'brukt';
+  subCategory: string;
+  subSubCategory?: string;
+  status: 'nytt' | 'brukt';
   pricePeriod?: string;
   sellerId?: string;
-  specialProps?: SpecialProp[];
   specialProperties?: SpecialProp[];
 
   createdAt: string;

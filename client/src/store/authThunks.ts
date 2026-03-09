@@ -48,7 +48,7 @@ export const logoutRequest = () => async (dispatch: AppDispatch) => {
   // Clear frontend state immediately — never block the user on a server response
   dispatch(userActions.logout());
   clearCsrfToken();
-  toast('Du har logget ut');
+  toast.success('Du har logget ut');
   // Best-effort server-side session invalidation — failure is non-critical
   logoutApi().catch(() => { /* session expires on its own */ });
 };

@@ -56,7 +56,7 @@ const MyListings = () => {
                 <p className={styles['item-title']}>{item.title}</p>
                 <p className={styles['item-price']}>{item.price} kr</p>
                 <div className={styles['item-buttons']}>
-                  <Button variant="outline-primary" size="sm" onClick={() => navigate('/new-listing', { state: { annonce: item } })}>
+                  <Button variant="outline-primary" size="sm" onClick={() => navigate(`/edit-listing/${item._id}`)}>
                     Endre
                   </Button>
                   <Button variant="outline-danger" size="sm" onClick={() => { setSelectedItem(item); setShowRemoveModal(true); }}>

@@ -133,9 +133,8 @@ const Navigation = () => {
                 onClick={(e) => {
                   if (!user?.isEmailVerified) {
                     e.preventDefault();
-                    toast('Du må bekrefte e-posten din før du kan legge ut annonser. Gå til kontoinnstillinger for å sende bekreftelsesmail.', {
+                    toast.error('Du må bekrefte e-posten din før du kan legge ut annonser. Gå til kontoinnstillinger for å sende bekreftelsesmail.', {
                       duration: 5000,
-                      icon: '\u26a0\ufe0f',
                     });
                   }
                 }}

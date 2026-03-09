@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAppSelector } from '../../store/hooks';
 import { useMutation } from '@tanstack/react-query';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Modal from 'react-bootstrap/Modal';
@@ -11,23 +11,12 @@ import styles from './NewListing.module.css';
 import { compressListingImage } from '../../utils/compressImage';
 import { instanceAxs } from '../../lib/axios';
 import { useDebounce } from '../../hooks/useDebounce';
-import categoryData from '../../categories.json';
 import toast from 'react-hot-toast';
 import ListingForm from './ListingForm';
 import ListingPreview from './ListingPreview';
 import { useFormValidation } from '../../hooks/useFormValidation';
 import { listingSchema } from '../../schemas/annonce.schema';
 import type { ListingImage, SpecProp, ListingPropertyObject, CategoryItem, SubCategoryItem } from './types';
-
-interface EditListingState {
-  annonce: ListingPropertyObject & {
-    specialProperties: SpecProp[];
-    images: ListingImage[];
-  };
-}
-
-const isEditListingState = (state: unknown): state is EditListingState =>
-  state !== null && typeof state === 'object' && 'annonce' in (state as object);
 
 const EMPTY_LISTING: ListingPropertyObject = {
   title: '', price: '', pricePeriod: '', category: '', subCategory: '',
@@ -37,9 +26,7 @@ const EMPTY_LISTING: ListingPropertyObject = {
 const NewListing = () => {
   const user = useAppSelector(state => state.user.user);
   const navigate = useNavigate();
-  const routerLocation = useLocation();
 
-  const [isModifyListing, setIsModifyListing] = useState(false);
   const [listing, setListing] = useState<ListingPropertyObject>(EMPTY_LISTING);
   const [selectedMainCat, setSelectedMainCat] = useState<CategoryItem | ''>('');
   const [selectedSubCat, setSelectedSubCat] = useState<SubCategoryItem | ''>('');
@@ -71,48 +58,26 @@ const NewListing = () => {
       };
       const formData = await buildFormData();
 
-      if (isModifyListing) {
-        const listingId = listing._id;
-        await instanceAxs.delete(`/listings/${listingId}/images`);
-        const result = await instanceAxs.post(`/listings/images?listingId=${listingId}`, formData);
-        const returnedFiles = result.data.files as Array<{ originalname: string; location: string }>;
-        const updatedImages = imageArray.map(img => {
-          const jpgName = img.name.replace(/\.[^.]+$/, '.jpg');
-          return { ...img, location: returnedFiles.find(f => f.originalname === jpgName)?.location };
-        });
-        await instanceAxs.put(`/listings/${listingId}`, {
-          images: updatedImages,
-          listingProperties,
-        });
-        return 'updated' as const;
-      } else {
-        const result = await instanceAxs.post('/listings/images', formData);
-        if (result.data.message !== 'images uploaded') {
-          toast(result.data.message);
-          throw new Error(result.data.message);
-        }
-        const returnedFiles = result.data.files as Array<{ originalname: string; location: string }>;
-        const finalImages = imageArray.flatMap(img => {
-          const jpgName = img.name.replace(/\.[^.]+$/, '.jpg');
-          const match = returnedFiles.find(f => f.originalname === jpgName);
-          return match ? [{ ...img, location: match.location }] : [];
-        });
-        await instanceAxs.post('/listings', {
-          listingProperties,
-          imageLocations: finalImages,
-          listingId: result.data.listingId,
-        });
-        return 'created' as const;
+      const result = await instanceAxs.post('/listings/images', formData);
+      if (result.data.message !== 'images uploaded') {
+        toast(result.data.message);
+        throw new Error(result.data.message);
       }
+      const returnedFiles = result.data.files as Array<{ originalname: string; location: string }>;
+      const finalImages = imageArray.flatMap(img => {
+        const jpgName = img.name.replace(/\.[^.]+$/, '.jpg');
+        const match = returnedFiles.find(f => f.originalname === jpgName);
+        return match ? [{ name: img.name, location: match.location, description: img.description }] : [];
+      });
+      await instanceAxs.post('/listings', {
+        listingProperties,
+        imageLocations: finalImages,
+        listingId: result.data.listingId,
+      });
     },
-    onSuccess: (type) => {
-      if (type === 'updated') {
-        toast.success('Annonsen oppdatert');
-        navigate('/my-listings');
-      } else {
-        toast.success('Annonsen publisert');
-        navigate('/');
-      }
+    onSuccess: () => {
+      toast.success('Annonsen publisert');
+      navigate('/');
     },
     onError: () => {
       toast.error('Kunne ikke publisere annonsen');
@@ -160,7 +125,7 @@ const NewListing = () => {
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
-    const MAX_RAW_SIZE = 15 * 1024 * 1024; // 15 MB raw limit (compressed later)
+    const MAX_RAW_SIZE = 15 * 1024 * 1024;
     Array.from(e.target.files).forEach(file => {
       if (file.size > MAX_RAW_SIZE) {
         toast.error(`${file.name} er for stor (maks 15 MB)`);
@@ -177,14 +142,8 @@ const NewListing = () => {
     });
   };
 
-  const handleImageDelete = (name: string) => {
-    setImageArray(prev => prev.filter(img => img.name !== name));
-  };
-
-  const handleImageDescriptionChange = (name: string, description: string) => {
-    setImageArray(prev => prev.map(img => img.name === name ? { ...img, description } : img));
-  };
-
+  const handleImageDelete = (name: string) => setImageArray(prev => prev.filter(img => img.name !== name));
+  const handleImageDescriptionChange = (name: string, description: string) => setImageArray(prev => prev.map(img => img.name === name ? { ...img, description } : img));
   const handleImageReorder = (images: ListingImage[]) => setImageArray(images);
 
   const handleSpecPropAdd = (title: string, value: string) => {
@@ -200,9 +159,7 @@ const NewListing = () => {
     });
   };
 
-  const handleRemoveSpecProp = (title: string) => {
-    setSpecPropArray(prev => prev.filter(item => item.title !== title));
-  };
+  const handleRemoveSpecProp = (title: string) => setSpecPropArray(prev => prev.filter(item => item.title !== title));
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -235,11 +192,7 @@ const NewListing = () => {
           setListing(prev => ({ ...prev, location: '', kommune: '' }));
           return;
         }
-        setListing(prev => ({
-          ...prev,
-          location: hit.poststed,
-          kommune: hit.kommunenavn,
-        }));
+        setListing(prev => ({ ...prev, location: hit.poststed, kommune: hit.kommunenavn }));
         setPostAddress(hit.poststed);
       })
       .catch(() => {
@@ -247,21 +200,6 @@ const NewListing = () => {
         setListing(prev => ({ ...prev, location: '', kommune: '' }));
       });
   }, [debouncedPostnumber]);
-
-  useEffect(() => {
-    const state = routerLocation.state;
-    if (!isEditListingState(state)) return;
-    const stateListing = state.annonce;
-    const foundCategory = categoryData.categories.find(item => item.maincategory === stateListing.category);
-    const foundSubCat = foundCategory?.subcategories.find(s => s.name === stateListing.subCategory) ?? '';
-    setIsModifyListing(true);
-    setListing(stateListing);
-    setSpecPropArray(stateListing.specialProperties);
-    setImageArray(stateListing.images);
-    setSelectedMainCat(foundCategory ?? '');
-    setSelectedSubCat(foundSubCat);
-  // eslint-disable-next-line react-hooks/exhaustive-deps — run once on mount to populate form from router state
-  }, []);
 
   if (!user?.isEmailVerified) {
     return (
@@ -282,12 +220,7 @@ const NewListing = () => {
   return (
     <div className={styles['page']}>
       <div className={styles['page-header']}>
-        <h1 className={styles['page-title']}>
-          {isModifyListing ? 'Endre annonse' : 'Ny annonse'}
-        </h1>
-        {isModifyListing && (
-          <p className={styles['page-subtitle']}>Oppdater informasjonen om produktet ditt</p>
-        )}
+        <h1 className={styles['page-title']}>Ny annonse</h1>
       </div>
 
       <Row className={styles['layout-row']}>
@@ -297,7 +230,7 @@ const NewListing = () => {
             selectedMainCat={selectedMainCat}
             selectedSubCat={selectedSubCat}
             imageArray={imageArray}
-            isModifyListing={isModifyListing}
+            isModifyListing={false}
             isPublishing={submitMutation.isPending}
             errors={formErrors}
             onPropertyChange={handlePropertyChange}
@@ -308,7 +241,7 @@ const NewListing = () => {
             onImageReorder={handleImageReorder}
             onSpecPropAdd={handleSpecPropAdd}
             onSubmit={handleSubmit}
-            onCancel={() => navigate(isModifyListing ? '/my-listings' : '/')}
+            onCancel={() => navigate('/')}
             postAddress={postAddress}
           />
         </Col>

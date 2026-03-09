@@ -33,6 +33,7 @@ const NewListing = React.lazy(() => import('./pages/new-listing/NewListing'));
 const Account = React.lazy(() => import('./pages/account/Account'));
 const Favorites = React.lazy(() => import('./pages/favorites/Favorites'));
 const MyListings = React.lazy(() => import('./pages/my-listings/MyListings'));
+const EditListing = React.lazy(() => import('./pages/edit-listing/EditListing'));
 
 const AppContent = () => {
   const dispatch = useAppDispatch();
@@ -82,6 +83,7 @@ const AppContent = () => {
               <Route path='/verify-email' element={<VerifyEmail />} />
 
               <Route path='/new-listing' element={<ProtectedRoute><NewListing /></ProtectedRoute>} />
+              <Route path='/edit-listing/:id' element={<ProtectedRoute><EditListing /></ProtectedRoute>} />
               <Route path='/chat' element={<ProtectedRoute><Chat /></ProtectedRoute>} />
               <Route path='/account' element={<ProtectedRoute><Account /></ProtectedRoute>} />
               <Route path='/favorites' element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
