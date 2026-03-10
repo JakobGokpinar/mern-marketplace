@@ -19,14 +19,11 @@ import { queryKeys } from "../../lib/queryKeys";
 import socket from "../../lib/socket";
 
 const CATEGORIES = [
-  { label: 'Elektronikk',     icon: 'laptop',   slug: 'Elektronikk' },
-  { label: 'Møbler',          icon: 'couch',    slug: 'Møbler og interiør' },
-  { label: 'Klær og mote',    icon: 'shirt',    slug: 'Klær og mote' },
-  { label: 'Sport',           icon: 'bicycle',  slug: 'Sport og friluftsliv' },
+  { label: 'Torget',           icon: 'store',    slug: 'Torget' },
   { label: 'Bil og kjøretøy', icon: 'car',      slug: 'Bil og kjøretøy' },
-  { label: 'Hage',            icon: 'seedling', slug: 'Hage og utemiljø' },
-  { label: 'Barneartikler',   icon: 'baby',     slug: 'Barneartikler' },
-  { label: 'Hobby og fritid', icon: 'palette',  slug: 'Hobby og fritid' },
+  { label: 'Eiendom',          icon: 'house',    slug: 'Eiendom' },
+  { label: 'Båt',              icon: 'sailboat', slug: 'Båt' },
+  { label: 'MC og scooter',   icon: 'motorcycle', slug: 'MC og scooter' },
 ];
 
 const Navigation = () => {
