@@ -138,7 +138,15 @@ export const findProduct = async (req: Request, res: Response) => {
       .select('fullName profilePicture lastActiveAt userCreatedAt')
       .lean();
 
-    return res.status(200).json({ product: result, seller, message: 'Product is found' });
+    const sellerNormalized = seller ? {
+      ...seller,
+      userCreatedAt: seller.userCreatedAt
+        ? new Date(
+            (seller.userCreatedAt as any).$date ?? seller.userCreatedAt
+          ).toISOString()
+        : null,
+    } : null;   
+    return res.status(200).json({ product: result, seller: sellerNormalized, message: 'Product is found' });
   } catch (error) {
     logger.error(error);
     return res.status(500).json({ message: 'Error occured while getting the listing' });
