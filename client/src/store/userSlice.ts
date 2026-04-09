@@ -22,7 +22,7 @@ const userSlice = createSlice({
       state.user = action.payload;
       state.isLoggedIn = true;
       const date = new Date();
-      const expiry = date.getTime() + 1000 * 60 * 60 * 24 * 30;
+      const expiry = date.getTime() + 1000 * 60 * 60 * 24 * 14;
       socket.emit('addUser', action.payload._id);
       window.localStorage.setItem('expiry', String(expiry));
       window.localStorage.setItem('user', JSON.stringify(action.payload));
